@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:youth_center/screens/auth/services/auth_service.dart';
 import 'package:youth_center/screens/auth/pages/register_page.dart';
 import 'package:youth_center/screens/qr/qr_scanner_page.dart';
+import 'package:youth_center/screens/Home/home.dart';
 import 'package:youth_center/widgets/auth_button.dart';
 import 'package:youth_center/widgets/auth_text_field.dart';
 import 'package:youth_center/utils/app_colors.dart';
@@ -47,7 +48,17 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         _submitting = true;
       });
-      await authService.signInWithEmail(email, password);
+      final response = await authService.signInWithEmail(email, password);
+      if (!mounted) return;
+
+      // Check if login was successful
+      if (response.session != null) {
+        // Navigate to HomeScreen and remove all previous routes
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          (route) => false, // Remove all previous routes
+        );
+      }
     } catch (e) {
       if (mounted) {
         String errorMessage = 'An error occurred';
@@ -137,10 +148,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                   child: const Text(
                     'Login via QR code',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
                 ),
                 const SizedBox(height: 8),
