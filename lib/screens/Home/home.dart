@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:youth_center/screens/auth/services/auth_service.dart';
-import 'package:youth_center/screens/auth/services/auth_gate.dart';
+import 'package:youth_center/utils/app_colors.dart';
+import 'package:youth_center/screens/Home/home_content_page.dart';
+import 'package:youth_center/screens/opportunities/opportunities_page.dart';
+import 'package:youth_center/screens/map/map_page.dart';
+import 'package:youth_center/screens/profile/profile_page.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,50 +13,41 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final AuthService authService = AuthService();
+  int _currentIndex = 0;
 
-  Future<void> _logout() async {
-    try {
-      await authService.signOut();
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Logged out')));
-      
-      // Navigate back to AuthGate which will handle showing WelcomeScreen
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const AuthGate()),
-        (route) => false,
-      );
-    } catch (e) {
-      if (mounted) {
-        String errorMessage = 'An error occurred';
-        if (e is AuthException) {
-          errorMessage = e.message;
-        } else if (e is Exception) {
-          errorMessage = e.toString();
-        }
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(errorMessage)));
-      }
-    }
-  }
+  final List<Widget> _pages = [
+    const HomeContentPage(),
+    const OpportunitiesPage(),
+    const MapPage(),
+    const ProfilePage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home'),
-        actions: [
-          IconButton(
-            onPressed: _logout,
-            icon: const Icon(Icons.logout),
-            tooltip: 'Logout',
+      body: IndexedStack(index: _currentIndex, children: _pages),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: AppColors.success,
+        unselectedItemColor: AppColors.textSecondary,
+        selectedFontSize: 12,
+        unselectedFontSize: 12,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.work),
+            label: 'Opportunities',
           ),
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
-      body: const Center(child: Text('Welcome!')),
     );
   }
 }
