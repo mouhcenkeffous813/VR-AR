@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:youth_center/screens/auth/services/auth_service.dart';
 import 'package:youth_center/screens/auth/pages/register_page.dart';
+import 'package:youth_center/screens/qr/qr_scanner_page.dart';
 import 'package:youth_center/widgets/auth_button.dart';
 import 'package:youth_center/widgets/auth_text_field.dart';
 import 'package:youth_center/utils/app_colors.dart';
@@ -124,7 +125,25 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: login,
                   isLoading: _submitting,
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const QRScannerPage(),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    'Login via QR code',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
                 TextButton(
                   onPressed: () {
                     Navigator.push(
