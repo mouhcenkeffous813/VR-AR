@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:youth_center/screens/Home/home.dart';
-import 'package:youth_center/screens/auth/pages/login.dart';
+import 'package:youth_center/screens/welcome/welcome_screen.dart';
 
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
@@ -16,13 +16,13 @@ class AuthGate extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(body: Center(child: CircularProgressIndicator()));
-        } 
+        }
         // check if there is valid session
         final session = snapshot.hasData ? snapshot.data!.session : null;
         if (session != null) {
           return const HomeScreen();
         } else {
-          return const LoginScreen();
+          return const WelcomeScreen();
         }
       },
     );

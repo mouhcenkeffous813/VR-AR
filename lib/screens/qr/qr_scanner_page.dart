@@ -10,9 +10,17 @@ class QRScannerPage extends StatefulWidget {
 }
 
 class _QRScannerPageState extends State<QRScannerPage> {
-  final MobileScannerController controller = MobileScannerController();
-
+  late final MobileScannerController controller;
   bool _isScanning = true;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = MobileScannerController(
+      detectionSpeed: DetectionSpeed.noDuplicates,
+      facing: CameraFacing.back,
+    );
+  }
 
   @override
   void dispose() {
@@ -83,13 +91,41 @@ class _QRScannerPageState extends State<QRScannerPage> {
           MobileScanner(
             controller: controller,
             onDetect: _handleBarcode,
+            errorBuilder: (context, error, child) {
+              String errorMessage =
+                  error.errorDetails?.message ?? "Unable to access camera";
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      color: Colors.white,
+                      size: 48,
+                    ),
+                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Text(
+                        'Camera Error: $errorMessage',
+                        style: const TextStyle(color: Colors.white),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Go Back'),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
           // Overlay with scanning area guide
-          Positioned.fill(
-            child: CustomPaint(
-              painter: ScannerOverlayPainter(),
-            ),
-          ),
+          Positioned.fill(child: CustomPaint(painter: ScannerOverlayPainter())),
           // Instructions
           Positioned(
             bottom: 50,
@@ -121,42 +157,36 @@ class _QRScannerPageState extends State<QRScannerPage> {
 class ScannerOverlayPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.black.withOpacity(0.5)
-      ..style = PaintingStyle.fill;
+    final paint =
+        Paint()
+          ..color = Colors.black.withOpacity(0.5)
+          ..style = PaintingStyle.fill;
 
-    final path = Path()
-      ..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
+    final path = Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
 
     // Scanning area (square in center)
     final scanAreaSize = size.width * 0.7;
     final scanAreaLeft = (size.width - scanAreaSize) / 2;
     final scanAreaTop = (size.height - scanAreaSize) / 2 - 50;
 
-    final scanArea = Path()
-      ..addRect(Rect.fromLTWH(
-        scanAreaLeft,
-        scanAreaTop,
-        scanAreaSize,
-        scanAreaSize,
-      ));
+    final scanArea =
+        Path()..addRect(
+          Rect.fromLTWH(scanAreaLeft, scanAreaTop, scanAreaSize, scanAreaSize),
+        );
 
     // Create the overlay by subtracting the scan area
-    final overlayPath = Path.combine(
-      PathOperation.difference,
-      path,
-      scanArea,
-    );
+    final overlayPath = Path.combine(PathOperation.difference, path, scanArea);
 
     canvas.drawPath(overlayPath, paint);
 
     // Draw corner brackets
     final cornerLength = 20.0;
-    final cornerPaint = Paint()
-      ..color = AppColors.primary
-      ..strokeWidth = 4
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
+    final cornerPaint =
+        Paint()
+          ..color = AppColors.primary
+          ..strokeWidth = 4
+          ..style = PaintingStyle.stroke
+          ..strokeCap = StrokeCap.round;
 
     // Top-left corner
     canvas.drawLine(
@@ -197,12 +227,18 @@ class ScannerOverlayPainter extends CustomPainter {
     // Bottom-right corner
     canvas.drawLine(
       Offset(scanAreaLeft + scanAreaSize, scanAreaTop + scanAreaSize),
-      Offset(scanAreaLeft + scanAreaSize, scanAreaTop + scanAreaSize - cornerLength),
+      Offset(
+        scanAreaLeft + scanAreaSize,
+        scanAreaTop + scanAreaSize - cornerLength,
+      ),
       cornerPaint,
     );
     canvas.drawLine(
       Offset(scanAreaLeft + scanAreaSize, scanAreaTop + scanAreaSize),
-      Offset(scanAreaLeft + scanAreaSize - cornerLength, scanAreaTop + scanAreaSize),
+      Offset(
+        scanAreaLeft + scanAreaSize - cornerLength,
+        scanAreaTop + scanAreaSize,
+      ),
       cornerPaint,
     );
   }
@@ -210,4 +246,3 @@ class ScannerOverlayPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
-
