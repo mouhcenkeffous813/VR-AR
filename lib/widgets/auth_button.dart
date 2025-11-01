@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:youth_center/utils/app_colors.dart';
 
 class AuthButton extends StatelessWidget {
   final String text;
@@ -15,30 +14,47 @@ class AuthButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 52,
+    return Container(
+      height: 56,
       width: double.infinity,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            const Color(0xFF194CBF),
+            const Color(0xFF61A1FF),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF194CBF).withOpacity(0.3),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: AppColors.textOnPrimary,
-          elevation: 2,
-          shadowColor: AppColors.primaryShadow,
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          disabledBackgroundColor: AppColors.disabledBackground,
-          disabledForegroundColor: AppColors.disabledForeground,
+          disabledBackgroundColor: Colors.grey[300],
+          disabledForegroundColor: Colors.grey[600],
         ),
         child: isLoading
             ? SizedBox(
-                height: 20,
-                width: 20,
+                height: 24,
+                width: 24,
                 child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: const AlwaysStoppedAnimation<Color>(
-                    AppColors.disabledForeground,
+                  strokeWidth: 2.5,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    isLoading && onPressed == null
+                        ? Colors.grey[600]!
+                        : Colors.white,
                   ),
                 ),
               )
