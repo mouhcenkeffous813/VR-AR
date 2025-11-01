@@ -9,6 +9,8 @@ import 'package:youth_center/screens/profile/edit_profile_page.dart';
 import 'package:youth_center/services/database_service.dart';
 import 'package:youth_center/models/user_profile_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'dart:math' as math;
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -17,15 +19,41 @@ class ProfilePage extends StatefulWidget {
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _ProfilePageState extends State<ProfilePage>
+    with SingleTickerProviderStateMixin {
   int _selectedTab = 0;
   final DatabaseService _dbService = DatabaseService();
   UserProfileModel? _userProfile;
+  late AnimationController _flipController;
+  bool _isFlipped = false;
 
   @override
   void initState() {
     super.initState();
     _loadUserProfile();
+    _flipController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+  }
+
+  @override
+  void dispose() {
+    _flipController.dispose();
+    super.dispose();
+  }
+
+  void _toggleFlip() {
+    if (_flipController.isAnimating) return;
+
+    setState(() {
+      _isFlipped = !_isFlipped;
+      if (_isFlipped) {
+        _flipController.forward();
+      } else {
+        _flipController.reverse();
+      }
+    });
   }
 
   Future<void> _loadUserProfile() async {
@@ -142,114 +170,142 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
 
-            // Profile Header Section
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Color(0xFF194CBF), Color(0xFF61A1FF)],
-                ),
-              ),
-              child: Column(
-                children: [
-                  // Profile Picture
-                  Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white,
-                      border: Border.all(color: Colors.white, width: 3),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 10,
-                          offset: const Offset(0, 5),
+            // Profile Header Section - 3D Flip Card
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: AnimatedBuilder(
+                animation: _flipController,
+                builder: (context, child) {
+                  final angle = _flipController.value * math.pi;
+                  final isFrontVisible =
+                      angle < math.pi / 2 || angle > 3 * math.pi / 2;
+
+                  return SizedBox(
+                    width: double.infinity,
+                    height: 330,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        // Card with flip gesture
+                        Positioned.fill(
+                          child: GestureDetector(
+                            onTap: _toggleFlip,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                // Front side
+                                Positioned.fill(
+                                  child: Transform(
+                                    alignment: Alignment.center,
+                                    transform:
+                                        Matrix4.identity()
+                                          ..setEntry(3, 2, 0.001)
+                                          ..rotateY(angle),
+                                    child: Opacity(
+                                      opacity: isFrontVisible ? 1.0 : 0.0,
+                                      child: _buildProfileFront(
+                                        displayName,
+                                        username,
+                                        onEditPressed:
+                                            null, // Will be handled separately
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                // Back side
+                                Positioned.fill(
+                                  child: Transform(
+                                    alignment: Alignment.center,
+                                    transform:
+                                        Matrix4.identity()
+                                          ..setEntry(3, 2, 0.001)
+                                          ..rotateY(angle + math.pi),
+                                    child: Opacity(
+                                      opacity: isFrontVisible ? 0.0 : 1.0,
+                                      child: _buildProfileBack(),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
+                        // Edit Profile Button Overlay (only visible when front is visible)
+                        if (isFrontVisible)
+                          Positioned(
+                            bottom: 50,
+                            left: 24,
+                            right: 24,
+                            child: GestureDetector(
+                              onTap: () async {
+                                final result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => const EditProfilePage(),
+                                  ),
+                                );
+                                if (result == true) {
+                                  _loadUserProfile();
+                                }
+                              },
+                              behavior: HitTestBehavior.opaque,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    onTap: () async {
+                                      final result = await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder:
+                                              (context) =>
+                                                  const EditProfilePage(),
+                                        ),
+                                      );
+                                      if (result == true) {
+                                        _loadUserProfile();
+                                      }
+                                    },
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 32,
+                                        vertical: 12,
+                                      ),
+                                      constraints: const BoxConstraints(
+                                        minHeight: 44,
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: const Text(
+                                        'Edit Profile',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          color: Color(0xFF194CBF),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                       ],
                     ),
-                    child: ClipOval(
-                      child: Image.asset(
-                        'images/student.jpeg',
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: const Color(0xFF194CBF),
-                            child: const Icon(
-                              Icons.person,
-                              size: 60,
-                              color: Colors.white,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  // Name
-                  Text(
-                    displayName
-                        .split('.')
-                        .map(
-                          (word) =>
-                              word.isEmpty
-                                  ? ''
-                                  : word[0].toUpperCase() + word.substring(1),
-                        )
-                        .join(' '),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  // Username
-                  Text(
-                    username,
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.9),
-                      fontSize: 16,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  // Edit Profile Button
-                  ElevatedButton(
-                    onPressed: () async {
-                      final result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const EditProfilePage(),
-                        ),
-                      );
-                      // Reload profile if updated
-                      if (result == true) {
-                        _loadUserProfile();
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: const Color(0xFF194CBF),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 32,
-                        vertical: 12,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    child: const Text(
-                      'Edit Profile',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
+                  );
+                },
               ),
             ),
 
@@ -504,6 +560,223 @@ class _ProfilePageState extends State<ProfilePage> {
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             ),
             child: const Text('View My Projects'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProfileFront(
+    String displayName,
+    String username, {
+    VoidCallback? onEditPressed,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF194CBF), Color(0xFF61A1FF)],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Profile Picture
+          Container(
+            width: 120,
+            height: 120,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white,
+              border: Border.all(color: Colors.white, width: 3),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+            ),
+            child: ClipOval(
+              child: Image.asset(
+                'images/student.jpeg',
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: const Color(0xFF194CBF),
+                    child: const Icon(
+                      Icons.person,
+                      size: 60,
+                      color: Colors.white,
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          // Name
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(
+              displayName
+                  .split('.')
+                  .map(
+                    (word) =>
+                        word.isEmpty
+                            ? ''
+                            : word[0].toUpperCase() + word.substring(1),
+                  )
+                  .join(' '),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const SizedBox(height: 4),
+          // Username
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(
+              username,
+              style: const TextStyle(color: Colors.white70, fontSize: 14),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const SizedBox(height: 44),
+          const SizedBox(height: 6),
+          // Flip hint
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(
+              'Tap to view QR code',
+              style: const TextStyle(
+                color: Colors.white70,
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProfileBack() {
+    final user = Supabase.instance.client.auth.currentUser;
+    final userId = user?.id ?? '';
+    final userEmail = user?.email ?? '';
+    final qrData =
+        userEmail.isNotEmpty
+            ? '${userEmail}|$userId'
+            : 'youth_center_user_$userId';
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF194CBF), Color(0xFF61A1FF)],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.qr_code_2, color: Colors.white, size: 28),
+          const SizedBox(height: 8),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(
+              'Profile QR Code',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          const SizedBox(height: 14),
+          // QR Code
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 180),
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: QrImageView(
+                data: qrData,
+                version: QrVersions.auto,
+                size: 130.0,
+                backgroundColor: Colors.white,
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(
+              userEmail,
+              style: const TextStyle(color: Colors.white70, fontSize: 11),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(
+              'Tap to flip back',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+            ),
           ),
         ],
       ),
