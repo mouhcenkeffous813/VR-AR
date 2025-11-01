@@ -54,22 +54,46 @@ class _HomeContentPageState extends State<HomeContentPage> {
         );
       },
       child: Container(
-        margin: const EdgeInsets.all(8),
+        margin: const EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.borderDefault, width: 1),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white,
+              iconColor.withOpacity(0.05),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: iconColor.withOpacity(0.2),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: iconColor.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 40, color: iconColor),
-            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: iconColor.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, size: 36, color: iconColor),
+            ),
+            const SizedBox(height: 10),
             Text(
               title,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textPrimary,
               ),
@@ -88,88 +112,64 @@ class _HomeContentPageState extends State<HomeContentPage> {
   }) {
     return Container(
       width: 280,
-      margin: const EdgeInsets.only(right: 16),
+      margin: const EdgeInsets.only(right: 20),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.borderDefault, width: 1),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Image placeholder or actual image
-          Container(
-            height: 160,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: AppColors.grey300,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(16),
-              ),
-            ),
-            child: imagePath != null
-                ? ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(16),
-                      topRight: Radius.circular(16),
-                    ),
-                    child: Image.asset(
-                      imagePath,
-                      fit: BoxFit.cover,
-                    ),
-                  )
-                : const Icon(
-                    Icons.image,
-                    size: 60,
-                    color: AppColors.textSecondary,
-                  ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  description,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: AppColors.textSecondary,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.people,
-                      size: 18,
-                      color: AppColors.textSecondary,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      collaborators,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           ),
         ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Stack(
+          children: [
+            imagePath != null
+                ? Image.asset(
+                    imagePath,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: 200,
+                  )
+                : Container(
+                    height: 200,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          AppColors.primaryLight,
+                          AppColors.primary,
+                        ],
+                      ),
+                    ),
+                    child: const Icon(
+                      Icons.image,
+                      size: 60,
+                      color: Colors.white,
+                    ),
+                  ),
+            // Gradient overlay
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withOpacity(0.7),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -463,147 +463,221 @@ class _HomeContentPageState extends State<HomeContentPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
-      drawer: _buildDrawer(),
-      appBar: AppBar(
-        backgroundColor: AppColors.background,
-        elevation: 0,
-        surfaceTintColor: Colors.transparent,
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu, color: AppColors.textPrimary),
-            onPressed: () => Scaffold.of(context).openDrawer(),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              AppColors.background,
+              AppColors.primary.withOpacity(0.02),
+            ],
           ),
         ),
-        title: const Text(
-          'Youth Center',
-          style: TextStyle(
-            color: AppColors.primary,
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications, color: AppColors.textPrimary),
-            onPressed: () {
-              // TODO: Navigate to notifications
-            },
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Welcome Message
-            Text(
-              'Welcome back, ${_getUserName()}!',
-              style: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 20),
-            // Search Bar
-            TextFormField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Search for projects or skills...',
-                prefixIcon: const Icon(Icons.search, color: AppColors.textSecondary),
-                border: OutlineInputBorder(
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          drawer: _buildDrawer(),
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            surfaceTintColor: Colors.transparent,
+            leading: Builder(
+              builder: (context) => Container(
+                margin: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColors.borderDefault),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(
-                    color: AppColors.borderFocused,
-                    width: 2,
-                  ),
-                ),
-                filled: true,
-                fillColor: AppColors.surface,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 16,
+                child: IconButton(
+                  icon: const Icon(Icons.menu, color: AppColors.primary, size: 24),
+                  onPressed: () => Scaffold.of(context).openDrawer(),
                 ),
               ),
             ),
-            const SizedBox(height: 32),
-            // Trending Projects Section
-            const Text(
-              'Trending Projects',
+            title: const Text(
+              'Youth Center',
               style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 320,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  _buildProjectCard(
-                    title: 'Community Learning App',
-                    description:
-                        'An app to connect local tutors with students for free educational support.',
-                    collaborators: '3/5 Collaborators',
-                  ),
-                  _buildProjectCard(
-                    title: 'Algiers Tech Hub',
-                    description:
-                        'Organizing young tech enthusiasts to collaborate on innovative projects.',
-                    collaborators: '8/10 Collaborators',
-                  ),
-                  _buildProjectCard(
-                    title: 'Green Initiative',
-                    description:
-                        'Community-led environmental project to promote sustainability.',
-                    collaborators: '5/7 Collaborators',
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 32),
-            // Explore Categories Section
-            const Text(
-              'Explore Categories',
-              style: TextStyle(
-                fontSize: 22,
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+                letterSpacing: -0.5,
               ),
             ),
-            const SizedBox(height: 16),
-            GridView.count(
-              crossAxisCount: 2,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              childAspectRatio: 1.5,
-              children: CategoryData.categories
-                  .map((category) => _buildCategoryCard(
-                        icon: category.icon,
-                        title: category.name,
-                        iconColor: category.iconColor,
-                      ))
-                  .toList(),
+            centerTitle: true,
+            actions: [
+              Container(
+                margin: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.notifications, color: AppColors.primary, size: 24),
+                  onPressed: () {
+                    // TODO: Navigate to notifications
+                  },
+                ),
+              ),
+            ],
+          ),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Search Bar with Gradient Shadow
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primary.withOpacity(0.1),
+                        blurRadius: 15,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: TextFormField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Search for projects or skills...',
+                      prefixIcon: Container(
+                        padding: const EdgeInsets.all(12),
+                        child: const Icon(Icons.search, color: AppColors.textSecondary),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide.none,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide.none,
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 18,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 32),
+                SizedBox(
+                  height: 200,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    children: [
+                      _buildProjectCard(
+                        title: 'Community Learning App',
+                        description:
+                            'An app to connect local tutors with students for free educational support.',
+                        collaborators: '3/5 Collaborators',
+                        imagePath: 'images/pic1.jpeg',
+                      ),
+                      _buildProjectCard(
+                        title: 'Algiers Tech Hub',
+                        description:
+                            'Organizing young tech enthusiasts to collaborate on innovative projects.',
+                        collaborators: '8/10 Collaborators',
+                        imagePath: 'images/pic2.jpeg',
+                      ),
+                      _buildProjectCard(
+                        title: 'Green Initiative',
+                        description:
+                            'Community-led environmental project to promote sustainability.',
+                        collaborators: '5/7 Collaborators',
+                        imagePath: 'images/pic3.jpeg',
+                      ),
+                      _buildProjectCard(
+                        title: 'Innovation Hub',
+                        description:
+                            'A platform for creative minds to collaborate and innovate.',
+                        collaborators: '7/10 Collaborators',
+                        imagePath: 'images/pic4.jpeg',
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 40),
+                // Explore Categories Section
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [AppColors.primary, AppColors.primaryLight],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.grid_view_rounded,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    const Text(
+                      'Explore Categories',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                GridView.count(
+                  crossAxisCount: 2,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  childAspectRatio: 1.8,
+                  children: CategoryData.categories
+                      .map((category) => _buildCategoryCard(
+                            icon: category.icon,
+                            title: category.name,
+                            iconColor: category.iconColor,
+                          ))
+                      .toList(),
+                ),
+                const SizedBox(height: 80),
+              ],
             ),
-          ],
+          ),
+          floatingActionButton: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primary.withOpacity(0.4),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+            child: FloatingActionButton.extended(
+              onPressed: _showBottomSheet,
+              backgroundColor: AppColors.primary,
+              elevation: 0,
+              icon: const Icon(Icons.add, color: Colors.white),
+              label: const Text(
+                'Add Post',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _showBottomSheet,
-        backgroundColor: AppColors.primary,
-        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
