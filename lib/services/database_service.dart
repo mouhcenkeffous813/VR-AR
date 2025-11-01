@@ -7,6 +7,7 @@ import 'package:youth_center/models/category_model.dart';
 import 'package:youth_center/models/event_model.dart';
 import 'package:youth_center/models/enrollment_model.dart';
 import 'package:youth_center/models/question_model.dart';
+import 'package:youth_center/models/suggestion_model.dart';
 
 class DatabaseService {
   final SupabaseClient supabase = Supabase.instance.client;
@@ -598,6 +599,73 @@ class DatabaseService {
           .eq('user_id', userId);
     } catch (e) {
       throw Exception('Error deleting question: $e');
+    }
+  }
+
+  // ==================== SUGGESTIONS ====================
+
+  /// Get all suggestions
+  Future<List<SuggestionModel>> getSuggestions() async {
+    try {
+      final response = await supabase
+          .from('suggestions')
+          .select()
+          .order('created_at', ascending: false);
+
+      if (response.isEmpty) {
+        return [];
+      }
+
+      return (response as List)
+          .map((json) => SuggestionModel.fromJson(json))
+          .toList();
+    } catch (e) {
+      throw Exception('Error fetching suggestions: $e');
+    }
+  }
+
+  /// Create a new suggestion
+  Future<SuggestionModel> createSuggestion({
+    required String title,
+    required String description,
+  }) async {
+    try {
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) {
+        throw Exception('You must be logged in to create a suggestion');
+      }
+
+      final response = await supabase
+          .from('suggestions')
+          .insert({
+            'user_id': userId,
+            'title': title,
+            'description': description,
+          })
+          .select()
+          .single();
+
+      return SuggestionModel.fromJson(response);
+    } catch (e) {
+      throw Exception('Error creating suggestion: $e');
+    }
+  }
+
+  /// Delete a suggestion
+  Future<void> deleteSuggestion(String suggestionId) async {
+    try {
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) {
+        throw Exception('You must be logged in to delete a suggestion');
+      }
+
+      await supabase
+          .from('suggestions')
+          .delete()
+          .eq('id', suggestionId)
+          .eq('user_id', userId);
+    } catch (e) {
+      throw Exception('Error deleting suggestion: $e');
     }
   }
 }

@@ -376,8 +376,8 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
               TextField(
                 controller: _titleController,
                 decoration: InputDecoration(
-                  labelText: 'Project Title',
-                  hintText: 'Enter project title',
+                  labelText: 'Suggestion Title',
+                  hintText: 'Enter Suggestion title',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -393,7 +393,7 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
                 maxLines: 4,
                 decoration: InputDecoration(
                   labelText: 'Description',
-                  hintText: 'Enter project description',
+                  hintText: 'Enter Suggestion description',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
