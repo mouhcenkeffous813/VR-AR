@@ -9,6 +9,22 @@ class WelcomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        automaticallyImplyLeading: false,
+        title: const Text(
+          'HOME',
+          style: TextStyle(
+            color: AppColors.textPrimary,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.5,
+          ),
+        ),
+        centerTitle: false,
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -16,11 +32,7 @@ class WelcomeScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Logo/Image
-              Image.asset(
-                'images/OIP.jpg',
-                height: 200,
-                fit: BoxFit.contain,
-              ),
+              Image.asset('images/OIP.jpg', height: 200, fit: BoxFit.contain),
               const SizedBox(height: 48),
               // Welcome Text
               const Text(
@@ -84,4 +96,3 @@ class WelcomeScreen extends StatelessWidget {
     );
   }
 }
-
