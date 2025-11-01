@@ -91,7 +91,7 @@ class _QRScannerPageState extends State<QRScannerPage> {
           MobileScanner(
             controller: controller,
             onDetect: _handleBarcode,
-            errorBuilder: (context, error, child) {
+            errorBuilder: (context, error) {
               String errorMessage =
                   error.errorDetails?.message ?? "Unable to access camera";
               return Center(
