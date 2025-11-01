@@ -8,6 +8,10 @@ import 'package:youth_center/models/event_model.dart';
 import 'package:youth_center/models/enrollment_model.dart';
 import 'package:youth_center/models/question_model.dart';
 import 'package:youth_center/models/suggestion_model.dart';
+import 'package:youth_center/models/club_model.dart';
+import 'package:youth_center/models/club_membership_model.dart';
+import 'package:youth_center/models/volunteering_opportunity_model.dart';
+import 'package:youth_center/models/volunteering_enrollment_model.dart';
 
 class DatabaseService {
   final SupabaseClient supabase = Supabase.instance.client;
@@ -202,6 +206,9 @@ class DatabaseService {
       }
 
       final data = profile.toJson();
+      // Remove id and timestamps from update data
+      data.remove('id');
+      data.remove('created_at');
       data['updated_at'] = DateTime.now().toIso8601String();
 
       final response = await supabase
@@ -214,6 +221,19 @@ class DatabaseService {
       return UserProfileModel.fromJson(response);
     } catch (e) {
       throw Exception('Error updating user profile: $e');
+    }
+  }
+
+  /// Get current user profile
+  Future<UserProfileModel?> getCurrentUserProfile() async {
+    try {
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) {
+        return null;
+      }
+      return await getUserProfile(userId);
+    } catch (e) {
+      return null;
     }
   }
 
@@ -666,6 +686,303 @@ class DatabaseService {
           .eq('user_id', userId);
     } catch (e) {
       throw Exception('Error deleting suggestion: $e');
+    }
+  }
+
+  // ==================== CLUBS ====================
+
+  /// Get all clubs
+  Future<List<ClubModel>> getClubs() async {
+    try {
+      final response = await supabase
+          .from('clubs')
+          .select()
+          .order('name', ascending: true);
+
+      return (response as List)
+          .map((json) => ClubModel.fromJson(json))
+          .toList();
+    } catch (e) {
+      throw Exception('Error fetching clubs: $e');
+    }
+  }
+
+  /// Get club by ID
+  Future<ClubModel?> getClubById(String clubId) async {
+    try {
+      final response = await supabase
+          .from('clubs')
+          .select()
+          .eq('id', clubId)
+          .maybeSingle();
+
+      if (response == null) return null;
+      return ClubModel.fromJson(response);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Get user's club memberships
+  Future<List<ClubMembershipModel>> getUserClubMemberships() async {
+    try {
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) {
+        return [];
+      }
+
+      final response = await supabase
+          .from('club_memberships')
+          .select()
+          .eq('user_id', userId)
+          .order('joined_at', ascending: false);
+
+      return (response as List)
+          .map((json) => ClubMembershipModel.fromJson(json))
+          .toList();
+    } catch (e) {
+      throw Exception('Error fetching user club memberships: $e');
+    }
+  }
+
+  /// Check if user is member of a club
+  Future<bool> isClubMember(String clubId) async {
+    try {
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) return false;
+
+      final response = await supabase
+          .from('club_memberships')
+          .select()
+          .eq('club_id', clubId)
+          .eq('user_id', userId)
+          .maybeSingle();
+
+      return response != null;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Join a club
+  Future<void> joinClub(String clubId) async {
+    try {
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) {
+        throw Exception('You must be logged in to join a club');
+      }
+
+      await supabase.from('club_memberships').insert({
+        'club_id': clubId,
+        'user_id': userId,
+      });
+    } catch (e) {
+      if (e.toString().contains('duplicate')) {
+        throw Exception('You are already a member of this club');
+      }
+      throw Exception('Error joining club: $e');
+    }
+  }
+
+  /// Leave a club
+  Future<void> leaveClub(String clubId) async {
+    try {
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) {
+        throw Exception('You must be logged in to leave a club');
+      }
+
+      await supabase
+          .from('club_memberships')
+          .delete()
+          .eq('club_id', clubId)
+          .eq('user_id', userId);
+    } catch (e) {
+      throw Exception('Error leaving club: $e');
+    }
+  }
+
+  /// Toggle club membership (join if not member, leave if member)
+  Future<bool> toggleClubMembership(String clubId) async {
+    try {
+      final isMember = await isClubMember(clubId);
+      if (isMember) {
+        await leaveClub(clubId);
+        return false;
+      } else {
+        await joinClub(clubId);
+        return true;
+      }
+    } catch (e) {
+      throw Exception('Error toggling club membership: $e');
+    }
+  }
+
+  // ==================== VOLUNTEERING ====================
+
+  /// Get all volunteering opportunities
+  Future<List<VolunteeringOpportunityModel>> getVolunteeringOpportunities() async {
+    try {
+      final response = await supabase
+          .from('volunteering_opportunities')
+          .select()
+          .order('title', ascending: true);
+
+      if (response.isEmpty) {
+        return [];
+      }
+
+      return (response as List)
+          .map((json) => VolunteeringOpportunityModel.fromJson(json))
+          .toList();
+    } catch (e) {
+      final errorMsg = e.toString();
+      if (errorMsg.contains('PGRST205') || 
+          errorMsg.contains('Could not find the table') ||
+          errorMsg.contains('volunteering_opportunities')) {
+        throw Exception(
+          'The table "volunteering_opportunities" does not exist in the database.\n\n'
+          'Please execute the VOLUNTEERING_SCHEMA.sql file in the Supabase SQL Editor to create the table.'
+        );
+      }
+      throw Exception('Error loading volunteering opportunities: $e');
+    }
+  }
+
+  /// Get volunteering opportunity by ID
+  Future<VolunteeringOpportunityModel?> getVolunteeringOpportunityById(String opportunityId) async {
+    try {
+      final response = await supabase
+          .from('volunteering_opportunities')
+          .select()
+          .eq('id', opportunityId)
+          .maybeSingle();
+
+      if (response == null) return null;
+      return VolunteeringOpportunityModel.fromJson(response);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Get user's volunteering enrollments
+  Future<List<VolunteeringEnrollmentModel>> getUserVolunteeringEnrollments() async {
+    try {
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) {
+        return [];
+      }
+
+      final response = await supabase
+          .from('volunteering_enrollments')
+          .select()
+          .eq('user_id', userId)
+          .order('enrolled_at', ascending: false);
+
+      if (response.isEmpty) {
+        return [];
+      }
+
+      return (response as List)
+          .map((json) => VolunteeringEnrollmentModel.fromJson(json))
+          .toList();
+    } catch (e) {
+      final errorMsg = e.toString();
+      if (errorMsg.contains('PGRST205') || 
+          errorMsg.contains('Could not find the table') ||
+          errorMsg.contains('volunteering_enrollments')) {
+        // Return empty list if table doesn't exist yet
+        return [];
+      }
+      throw Exception('Error fetching user volunteering enrollments: $e');
+    }
+  }
+
+  /// Check if user is enrolled in a volunteering opportunity
+  Future<bool> isEnrolledInVolunteering(String opportunityId) async {
+    try {
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) return false;
+
+      final response = await supabase
+          .from('volunteering_enrollments')
+          .select()
+          .eq('opportunity_id', opportunityId)
+          .eq('user_id', userId)
+          .maybeSingle();
+
+      return response != null;
+    } catch (e) {
+      // Return false if table doesn't exist or any error
+      return false;
+    }
+  }
+
+  /// Enroll in a volunteering opportunity
+  Future<void> enrollInVolunteering(String opportunityId) async {
+    try {
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) {
+        throw Exception('You must be logged in to enroll in volunteering');
+      }
+
+      await supabase.from('volunteering_enrollments').insert({
+        'opportunity_id': opportunityId,
+        'user_id': userId,
+      });
+    } catch (e) {
+      final errorMsg = e.toString();
+      if (errorMsg.contains('duplicate') || errorMsg.contains('unique')) {
+        throw Exception('You are already enrolled in this opportunity');
+      }
+      if (errorMsg.contains('PGRST205') || errorMsg.contains('Could not find the table')) {
+        throw Exception(
+          'Volunteering tables have not been created.\n'
+          'Execute VOLUNTEERING_SCHEMA.sql in the Supabase SQL Editor.'
+        );
+      }
+      throw Exception('Error enrolling: $e');
+    }
+  }
+
+  /// Unenroll from a volunteering opportunity
+  Future<void> unenrollFromVolunteering(String opportunityId) async {
+    try {
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) {
+        throw Exception('You must be logged in to unenroll from volunteering');
+      }
+
+      await supabase
+          .from('volunteering_enrollments')
+          .delete()
+          .eq('opportunity_id', opportunityId)
+          .eq('user_id', userId);
+    } catch (e) {
+      final errorMsg = e.toString();
+      if (errorMsg.contains('PGRST205') || errorMsg.contains('Could not find the table')) {
+        throw Exception(
+          'Volunteering tables have not been created.\n'
+          'Execute VOLUNTEERING_SCHEMA.sql in the Supabase SQL Editor.'
+        );
+      }
+      throw Exception('Error unenrolling: $e');
+    }
+  }
+
+  /// Toggle volunteering enrollment (enroll if not enrolled, unenroll if enrolled)
+  Future<bool> toggleVolunteeringEnrollment(String opportunityId) async {
+    try {
+      final isEnrolled = await isEnrolledInVolunteering(opportunityId);
+      if (isEnrolled) {
+        await unenrollFromVolunteering(opportunityId);
+        return false;
+      } else {
+        await enrollInVolunteering(opportunityId);
+        return true;
+      }
+    } catch (e) {
+      throw Exception('Error toggling volunteering enrollment: $e');
     }
   }
 }

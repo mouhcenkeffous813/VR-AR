@@ -1,8 +1,114 @@
 import 'package:flutter/material.dart';
 import 'package:youth_center/utils/app_colors.dart';
+import 'package:youth_center/services/database_service.dart';
+import 'package:youth_center/models/club_model.dart';
+import 'package:youth_center/utils/icon_helper.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-class ClubsHubPage extends StatelessWidget {
+class ClubsHubPage extends StatefulWidget {
   const ClubsHubPage({super.key});
+
+  @override
+  State<ClubsHubPage> createState() => _ClubsHubPageState();
+}
+
+class _ClubsHubPageState extends State<ClubsHubPage> {
+  final DatabaseService _dbService = DatabaseService();
+  List<ClubModel> _clubs = [];
+  Set<String> _joinedClubIds = {};
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadClubs();
+  }
+
+  Future<void> _loadClubs() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final clubs = await _dbService.getClubs();
+      final userId = Supabase.instance.client.auth.currentUser?.id;
+      
+      Set<String> joinedIds = {};
+      if (userId != null) {
+        final memberships = await _dbService.getUserClubMemberships();
+        joinedIds = memberships.map((m) => m.clubId).toSet();
+      }
+
+      setState(() {
+        _clubs = clubs;
+        _joinedClubIds = joinedIds;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error loading clubs: $e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _toggleClubMembership(ClubModel club) async {
+    final userId = Supabase.instance.client.auth.currentUser?.id;
+    if (userId == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please log in to join clubs'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+      return;
+    }
+
+    try {
+      final isMember = _joinedClubIds.contains(club.id);
+      await _dbService.toggleClubMembership(club.id);
+      
+      setState(() {
+        if (isMember) {
+          _joinedClubIds.remove(club.id);
+        } else {
+          _joinedClubIds.add(club.id);
+        }
+      });
+
+      // Reload clubs to update member count
+      await _loadClubs();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(isMember 
+              ? 'Left ${club.name} successfully' 
+              : 'Joined ${club.name} successfully'),
+            backgroundColor: AppColors.success,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString().replaceFirst('Exception: ', '')}'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,64 +188,58 @@ class ClubsHubPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            _buildClubCard(
-              icon: Icons.code,
-              title: 'Tech Club',
-              description: 'Programming, app development, and tech discussions',
-              members: '125 members',
-              color: AppColors.primary,
-            ),
-            const SizedBox(height: 12),
-            _buildClubCard(
-              icon: Icons.palette_outlined,
-              title: 'Art & Design',
-              description: 'Creative projects, design workshops, and exhibitions',
-              members: '89 members',
-              color: AppColors.secondary,
-            ),
-            const SizedBox(height: 12),
-            _buildClubCard(
-              icon: Icons.music_note,
-              title: 'Music Club',
-              description: 'Jam sessions, performances, and music production',
-              members: '67 members',
-              color: AppColors.success,
-            ),
-            const SizedBox(height: 12),
-            _buildClubCard(
-              icon: Icons.sports_soccer,
-              title: 'Sports Club',
-              description: 'Organize games, tournaments, and fitness activities',
-              members: '142 members',
-              color: AppColors.warning,
-            ),
-            const SizedBox(height: 12),
-            _buildClubCard(
-              icon: Icons.menu_book,
-              title: 'Book Club',
-              description: 'Book discussions, reading circles, and literary events',
-              members: '54 members',
-              color: AppColors.info,
-            ),
+            _isLoading
+                ? const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(32.0),
+                      child: CircularProgressIndicator(),
+                    ),
+                  )
+                : _clubs.isEmpty
+                    ? Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(32.0),
+                          child: Text(
+                            'No clubs available',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ),
+                      )
+                    : Column(
+                        children: _clubs.asMap().entries.map((entry) {
+                          final index = entry.key;
+                          final club = entry.value;
+                          return Padding(
+                            padding: EdgeInsets.only(
+                              bottom: index < _clubs.length - 1 ? 12 : 0,
+                            ),
+                            child: _buildClubCard(club),
+                          );
+                        }).toList(),
+                      ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildClubCard({
-    required IconData icon,
-    required String title,
-    required String description,
-    required String members,
-    required Color color,
-  }) {
+  Widget _buildClubCard(ClubModel club) {
+    final isJoined = _joinedClubIds.contains(club.id);
+    final icon = IconHelper.getIconFromName(club.iconName);
+    final color = IconHelper.getColorFromHex(club.color);
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.borderDefault, width: 1),
+        border: Border.all(
+          color: isJoined ? color : AppColors.borderDefault,
+          width: isJoined ? 2 : 1,
+        ),
       ),
       child: Row(
         children: [
@@ -157,7 +257,7 @@ class ClubsHubPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
+                  club.name,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -166,7 +266,7 @@ class ClubsHubPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  description,
+                  club.description,
                   style: const TextStyle(
                     fontSize: 14,
                     color: AppColors.textSecondary,
@@ -182,7 +282,7 @@ class ClubsHubPage extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      members,
+                      '${club.memberCount} members',
                       style: const TextStyle(
                         fontSize: 12,
                         color: AppColors.textSecondary,
@@ -193,9 +293,17 @@ class ClubsHubPage extends StatelessWidget {
               ],
             ),
           ),
-          const Icon(
-            Icons.chevron_right,
-            color: AppColors.textSecondary,
+          ElevatedButton(
+            onPressed: () => _toggleClubMembership(club),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: isJoined ? AppColors.error : AppColors.primary,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: Text(isJoined ? 'Leave' : 'Join'),
           ),
         ],
       ),

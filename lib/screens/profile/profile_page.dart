@@ -5,6 +5,9 @@ import 'package:youth_center/screens/auth/pages/login.dart';
 import 'package:youth_center/screens/profile/my_projects_page.dart';
 import 'package:youth_center/screens/profile/achievements_page.dart';
 import 'package:youth_center/screens/profile/bookmarks_page.dart';
+import 'package:youth_center/screens/profile/edit_profile_page.dart';
+import 'package:youth_center/services/database_service.dart';
+import 'package:youth_center/models/user_profile_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -16,6 +19,25 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   int _selectedTab = 0;
+  final DatabaseService _dbService = DatabaseService();
+  UserProfileModel? _userProfile;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserProfile();
+  }
+
+  Future<void> _loadUserProfile() async {
+    try {
+      final profile = await _dbService.getCurrentUserProfile();
+      setState(() {
+        _userProfile = profile;
+      });
+    } catch (e) {
+      // Handle error silently or show snackbar if needed
+    }
+  }
 
   Future<void> _logout(BuildContext context) async {
     final AuthService authService = AuthService();
@@ -196,10 +218,17 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(height: 20),
                   // Edit Profile Button
                   ElevatedButton(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Edit Profile')),
+                    onPressed: () async {
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const EditProfilePage(),
+                        ),
                       );
+                      // Reload profile if updated
+                      if (result == true) {
+                        _loadUserProfile();
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
@@ -315,6 +344,12 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildAboutSection(String? userEmail) {
+    final bio =
+        _userProfile?.bio ??
+        'Digital product designer and front-end developer passionate about creating intuitive user experiences for Algerian startups. Let\'s connect and build something amazing together!';
+    final location = _userProfile?.location ?? 'Algiers, Algeria';
+    final portfolio = _userProfile?.portfolio ?? 'https://moncefaz.vercel.app';
+
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -331,7 +366,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           const SizedBox(height: 12),
           Text(
-            'Digital product designer and front-end developer passionate about creating intuitive user experiences for Algerian startups. Let\'s connect and build something amazing together!',
+            bio,
             style: const TextStyle(
               color: AppColors.textSecondary,
               fontSize: 15,
@@ -341,33 +376,43 @@ class _ProfilePageState extends State<ProfilePage> {
           const SizedBox(height: 24),
 
           // Location
-          _buildInfoRow(icon: Icons.location_on, text: 'Algiers, Algeria'),
+          _buildInfoRow(icon: Icons.location_on, text: location),
           const SizedBox(height: 16),
 
-          // Skills
-          _buildInfoRow(
-            icon: Icons.settings,
-            text: 'UI/UX Design, Python, Marketing',
-          ),
-          const SizedBox(height: 16),
+          // Skills (Settings)
+          if (_userProfile?.settings != null &&
+              _userProfile!.settings!.isNotEmpty)
+            _buildInfoRow(
+              icon: Icons.settings,
+              text:
+                  _userProfile!.settings!['bio'] ??
+                  'UI/UX Design, Python, Marketing',
+            ),
+          if (_userProfile?.settings != null &&
+              _userProfile!.settings!.isNotEmpty)
+            const SizedBox(height: 16),
 
-          // Website
+          // Website/Portfolio
           InkWell(
             onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Opening website...')),
-              );
+              if (portfolio.isNotEmpty && portfolio.startsWith('http')) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Opening $portfolio...')),
+                );
+              }
             },
             child: Row(
               children: [
                 Icon(Icons.link, color: const Color(0xFF194CBF), size: 20),
                 const SizedBox(width: 12),
-                Text(
-                  'https://moncefaz.vercel.app',
-                  style: const TextStyle(
-                    color: Color(0xFF194CBF),
-                    fontSize: 15,
-                    decoration: TextDecoration.underline,
+                Expanded(
+                  child: Text(
+                    portfolio,
+                    style: const TextStyle(
+                      color: Color(0xFF194CBF),
+                      fontSize: 15,
+                      decoration: TextDecoration.underline,
+                    ),
                   ),
                 ),
               ],

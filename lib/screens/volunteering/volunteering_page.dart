@@ -1,8 +1,125 @@
 import 'package:flutter/material.dart';
 import 'package:youth_center/utils/app_colors.dart';
+import 'package:youth_center/services/database_service.dart';
+import 'package:youth_center/models/volunteering_opportunity_model.dart';
+import 'package:youth_center/utils/icon_helper.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-class VolunteeringPage extends StatelessWidget {
+class VolunteeringPage extends StatefulWidget {
   const VolunteeringPage({super.key});
+
+  @override
+  State<VolunteeringPage> createState() => _VolunteeringPageState();
+}
+
+class _VolunteeringPageState extends State<VolunteeringPage> {
+  final DatabaseService _dbService = DatabaseService();
+  List<VolunteeringOpportunityModel> _opportunities = [];
+  Set<String> _enrolledOpportunityIds = {};
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadOpportunities();
+  }
+
+  Future<void> _loadOpportunities() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final opportunities = await _dbService.getVolunteeringOpportunities();
+      final userId = Supabase.instance.client.auth.currentUser?.id;
+      
+      Set<String> enrolledIds = {};
+      if (userId != null) {
+        final enrollments = await _dbService.getUserVolunteeringEnrollments();
+        enrolledIds = enrollments.map((e) => e.opportunityId).toSet();
+      }
+
+      setState(() {
+        _opportunities = opportunities;
+        _enrolledOpportunityIds = enrolledIds;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      if (mounted) {
+        // Show error message with better formatting
+        final errorMsg = e.toString().replaceFirst('Exception: ', '');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              errorMsg,
+              style: const TextStyle(fontSize: 14),
+            ),
+            backgroundColor: AppColors.error,
+            duration: const Duration(seconds: 5),
+            action: SnackBarAction(
+              label: 'OK',
+              textColor: Colors.white,
+              onPressed: () {},
+            ),
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _toggleEnrollment(VolunteeringOpportunityModel opportunity) async {
+    final userId = Supabase.instance.client.auth.currentUser?.id;
+    if (userId == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please log in to join volunteering opportunities'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+      return;
+    }
+
+    try {
+      final isEnrolled = _enrolledOpportunityIds.contains(opportunity.id);
+      await _dbService.toggleVolunteeringEnrollment(opportunity.id);
+      
+      setState(() {
+        if (isEnrolled) {
+          _enrolledOpportunityIds.remove(opportunity.id);
+        } else {
+          _enrolledOpportunityIds.add(opportunity.id);
+        }
+      });
+
+      // Reload opportunities to update enrolled count
+      await _loadOpportunities();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(isEnrolled 
+              ? 'Unenrolled from ${opportunity.title} successfully' 
+              : 'Enrolled in ${opportunity.title} successfully'),
+            backgroundColor: AppColors.success,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString().replaceFirst('Exception: ', '')}'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,64 +199,58 @@ class VolunteeringPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            _buildOpportunityCard(
-              icon: Icons.local_hospital_outlined,
-              title: 'Healthcare Support',
-              description: 'Assist in community health programs and clinics',
-              location: 'Various locations',
-              color: AppColors.error,
-            ),
-            const SizedBox(height: 12),
-            _buildOpportunityCard(
-              icon: Icons.school_outlined,
-              title: 'Education Tutoring',
-              description: 'Help students with homework and learning support',
-              location: 'Youth Center',
-              color: AppColors.primary,
-            ),
-            const SizedBox(height: 12),
-            _buildOpportunityCard(
-              icon: Icons.eco_outlined,
-              title: 'Environmental Cleanup',
-              description: 'Participate in beach and park cleaning initiatives',
-              location: 'Public spaces',
-              color: AppColors.success,
-            ),
-            const SizedBox(height: 12),
-            _buildOpportunityCard(
-              icon: Icons.volunteer_activism,
-              title: 'Elderly Care',
-              description: 'Visit and assist elderly members of the community',
-              location: 'Care centers',
-              color: AppColors.secondary,
-            ),
-            const SizedBox(height: 12),
-            _buildOpportunityCard(
-              icon: Icons.food_bank_outlined,
-              title: 'Food Distribution',
-              description: 'Help organize and distribute food to those in need',
-              location: 'Community centers',
-              color: AppColors.warning,
-            ),
+            _isLoading
+                ? const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(32.0),
+                      child: CircularProgressIndicator(),
+                    ),
+                  )
+                : _opportunities.isEmpty
+                    ? Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(32.0),
+                          child: Text(
+                            'No volunteering opportunities available',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ),
+                      )
+                    : Column(
+                        children: _opportunities.asMap().entries.map((entry) {
+                          final index = entry.key;
+                          final opportunity = entry.value;
+                          return Padding(
+                            padding: EdgeInsets.only(
+                              bottom: index < _opportunities.length - 1 ? 12 : 0,
+                            ),
+                            child: _buildOpportunityCard(opportunity),
+                          );
+                        }).toList(),
+                      ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildOpportunityCard({
-    required IconData icon,
-    required String title,
-    required String description,
-    required String location,
-    required Color color,
-  }) {
+  Widget _buildOpportunityCard(VolunteeringOpportunityModel opportunity) {
+    final isEnrolled = _enrolledOpportunityIds.contains(opportunity.id);
+    final icon = IconHelper.getIconFromName(opportunity.iconName);
+    final color = IconHelper.getColorFromHex(opportunity.color);
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.borderDefault, width: 1),
+        border: Border.all(
+          color: isEnrolled ? color : AppColors.borderDefault,
+          width: isEnrolled ? 2 : 1,
+        ),
       ),
       child: Row(
         children: [
@@ -157,7 +268,7 @@ class VolunteeringPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
+                  opportunity.title,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -166,7 +277,7 @@ class VolunteeringPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  description,
+                  opportunity.description,
                   style: const TextStyle(
                     fontSize: 14,
                     color: AppColors.textSecondary,
@@ -181,8 +292,28 @@ class VolunteeringPage extends StatelessWidget {
                       color: AppColors.textSecondary,
                     ),
                     const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        opportunity.location,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.people_outline,
+                      size: 16,
+                      color: AppColors.textSecondary,
+                    ),
+                    const SizedBox(width: 4),
                     Text(
-                      location,
+                      '${opportunity.enrolledCount} enrolled',
                       style: const TextStyle(
                         fontSize: 12,
                         color: AppColors.textSecondary,
@@ -193,9 +324,17 @@ class VolunteeringPage extends StatelessWidget {
               ],
             ),
           ),
-          const Icon(
-            Icons.chevron_right,
-            color: AppColors.textSecondary,
+          ElevatedButton(
+            onPressed: () => _toggleEnrollment(opportunity),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: isEnrolled ? AppColors.error : AppColors.success,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: Text(isEnrolled ? 'Leave' : 'Join'),
           ),
         ],
       ),
