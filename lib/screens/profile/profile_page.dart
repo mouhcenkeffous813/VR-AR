@@ -61,16 +61,10 @@ class _ProfilePageState extends State<ProfilePage> {
             // Top Navigation Bar
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Row(
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(
-                      Icons.arrow_back,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const Spacer(),
+                  // Centered title
                   const Text(
                     'My Profile',
                     style: TextStyle(
@@ -79,26 +73,28 @@ class _ProfilePageState extends State<ProfilePage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const Spacer(),
-                  // Points with coin icon
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.monetization_on,
-                        color: Colors.amber,
-                        size: 24,
-                      ),
-                      const SizedBox(width: 4),
-                      const Text(
-                        '5',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
+                  // Points with coin icon aligned to the right
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.monetization_on,
+                          color: Colors.amber,
+                          size: 24,
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 4),
+                        const Text(
+                          '5',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

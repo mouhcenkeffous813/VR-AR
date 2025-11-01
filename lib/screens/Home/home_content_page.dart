@@ -499,12 +499,10 @@ class _HomeContentPageState extends State<HomeContentPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: AppColors.background,
-        child: Scaffold(
-          backgroundColor: AppColors.background,
-          drawer: _buildDrawer(),
-          appBar: AppBar(
+      backgroundColor: AppColors.background,
+      drawer: _buildDrawer(),
+      appBar: AppBar(
+            automaticallyImplyLeading: true,
             backgroundColor: Colors.transparent,
             elevation: 0,
             surfaceTintColor: Colors.transparent,
@@ -714,6 +712,7 @@ class _HomeContentPageState extends State<HomeContentPage> {
               ],
             ),
             child: FloatingActionButton.extended(
+              heroTag: "home_fab",
               onPressed: _showBottomSheet,
               backgroundColor: AppColors.primary,
               elevation: 0,
@@ -727,8 +726,6 @@ class _HomeContentPageState extends State<HomeContentPage> {
               ),
             ),
           ),
-        ),
-      ),
     );
   }
 }

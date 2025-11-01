@@ -253,6 +253,7 @@ class _OpportunitiesPageState extends State<OpportunitiesPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: "opportunities_fab",
         onPressed: () {
           ScaffoldMessenger.of(
             context,
