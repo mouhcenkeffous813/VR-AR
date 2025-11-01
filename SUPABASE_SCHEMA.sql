@@ -197,3 +197,25 @@ INSERT INTO opportunities (company, title, location, type, tags, image, descript
 ('Djezzy', 'Frontend Developer Project', 'Remote', 'Projects', ARRAY['Collaboration', 'React', 'Portfolio'], 'images/djezzy.jpeg', 'Work on exciting frontend projects and build your portfolio', '#1B5E20'),
 ('Algerie telecom', 'Backend Developer Project', 'Constantine, Algeria', 'Projects', ARRAY['Remote', 'Node.js', 'Portfolio'], 'images/algerietelc.jpeg', 'Develop backend solutions and enhance your skills', '#7B1FA2')
 ON CONFLICT DO NOTHING;
+
+-- ==================== WILAYA MESSAGES TABLE ====================
+CREATE TABLE IF NOT EXISTS wilaya_messages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  wilaya_name TEXT NOT NULL,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  user_name TEXT,
+  message TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable Row Level Security
+ALTER TABLE wilaya_messages ENABLE ROW LEVEL SECURITY;
+
+-- Policies for wilaya_messages
+CREATE POLICY "Anyone can view wilaya messages"
+  ON wilaya_messages FOR SELECT
+  USING (true);
+
+CREATE POLICY "Authenticated users can send messages"
+  ON wilaya_messages FOR INSERT
+  WITH CHECK (auth.role() = 'authenticated');

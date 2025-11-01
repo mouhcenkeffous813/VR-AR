@@ -2,6 +2,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:youth_center/models/opportunity_model.dart';
 import 'package:youth_center/models/project_model.dart';
 import 'package:youth_center/models/user_profile_model.dart';
+import 'package:youth_center/models/message_model.dart';
 
 class DatabaseService {
   final SupabaseClient supabase = Supabase.instance.client;
@@ -291,6 +292,51 @@ class DatabaseService {
         );
       }
       throw Exception('Failed to save bookmark: $errorMsg');
+    }
+  }
+
+  // ==================== WILAYA CHAT MESSAGES ====================
+
+  /// Get messages for a specific wilaya
+  Future<List<MessageModel>> getWilayaMessages(String wilayaName) async {
+    try {
+      final response = await supabase
+          .from('wilaya_messages')
+          .select()
+          .eq('wilaya_name', wilayaName)
+          .order('created_at', ascending: true);
+
+      if (response.isEmpty) {
+        return [];
+      }
+
+      return (response as List)
+          .map((json) => MessageModel.fromJson(json))
+          .toList();
+    } catch (e) {
+      throw Exception('Error loading messages: $e');
+    }
+  }
+
+  /// Send a message to a wilaya chat
+  Future<void> sendWilayaMessage({
+    required String wilayaName,
+    required String message,
+    required String userId,
+  }) async {
+    try {
+      final user = supabase.auth.currentUser;
+      final userName = user?.email?.split('@')[0] ?? 'User';
+
+      await supabase.from('wilaya_messages').insert({
+        'wilaya_name': wilayaName,
+        'user_id': userId,
+        'user_name': userName,
+        'message': message,
+        'created_at': DateTime.now().toIso8601String(),
+      });
+    } catch (e) {
+      throw Exception('Error sending message: $e');
     }
   }
 }
