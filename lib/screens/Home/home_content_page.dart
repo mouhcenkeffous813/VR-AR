@@ -28,12 +28,31 @@ class _HomeContentPageState extends State<HomeContentPage> {
   Timer? _scrollTimer;
   List<ProjectModel> _projects = [];
   bool _isLoadingProjects = true;
+  List<CategoryModel> _categories = [];
 
   @override
   void initState() {
     super.initState();
     _startAutoScroll();
     _loadProjects();
+    _loadCategories();
+  }
+
+  Future<void> _loadCategories() async {
+    try {
+      final dbCategories = await _dbService.getCategories();
+
+      // If database has categories, use them; otherwise use default
+      setState(() {
+        _categories =
+            dbCategories.isNotEmpty ? dbCategories : CategoryData.categories;
+      });
+    } catch (e) {
+      // Fallback to default categories on error
+      setState(() {
+        _categories = CategoryData.categories;
+      });
+    }
   }
 
   Future<void> _loadProjects() async {
@@ -781,7 +800,7 @@ class _HomeContentPageState extends State<HomeContentPage> {
               physics: const NeverScrollableScrollPhysics(),
               childAspectRatio: 1.8,
               children:
-                  CategoryData.categories
+                  _categories
                       .map(
                         (category) => _buildCategoryCard(
                           icon: category.icon,

@@ -3,6 +3,9 @@ import 'package:youth_center/models/opportunity_model.dart';
 import 'package:youth_center/models/project_model.dart';
 import 'package:youth_center/models/user_profile_model.dart';
 import 'package:youth_center/models/message_model.dart';
+import 'package:youth_center/models/category_model.dart';
+import 'package:youth_center/models/event_model.dart';
+import 'package:youth_center/models/enrollment_model.dart';
 
 class DatabaseService {
   final SupabaseClient supabase = Supabase.instance.client;
@@ -337,6 +340,193 @@ class DatabaseService {
       });
     } catch (e) {
       throw Exception('Error sending message: $e');
+    }
+  }
+
+  // ==================== CATEGORIES ====================
+
+  /// Get all categories
+  Future<List<CategoryModel>> getCategories() async {
+    try {
+      final response = await supabase
+          .from('categories')
+          .select()
+          .order('name', ascending: true);
+
+      if (response.isEmpty) {
+        return [];
+      }
+
+      return (response as List)
+          .map((json) => CategoryModel.fromJson(json))
+          .toList();
+    } catch (e) {
+      throw Exception('Error fetching categories: $e');
+    }
+  }
+
+  /// Get category by name
+  Future<CategoryModel?> getCategoryByName(String name) async {
+    try {
+      final response = await supabase
+          .from('categories')
+          .select()
+          .eq('name', name)
+          .maybeSingle();
+
+      if (response == null) {
+        return null;
+      }
+
+      return CategoryModel.fromJson(response);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // ==================== EVENTS ====================
+
+  /// Get events by category ID
+  Future<List<EventModel>> getEventsByCategoryId(String categoryId) async {
+    try {
+      final response = await supabase
+          .from('events')
+          .select()
+          .eq('category_id', categoryId)
+          .gte('event_date', DateTime.now().toIso8601String().split('T')[0])
+          .order('event_date', ascending: true)
+          .order('event_time', ascending: true);
+
+      if (response.isEmpty) {
+        return [];
+      }
+
+      return (response as List)
+          .map((json) => EventModel.fromJson(json))
+          .toList();
+    } catch (e) {
+      throw Exception('Error fetching events: $e');
+    }
+  }
+
+  /// Get events by category name
+  Future<List<EventModel>> getEventsByCategoryName(String categoryName) async {
+    try {
+      // First get category ID
+      final category = await getCategoryByName(categoryName);
+      if (category == null || category.id == null) {
+        return [];
+      }
+
+      return await getEventsByCategoryId(category.id!);
+    } catch (e) {
+      throw Exception('Error fetching events: $e');
+    }
+  }
+
+  // ==================== ENROLLMENTS ====================
+
+  /// Check if user is enrolled in an event
+  Future<bool> isEnrolledInEvent(String eventId) async {
+    try {
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) {
+        return false;
+      }
+
+      final response = await supabase
+          .from('enrollments')
+          .select()
+          .eq('user_id', userId)
+          .eq('event_id', eventId)
+          .maybeSingle();
+
+      return response != null;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Enroll user in an event
+  Future<void> enrollInEvent(String eventId) async {
+    try {
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) {
+        throw Exception('You must be logged in to enroll');
+      }
+
+      // Check if already enrolled
+      final isEnrolled = await isEnrolledInEvent(eventId);
+      if (isEnrolled) {
+        throw Exception('You are already enrolled in this event');
+      }
+
+      await supabase.from('enrollments').insert({
+        'user_id': userId,
+        'event_id': eventId,
+      });
+    } catch (e) {
+      throw Exception('Error enrolling in event: $e');
+    }
+  }
+
+  /// Unenroll user from an event
+  Future<void> unenrollFromEvent(String eventId) async {
+    try {
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) {
+        throw Exception('You must be logged in to unenroll');
+      }
+
+      await supabase
+          .from('enrollments')
+          .delete()
+          .eq('user_id', userId)
+          .eq('event_id', eventId);
+    } catch (e) {
+      throw Exception('Error unenrolling from event: $e');
+    }
+  }
+
+  /// Toggle enrollment (enroll if not enrolled, unenroll if enrolled)
+  Future<bool> toggleEnrollment(String eventId) async {
+    try {
+      final isEnrolled = await isEnrolledInEvent(eventId);
+      if (isEnrolled) {
+        await unenrollFromEvent(eventId);
+        return false;
+      } else {
+        await enrollInEvent(eventId);
+        return true;
+      }
+    } catch (e) {
+      throw Exception('Error toggling enrollment: $e');
+    }
+  }
+
+  /// Get all enrollments for current user
+  Future<List<EnrollmentModel>> getMyEnrollments() async {
+    try {
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) {
+        return [];
+      }
+
+      final response = await supabase
+          .from('enrollments')
+          .select()
+          .eq('user_id', userId)
+          .order('enrolled_at', ascending: false);
+
+      if (response.isEmpty) {
+        return [];
+      }
+
+      return (response as List)
+          .map((json) => EnrollmentModel.fromJson(json))
+          .toList();
+    } catch (e) {
+      throw Exception('Error fetching enrollments: $e');
     }
   }
 }
