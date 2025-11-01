@@ -5,11 +5,13 @@ import 'package:intl/intl.dart';
 class CategoryDetailPage extends StatelessWidget {
   final String categoryName;
   final IconData categoryIcon;
+  final bool allowEnrollment;
 
   const CategoryDetailPage({
     super.key,
     required this.categoryName,
     required this.categoryIcon,
+    this.allowEnrollment = true,
   });
 
   List<Map<String, dynamic>> _getActivities() {
@@ -347,6 +349,7 @@ class CategoryDetailPage extends StatelessWidget {
     required DateTime date,
     required String time,
     required Color color,
+    required bool allowEnrollment,
   }) {
     final dateFormat = DateFormat('MMM dd, yyyy');
     final formattedDate = dateFormat.format(date);
@@ -461,41 +464,43 @@ class CategoryDetailPage extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: Builder(
-              builder:
-                  (context) => ElevatedButton(
-                    onPressed: () {
-                      // TODO: Handle enrollment (e.g., save to Firebase)
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Enrolled in $title'),
-                          backgroundColor: AppColors.success,
-                          duration: const Duration(seconds: 2),
+          if (allowEnrollment) ...[
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: Builder(
+                builder:
+                    (context) => ElevatedButton(
+                      onPressed: () {
+                        // TODO: Handle enrollment (e.g., save to Firebase)
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Enrolled in $title'),
+                            backgroundColor: AppColors.success,
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: color,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: color,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        elevation: 0,
                       ),
-                      elevation: 0,
-                    ),
-                    child: const Text(
-                      'Enroll',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
+                      child: const Text(
+                        'Enroll',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
-                  ),
+              ),
             ),
-          ),
+          ],
         ],
       ),
     );
@@ -579,6 +584,7 @@ class CategoryDetailPage extends StatelessWidget {
                   date: activity['date'] as DateTime,
                   time: activity['time'] as String,
                   color: activity['color'] as Color,
+                  allowEnrollment: allowEnrollment,
                 ),
               ),
             ],
