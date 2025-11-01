@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:youth_center/screens/auth/services/auth_service.dart';
+import 'package:youth_center/screens/auth/services/auth_gate.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,7 +21,11 @@ class _HomeScreenState extends State<HomeScreen> {
         context,
       ).showSnackBar(const SnackBar(content: Text('Logged out')));
       
-      // AuthGate should react to auth state change and redirect
+      // Navigate back to AuthGate which will handle showing WelcomeScreen
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const AuthGate()),
+        (route) => false,
+      );
     } catch (e) {
       if (mounted) {
         String errorMessage = 'An error occurred';
