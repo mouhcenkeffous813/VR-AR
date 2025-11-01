@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:youth_center/screens/auth/services/auth_service.dart';
 import 'package:youth_center/screens/auth/pages/register_page.dart';
+import 'package:youth_center/widgets/auth_button.dart';
+import 'package:youth_center/widgets/auth_text_field.dart';
+import 'package:youth_center/utils/app_colors.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -45,9 +49,15 @@ class _LoginScreenState extends State<LoginScreen> {
       await authService.signInWithEmail(email, password);
     } catch (e) {
       if (mounted) {
+        String errorMessage = 'An error occurred';
+        if (e is AuthException) {
+          errorMessage = e.message;
+        } else if (e is Exception) {
+          errorMessage = e.toString();
+        }
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text(e.toString())));
+        ).showSnackBar(SnackBar(content: Text(errorMessage)));
       }
     } finally {
       if (mounted) {
@@ -62,16 +72,16 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     // Build UI
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.background,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
         automaticallyImplyLeading: false,
         title: const Text(
           'Login',
           style: TextStyle(
-            color: Colors.black,
+            color: AppColors.textPrimary,
             fontSize: 24,
             fontWeight: FontWeight.bold,
             letterSpacing: 0.5,
@@ -87,62 +97,32 @@ class _LoginScreenState extends State<LoginScreen> {
             autovalidateMode: AutovalidateMode.disabled,
             child: ListView(
               children: [
-                TextFormField(
+                const SizedBox(height: 24),
+                Center(
+                  child: Image.asset(
+                    'images/OIP.jpg',
+                    height: 150,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                const SizedBox(height: 32),
+                EmailTextField(
                   controller: emailController,
                   focusNode: _emailFocusNode,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (_) {
-                    // Don't validate on change to avoid showing errors too early
-                  },
-                  onEditingComplete: () {
-                    // Validate only when field loses focus
-                    _formKey.currentState?.validate();
-                    _passwordFocusNode.requestFocus();
-                  },
-                  validator: (value) {
-                    final text = value?.trim() ?? '';
-                    if (text.isEmpty) return 'Email is required';
-                    final emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
-                    if (!emailRegex.hasMatch(text))
-                      return 'Enter a valid email';
-                    return null;
-                  },
+                  nextFocusNode: _passwordFocusNode,
+                  formKey: _formKey,
                 ),
                 const SizedBox(height: 16),
-                TextFormField(
+                PasswordTextField(
                   controller: passwordController,
                   focusNode: _passwordFocusNode,
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Password',
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (_) {
-                    // Don't validate on change
-                  },
-                  onEditingComplete: () {
-                    // Validate when field loses focus
-                    _passwordFocusNode.unfocus();
-                    _formKey.currentState?.validate();
-                  },
-                  validator: (value) {
-                    final text = value ?? '';
-                    if (text.isEmpty) return 'Password is required';
-                    if (text.length < 6) return 'Minimum 6 characters';
-                    return null;
-                  },
+                  formKey: _formKey,
                 ),
                 const SizedBox(height: 24),
-                SizedBox(
-                  height: 48,
-                  child: ElevatedButton(
-                    onPressed: _submitting ? null : login,
-                    child: Text(_submitting ? 'Logging in...' : 'Login'),
-                  ),
+                AuthButton(
+                  text: 'Login',
+                  onPressed: login,
+                  isLoading: _submitting,
                 ),
                 const SizedBox(height: 24),
                 TextButton(

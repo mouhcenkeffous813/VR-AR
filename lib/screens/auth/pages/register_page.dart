@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:youth_center/screens/auth/services/auth_service.dart';
+import 'package:youth_center/widgets/auth_button.dart';
+import 'package:youth_center/widgets/auth_text_field.dart';
+import 'package:youth_center/widgets/confirm_password_text_field.dart';
+import 'package:youth_center/utils/app_colors.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -76,19 +80,19 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.background,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
           'Signup',
           style: TextStyle(
-            color: Colors.black,
+            color: AppColors.textPrimary,
             fontSize: 24,
             fontWeight: FontWeight.bold,
             letterSpacing: 0.5,
@@ -104,92 +108,46 @@ class _RegisterPageState extends State<RegisterPage> {
             autovalidateMode: AutovalidateMode.disabled,
             child: ListView(
               children: [
-                TextFormField(
+                const SizedBox(height: 24),
+                Center(
+                  child: Image.asset(
+                    'images/OIP.jpg',
+                    height: 150,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                const SizedBox(height: 32),
+                EmailTextField(
                   controller: emailController,
                   focusNode: _emailFocusNode,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (_) {
-                    // Don't validate on change
-                  },
-                  onEditingComplete: () {
-                    // Validate only when field loses focus
-                    _formKey.currentState?.validate();
-                    _passwordFocusNode.requestFocus();
-                  },
-                  validator: (value) {
-                    final text = value?.trim() ?? '';
-                    if (text.isEmpty) return 'Email is required';
-                    final emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
-                    if (!emailRegex.hasMatch(text))
-                      return 'Enter a valid email';
-                    return null;
-                  },
+                  nextFocusNode: _passwordFocusNode,
+                  formKey: _formKey,
                 ),
                 const SizedBox(height: 16),
-                TextFormField(
+                PasswordTextField(
                   controller: passwordController,
                   focusNode: _passwordFocusNode,
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Password',
-                    border: OutlineInputBorder(),
-                  ),
+                  nextFocusNode: _confirmPasswordFocusNode,
+                  formKey: _formKey,
                   onChanged: (_) {
                     // Re-validate confirm password if it has content (for password matching)
                     if (confirmPasswordController.text.isNotEmpty) {
                       Future.microtask(() => _formKey.currentState?.validate());
                     }
                   },
-                  onEditingComplete: () {
-                    // Validate when field loses focus
-                    _formKey.currentState?.validate();
-                    _confirmPasswordFocusNode.requestFocus();
-                  },
-                  validator: (value) {
-                    final text = value ?? '';
-                    if (text.isEmpty) return 'Password is required';
-                    if (text.length < 6) return 'Minimum 6 characters';
-                    return null;
-                  },
                 ),
                 const SizedBox(height: 16),
-                TextFormField(
+                ConfirmPasswordTextField(
                   controller: confirmPasswordController,
+                  passwordController: passwordController,
                   focusNode: _confirmPasswordFocusNode,
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Confirm Password',
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (_) {
-                    // Don't validate on change
-                  },
-                  onEditingComplete: () {
-                    // Validate when field loses focus
-                    _confirmPasswordFocusNode.unfocus();
-                    _formKey.currentState?.validate();
-                  },
-                  validator: (value) {
-                    final text = value ?? '';
-                    if (text.isEmpty) return 'Please confirm your password';
-                    if (text != passwordController.text)
-                      return 'Passwords do not match';
-                    return null;
-                  },
+                  formKey: _formKey,
                 ),
                 const SizedBox(height: 24),
-                SizedBox(
-                  height: 48,
-                  child: ElevatedButton(
-                    onPressed: _submitting ? null : _register,
-                    child: Text(
-                      _submitting ? 'Creating account...' : 'Sign up',
-                    ),
-                  ),
+                AuthButton(
+                  text: 'Sign up',
+                  onPressed: _register,
+                  isLoading: _submitting,
                 ),
                 const SizedBox(height: 24),
                 TextButton(

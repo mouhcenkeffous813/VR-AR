@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:youth_center/screens/auth/services/auth_service.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -18,12 +19,19 @@ class _HomeScreenState extends State<HomeScreen> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Logged out')));
+      
       // AuthGate should react to auth state change and redirect
     } catch (e) {
       if (mounted) {
+        String errorMessage = 'An error occurred';
+        if (e is AuthException) {
+          errorMessage = e.message;
+        } else if (e is Exception) {
+          errorMessage = e.toString();
+        }
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text(e.toString())));
+        ).showSnackBar(SnackBar(content: Text(errorMessage)));
       }
     }
   }
