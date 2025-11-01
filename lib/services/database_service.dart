@@ -6,6 +6,7 @@ import 'package:youth_center/models/message_model.dart';
 import 'package:youth_center/models/category_model.dart';
 import 'package:youth_center/models/event_model.dart';
 import 'package:youth_center/models/enrollment_model.dart';
+import 'package:youth_center/models/question_model.dart';
 
 class DatabaseService {
   final SupabaseClient supabase = Supabase.instance.client;
@@ -527,6 +528,76 @@ class DatabaseService {
           .toList();
     } catch (e) {
       throw Exception('Error fetching enrollments: $e');
+    }
+  }
+
+  // ==================== IDEAS EXPO QUESTIONS ====================
+
+  /// Get all questions
+  Future<List<QuestionModel>> getIdeasExpoQuestions() async {
+    try {
+      final response = await supabase
+          .from('ideas_expo_questions')
+          .select()
+          .order('created_at', ascending: false);
+
+      if (response.isEmpty) {
+        return [];
+      }
+
+      return (response as List)
+          .map((json) => QuestionModel.fromJson(json))
+          .toList();
+    } catch (e) {
+      throw Exception('Error fetching questions: $e');
+    }
+  }
+
+  /// Create a new question
+  Future<QuestionModel> createIdeasExpoQuestion({
+    required String name,
+    required String category,
+    required String question,
+  }) async {
+    try {
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) {
+        throw Exception('You must be logged in to ask a question');
+      }
+
+      final response = await supabase
+          .from('ideas_expo_questions')
+          .insert({
+            'user_id': userId,
+            'name': name,
+            'category': category,
+            'question': question,
+            'replies': 0,
+          })
+          .select()
+          .single();
+
+      return QuestionModel.fromJson(response);
+    } catch (e) {
+      throw Exception('Error creating question: $e');
+    }
+  }
+
+  /// Delete a question
+  Future<void> deleteIdeasExpoQuestion(String questionId) async {
+    try {
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) {
+        throw Exception('You must be logged in to delete a question');
+      }
+
+      await supabase
+          .from('ideas_expo_questions')
+          .delete()
+          .eq('id', questionId)
+          .eq('user_id', userId);
+    } catch (e) {
+      throw Exception('Error deleting question: $e');
     }
   }
 }

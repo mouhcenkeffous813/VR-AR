@@ -11,6 +11,7 @@ import 'package:youth_center/screens/projects/project_detail_page.dart';
 import 'package:youth_center/screens/ideas_expo/ideas_expo_page.dart';
 import 'package:youth_center/services/database_service.dart';
 import 'package:youth_center/models/project_model.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomeContentPage extends StatefulWidget {
   const HomeContentPage({super.key});
@@ -63,38 +64,61 @@ class _HomeContentPageState extends State<HomeContentPage> {
       });
       final dbProjects = await _dbService.getProjects();
 
-      // Always ensure Ideas Expo is first, then combine other projects
-      final ideasExpoProject = ProjectModel(
-        id: 'ideas_expo',
-        title: 'Ideas Expo',
-        description:
-            'Share your business ideas, get feedback, and connect with innovators.',
-        collaborators: 'Active Community',
-        imagePath: 'images/pic4.jpeg',
-      );
-      
       final defaultProjects = _getDefaultProjects();
-      // Remove Ideas Expo from default if it exists, then add it at the start
-      final otherProjects = defaultProjects.where((p) => p.id != 'ideas_expo').toList();
-      
+      // Remove Ideas Expo from default if it exists
+      final otherProjects =
+          defaultProjects.where((p) => p.id != 'ideas_expo').toList();
+
+      // Check if user is logged in
+      final isLoggedIn = Supabase.instance.client.auth.currentUser != null;
+
+      // Only include Ideas Expo if user is logged in
+      List<ProjectModel> finalProjects = [];
+      if (isLoggedIn) {
+        final ideasExpoProject = ProjectModel(
+          id: 'ideas_expo',
+          title: 'Ideas Expo',
+          description:
+              'Share your business ideas, get feedback, and connect with innovators.',
+          collaborators: 'Active Community',
+          imagePath: 'images/pic4.jpeg',
+        );
+        finalProjects = [ideasExpoProject, ...otherProjects, ...dbProjects];
+      } else {
+        finalProjects = [...otherProjects, ...dbProjects];
+      }
+
       setState(() {
-        _projects = [ideasExpoProject, ...otherProjects, ...dbProjects];
+        _projects = finalProjects;
         _isLoadingProjects = false;
       });
     } catch (e) {
       // On error, show default projects
-      final ideasExpoProject = ProjectModel(
-        id: 'ideas_expo',
-        title: 'Ideas Expo',
-        description:
-            'Share your business ideas, get feedback, and connect with innovators.',
-        collaborators: 'Active Community',
-        imagePath: 'images/pic4.jpeg',
-      );
       final defaultProjects = _getDefaultProjects();
-      final otherProjects = defaultProjects.where((p) => p.id != 'ideas_expo').toList();
+      final otherProjects =
+          defaultProjects.where((p) => p.id != 'ideas_expo').toList();
+
+      // Check if user is logged in
+      final isLoggedIn = Supabase.instance.client.auth.currentUser != null;
+
+      // Only include Ideas Expo if user is logged in
+      List<ProjectModel> finalProjects = [];
+      if (isLoggedIn) {
+        final ideasExpoProject = ProjectModel(
+          id: 'ideas_expo',
+          title: 'Ideas Expo',
+          description:
+              'Share your business ideas, get feedback, and connect with innovators.',
+          collaborators: 'Active Community',
+          imagePath: 'images/pic4.jpeg',
+        );
+        finalProjects = [ideasExpoProject, ...otherProjects];
+      } else {
+        finalProjects = otherProjects;
+      }
+
       setState(() {
-        _projects = [ideasExpoProject, ...otherProjects];
+        _projects = finalProjects;
         _isLoadingProjects = false;
       });
     }
@@ -250,9 +274,7 @@ class _HomeContentPageState extends State<HomeContentPage> {
         if (projectId == 'ideas_expo') {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => const IdeasExpoPage(),
-            ),
+            MaterialPageRoute(builder: (context) => const IdeasExpoPage()),
           );
         } else {
           Navigator.push(
@@ -301,22 +323,30 @@ class _HomeContentPageState extends State<HomeContentPage> {
                           gradient: LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
-                            colors: projectId == 'ideas_expo'
-                                ? [AppColors.primaryLight, AppColors.primary]
-                                : [AppColors.primaryLight, AppColors.primary],
+                            colors:
+                                projectId == 'ideas_expo'
+                                    ? [
+                                      AppColors.primaryLight,
+                                      AppColors.primary,
+                                    ]
+                                    : [
+                                      AppColors.primaryLight,
+                                      AppColors.primary,
+                                    ],
                           ),
                         ),
-                        child: projectId == 'ideas_expo'
-                            ? const Icon(
-                                Icons.lightbulb,
-                                size: 60,
-                                color: Colors.white,
-                              )
-                            : const Icon(
-                                Icons.image,
-                                size: 60,
-                                color: Colors.white,
-                              ),
+                        child:
+                            projectId == 'ideas_expo'
+                                ? const Icon(
+                                  Icons.lightbulb,
+                                  size: 60,
+                                  color: Colors.white,
+                                )
+                                : const Icon(
+                                  Icons.image,
+                                  size: 60,
+                                  color: Colors.white,
+                                ),
                       );
                     },
                   )
@@ -375,11 +405,7 @@ class _HomeContentPageState extends State<HomeContentPage> {
                     child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          Icons.lightbulb,
-                          color: Colors.white,
-                          size: 16,
-                        ),
+                        Icon(Icons.lightbulb, color: Colors.white, size: 16),
                         SizedBox(width: 4),
                         Text(
                           'New',
@@ -926,7 +952,9 @@ class _HomeContentPageState extends State<HomeContentPage> {
                           final project = _projects[index];
                           // Debug: verify Ideas Expo is in the list
                           if (project.id == 'ideas_expo') {
-                            debugPrint('Ideas Expo card found at index: $index');
+                            debugPrint(
+                              'Ideas Expo card found at index: $index',
+                            );
                           }
                           return _buildProjectCard(
                             title: project.title,

@@ -88,11 +88,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(
-                        Icons.group,
-                        size: 60,
-                        color: Colors.white,
-                      ),
+                      const Icon(Icons.group, size: 60, color: Colors.white),
                       const SizedBox(height: 12),
                       const Text(
                         'Guest',
@@ -237,16 +233,26 @@ class _WelcomeContentPageState extends State<WelcomeContentPage> {
       });
       final dbProjects = await _dbService.getProjects();
 
-      // Combine default projects with database projects
       final defaultProjects = _getDefaultProjects();
+      // Remove Ideas Expo from default - welcome screen is for non-logged users
+      final otherProjects =
+          defaultProjects.where((p) => p.id != 'ideas_expo').toList();
+
+      // Welcome screen is for non-logged users, so exclude Ideas Expo
+      final finalProjects = [...otherProjects, ...dbProjects];
+
       setState(() {
-        _projects = [...defaultProjects, ...dbProjects];
+        _projects = finalProjects;
         _isLoadingProjects = false;
       });
     } catch (e) {
-      // On error, show default projects
+      // On error, show default projects (without Ideas Expo for non-logged users)
+      final defaultProjects = _getDefaultProjects();
+      final otherProjects =
+          defaultProjects.where((p) => p.id != 'ideas_expo').toList();
+
       setState(() {
-        _projects = _getDefaultProjects();
+        _projects = otherProjects;
         _isLoadingProjects = false;
       });
     }

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:youth_center/utils/app_colors.dart';
 import 'package:intl/intl.dart';
+import 'package:youth_center/services/database_service.dart';
+import 'package:youth_center/models/question_model.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class IdeasExpoPage extends StatefulWidget {
   const IdeasExpoPage({super.key});
@@ -11,64 +14,42 @@ class IdeasExpoPage extends StatefulWidget {
 
 class _IdeasExpoPageState extends State<IdeasExpoPage> {
   final ScrollController _scrollController = ScrollController();
+  final DatabaseService _dbService = DatabaseService();
+  List<QuestionModel> _questions = [];
+  bool _isLoading = true;
 
-  // Dummy questions data
-  final List<Map<String, dynamic>> _questions = [
-    {
-      'id': '1',
-      'author': 'Ahmed Benali',
-      'authorAvatar': null,
-      'question': 'How can I implement a mobile payment system for my e-commerce startup?',
-      'category': 'Tech & Innovation',
-      'createdAt': DateTime.now().subtract(const Duration(hours: 2)),
-      'replies': 5,
-    },
-    {
-      'id': '2',
-      'author': 'Sarah Khelifi',
-      'authorAvatar': null,
-      'question': 'What are the best practices for scaling a local food delivery business?',
-      'category': 'Business Strategy',
-      'createdAt': DateTime.now().subtract(const Duration(hours: 5)),
-      'replies': 12,
-    },
-    {
-      'id': '3',
-      'author': 'Youssef Amrani',
-      'authorAvatar': null,
-      'question': 'I have an idea for a sustainable energy solution. How do I validate it before investing?',
-      'category': 'Sustainability',
-      'createdAt': DateTime.now().subtract(const Duration(days: 1)),
-      'replies': 8,
-    },
-    {
-      'id': '4',
-      'author': 'Fatima Belhadj',
-      'authorAvatar': null,
-      'question': 'What tools do you recommend for project management in a remote team?',
-      'category': 'Management',
-      'createdAt': DateTime.now().subtract(const Duration(days: 2)),
-      'replies': 15,
-    },
-    {
-      'id': '5',
-      'author': 'Mohamed Cherif',
-      'authorAvatar': null,
-      'question': 'How do I protect my business idea before pitching to investors?',
-      'category': 'Legal & Finance',
-      'createdAt': DateTime.now().subtract(const Duration(days: 3)),
-      'replies': 7,
-    },
-    {
-      'id': '6',
-      'author': 'Lina Boukari',
-      'authorAvatar': null,
-      'question': 'What marketing strategies work best for a B2B SaaS product in Algeria?',
-      'category': 'Marketing',
-      'createdAt': DateTime.now().subtract(const Duration(days: 4)),
-      'replies': 10,
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadQuestions();
+  }
+
+  Future<void> _loadQuestions() async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+
+      final questions = await _dbService.getIdeasExpoQuestions();
+      
+      setState(() {
+        _questions = questions;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error loading questions: $e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -91,7 +72,7 @@ class _IdeasExpoPageState extends State<IdeasExpoPage> {
     }
   }
 
-  Widget _buildQuestionCard(Map<String, dynamic> question) {
+  Widget _buildQuestionCard(QuestionModel question) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -121,18 +102,11 @@ class _IdeasExpoPageState extends State<IdeasExpoPage> {
                     color: AppColors.primary.withOpacity(0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: question['authorAvatar'] != null
-                      ? ClipOval(
-                          child: Image.network(
-                            question['authorAvatar'],
-                            fit: BoxFit.cover,
-                          ),
-                        )
-                      : Icon(
-                          Icons.person,
-                          color: AppColors.primary,
-                          size: 24,
-                        ),
+                  child: Icon(
+                    Icons.person,
+                    color: AppColors.primary,
+                    size: 24,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -140,7 +114,7 @@ class _IdeasExpoPageState extends State<IdeasExpoPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        question['author'],
+                        question.name,
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -160,7 +134,7 @@ class _IdeasExpoPageState extends State<IdeasExpoPage> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
-                              question['category'],
+                              question.category,
                               style: TextStyle(
                                 fontSize: 12,
                                 color: AppColors.primary,
@@ -170,7 +144,7 @@ class _IdeasExpoPageState extends State<IdeasExpoPage> {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            _formatTime(question['createdAt']),
+                            _formatTime(question.createdAt),
                             style: const TextStyle(
                               fontSize: 12,
                               color: AppColors.textSecondary,
@@ -186,7 +160,7 @@ class _IdeasExpoPageState extends State<IdeasExpoPage> {
             const SizedBox(height: 16),
             // Question text
             Text(
-              question['question'],
+              question.question,
               style: const TextStyle(
                 fontSize: 15,
                 color: AppColors.textPrimary,
@@ -204,7 +178,7 @@ class _IdeasExpoPageState extends State<IdeasExpoPage> {
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  '${question['replies']} replies',
+                  '${question.replies} replies',
                   style: const TextStyle(
                     fontSize: 13,
                     color: AppColors.textSecondary,
@@ -226,7 +200,8 @@ class _IdeasExpoPageState extends State<IdeasExpoPage> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => Container(
         decoration: const BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.only(
@@ -307,7 +282,9 @@ class _IdeasExpoPageState extends State<IdeasExpoPage> {
                       ))
                   .toList(),
               onChanged: (value) {
-                selectedCategory = value;
+                setDialogState(() {
+                  selectedCategory = value;
+                });
               },
             ),
             const SizedBox(height: 16),
@@ -348,9 +325,9 @@ class _IdeasExpoPageState extends State<IdeasExpoPage> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  final question = questionController.text.trim();
-                  if (question.isEmpty || selectedCategory == null) {
+                onPressed: () async {
+                  final questionText = questionController.text.trim();
+                  if (questionText.isEmpty || selectedCategory == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Please fill in all fields'),
@@ -360,14 +337,38 @@ class _IdeasExpoPageState extends State<IdeasExpoPage> {
                     return;
                   }
 
-                  // TODO: Submit question to database
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Question submitted successfully!'),
-                      backgroundColor: AppColors.success,
-                    ),
-                  );
+                  // Get current user's name
+                  final user = Supabase.instance.client.auth.currentUser;
+                  final userName = user?.email?.split('@')[0] ?? 'User';
+                  
+                  try {
+                    await _dbService.createIdeasExpoQuestion(
+                      name: userName,
+                      category: selectedCategory!,
+                      question: questionText,
+                    );
+                    
+                    Navigator.pop(context);
+                    await _loadQuestions(); // Reload questions
+                    
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Question submitted successfully!'),
+                          backgroundColor: AppColors.success,
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Error submitting question: $e'),
+                          backgroundColor: AppColors.error,
+                        ),
+                      );
+                    }
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
@@ -389,6 +390,7 @@ class _IdeasExpoPageState extends State<IdeasExpoPage> {
             const SizedBox(height: 16),
           ],
         ),
+      ),
       ),
     );
   }
@@ -478,24 +480,26 @@ class _IdeasExpoPageState extends State<IdeasExpoPage> {
           ),
           // Questions List
           Expanded(
-            child: _questions.isEmpty
-                ? const Center(
-                    child: Text(
-                      'No questions yet. Be the first to ask!',
-                      style: TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: 16,
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _questions.isEmpty
+                    ? const Center(
+                        child: Text(
+                          'No questions yet. Be the first to ask!',
+                          style: TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 16,
+                          ),
+                        ),
+                      )
+                    : ListView.builder(
+                        controller: _scrollController,
+                        padding: const EdgeInsets.all(16),
+                        itemCount: _questions.length,
+                        itemBuilder: (context, index) {
+                          return _buildQuestionCard(_questions[index]);
+                        },
                       ),
-                    ),
-                  )
-                : ListView.builder(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.all(16),
-                    itemCount: _questions.length,
-                    itemBuilder: (context, index) {
-                      return _buildQuestionCard(_questions[index]);
-                    },
-                  ),
           ),
         ],
       ),
