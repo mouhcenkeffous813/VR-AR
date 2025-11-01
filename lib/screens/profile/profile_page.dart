@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:youth_center/utils/app_colors.dart';
 import 'package:youth_center/screens/auth/services/auth_service.dart';
-import 'package:youth_center/screens/auth/services/auth_gate.dart';
+import 'package:youth_center/screens/auth/pages/login.dart';
 import 'package:youth_center/screens/profile/my_projects_page.dart';
 import 'package:youth_center/screens/profile/achievements_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -25,9 +25,9 @@ class _ProfilePageState extends State<ProfilePage> {
         context,
       ).showSnackBar(const SnackBar(content: Text('Logged out')));
 
-      // Navigate back to AuthGate which will handle showing WelcomeScreen
+      // Navigate directly to LoginScreen
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const AuthGate()),
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
         (route) => false,
       );
     } catch (e) {
