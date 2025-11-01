@@ -17,15 +17,19 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       await authService.signOut();
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Logged out')));
       
       // Navigate back to AuthGate which will handle showing WelcomeScreen
+      // AuthGate listens to auth state changes and will show WelcomeScreen
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => const AuthGate()),
         (route) => false,
       );
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Logged out')),
+        );
+      }
     } catch (e) {
       if (mounted) {
         String errorMessage = 'An error occurred';
