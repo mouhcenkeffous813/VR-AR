@@ -2,8 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:youth_center/screens/auth/pages/login.dart';
 import 'package:youth_center/utils/app_colors.dart';
 
-class WelcomeScreen extends StatelessWidget {
+class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
+
+  @override
+  State<WelcomeScreen> createState() => _WelcomeScreenState();
+}
+
+class _WelcomeScreenState extends State<WelcomeScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _searchFocusNode.dispose();
+    super.dispose();
+  }
 
   Widget _buildDrawerItem(
     BuildContext context, {
@@ -215,8 +230,48 @@ class WelcomeScreen extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // Search Field
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: _searchController,
+                focusNode: _searchFocusNode,
+                decoration: InputDecoration(
+                  labelText: 'Search',
+                  hintText: 'Search for events, members, or activities...',
+                  prefixIcon: const Icon(
+                    Icons.search,
+                    color: AppColors.primary,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: AppColors.borderDefault,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: AppColors.borderFocused,
+                      width: 2,
+                    ),
+                  ),
+                  filled: true,
+                  fillColor: AppColors.surface,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 16,
+                  ),
+                  labelStyle: const TextStyle(color: AppColors.textSecondary),
+                ),
+                onChanged: (value) {
+                  // TODO: Implement search functionality
+                },
+              ),
+              const Spacer(),
               // Logo/Image
               Image.asset('images/OIP.jpg', height: 200, fit: BoxFit.contain),
               const SizedBox(height: 48),
@@ -275,6 +330,7 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
+              const Spacer(),
             ],
           ),
         ),
