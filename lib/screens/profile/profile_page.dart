@@ -4,6 +4,7 @@ import 'package:youth_center/screens/auth/services/auth_service.dart';
 import 'package:youth_center/screens/auth/pages/login.dart';
 import 'package:youth_center/screens/profile/my_projects_page.dart';
 import 'package:youth_center/screens/profile/achievements_page.dart';
+import 'package:youth_center/screens/profile/bookmarks_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -64,6 +65,25 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
+                  // Bookmark icon on the left
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const BookmarksPage(),
+                          ),
+                        );
+                      },
+                      icon: const Icon(
+                        Icons.bookmark,
+                        color: AppColors.primary,
+                        size: 28,
+                      ),
+                    ),
+                  ),
                   // Centered title
                   const Text(
                     'My Profile',

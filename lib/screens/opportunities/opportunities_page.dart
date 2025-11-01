@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:youth_center/utils/app_colors.dart';
 import 'package:youth_center/screens/opportunities/opportunity_detail_page.dart';
+import 'package:youth_center/services/database_service.dart';
 
 class OpportunitiesPage extends StatefulWidget {
   const OpportunitiesPage({super.key});
@@ -12,7 +13,8 @@ class OpportunitiesPage extends StatefulWidget {
 class _OpportunitiesPageState extends State<OpportunitiesPage> {
   int _selectedCategory = 0;
   final TextEditingController _searchController = TextEditingController();
-  final List<int> _bookmarkedItems = [];
+  final DatabaseService _dbService = DatabaseService();
+  final List<String> _bookmarkedItems = [];
 
   final List<String> _categories = [
     'All',
@@ -75,15 +77,6 @@ class _OpportunitiesPageState extends State<OpportunitiesPage> {
     },
   ];
 
-  void _toggleBookmark(int id) {
-    setState(() {
-      if (_bookmarkedItems.contains(id)) {
-        _bookmarkedItems.remove(id);
-      } else {
-        _bookmarkedItems.add(id);
-      }
-    });
-  }
 
   List<Map<String, dynamic>> get _filteredOpportunities {
     if (_selectedCategory == 0) {
@@ -94,6 +87,73 @@ class _OpportunitiesPageState extends State<OpportunitiesPage> {
     return _opportunities
         .where((opp) => opp['type'] == _categories[_selectedCategory])
         .toList();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBookmarks();
+  }
+
+  Future<void> _loadBookmarks() async {
+    try {
+      final bookmarks = await _dbService.getUserBookmarks();
+      setState(() {
+        _bookmarkedItems.clear();
+        _bookmarkedItems.addAll(bookmarks);
+      });
+    } catch (e) {
+      // Silently handle errors - bookmarks are optional
+    }
+  }
+
+  Future<void> _toggleBookmark(String id) async {
+    try {
+      // Update local state first for immediate feedback
+      final wasBookmarked = _bookmarkedItems.contains(id);
+      setState(() {
+        if (wasBookmarked) {
+          _bookmarkedItems.remove(id);
+        } else {
+          _bookmarkedItems.add(id);
+        }
+      });
+
+      // Then save to database
+      await _dbService.toggleBookmark(id);
+      
+      // Reload bookmarks to sync with database
+      await _loadBookmarks();
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(wasBookmarked ? 'Bookmark removed' : 'Bookmarked!'),
+            backgroundColor: AppColors.success,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      // Revert local state on error
+      setState(() {
+        if (_bookmarkedItems.contains(id)) {
+          _bookmarkedItems.remove(id);
+        } else {
+          _bookmarkedItems.add(id);
+        }
+      });
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: AppColors.error,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -240,7 +300,7 @@ class _OpportunitiesPageState extends State<OpportunitiesPage> {
                         itemBuilder: (context, index) {
                           final opportunity = _filteredOpportunities[index];
                           final isBookmarked = _bookmarkedItems.contains(
-                            opportunity['id'],
+                            opportunity['id'].toString(),
                           );
                           return _buildOpportunityCard(
                             opportunity,
@@ -392,7 +452,7 @@ class _OpportunitiesPageState extends State<OpportunitiesPage> {
 
             // Bookmark icon
             IconButton(
-              onPressed: () => _toggleBookmark(opportunity['id']),
+              onPressed: () => _toggleBookmark(opportunity['id'].toString()),
               icon: Icon(
                 isBookmarked ? Icons.bookmark : Icons.bookmark_border,
                 color:

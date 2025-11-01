@@ -8,6 +8,8 @@ import 'package:youth_center/screens/career/career_campus_page.dart';
 import 'package:youth_center/screens/clubs/clubs_hub_page.dart';
 import 'package:youth_center/screens/volunteering/volunteering_page.dart';
 import 'package:youth_center/screens/projects/project_detail_page.dart';
+import 'package:youth_center/services/database_service.dart';
+import 'package:youth_center/models/project_model.dart';
 
 class HomeContentPage extends StatefulWidget {
   const HomeContentPage({super.key});
@@ -19,15 +21,86 @@ class HomeContentPage extends StatefulWidget {
 class _HomeContentPageState extends State<HomeContentPage> {
   final TextEditingController _searchController = TextEditingController();
   final AuthService _authService = AuthService();
+  final DatabaseService _dbService = DatabaseService();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   Timer? _scrollTimer;
+  List<ProjectModel> _projects = [];
+  bool _isLoadingProjects = true;
 
   @override
   void initState() {
     super.initState();
     _startAutoScroll();
+    _loadProjects();
+  }
+
+  Future<void> _loadProjects() async {
+    try {
+      setState(() {
+        _isLoadingProjects = true;
+      });
+      final dbProjects = await _dbService.getProjects();
+
+      // Combine default projects with database projects
+      final defaultProjects = _getDefaultProjects();
+      setState(() {
+        _projects = [...defaultProjects, ...dbProjects];
+        _isLoadingProjects = false;
+      });
+    } catch (e) {
+      // On error, show default projects
+      setState(() {
+        _projects = _getDefaultProjects();
+        _isLoadingProjects = false;
+      });
+    }
+  }
+
+  List<ProjectModel> _getDefaultProjects() {
+    return [
+      ProjectModel(
+        id: '1',
+        title: 'Djezzy Hachthon',
+        description:
+            'An app to connect local tutors with students for free educational support.',
+        collaborators: '3/5 Collaborators',
+        imagePath: 'images/pic1.jpeg',
+      ),
+      ProjectModel(
+        id: '2',
+        title: 'Hachthon Youth digital innovation',
+        description:
+            'Organizing young tech enthusiasts to collaborate on innovative projects.',
+        collaborators: '8/10 Collaborators',
+        imagePath: 'images/pic2.jpeg',
+      ),
+      ProjectModel(
+        id: '3',
+        title: 'Innovation Hub',
+        description:
+            'Community-led environmental project to promote sustainability.',
+        collaborators: '5/7 Collaborators',
+        imagePath: 'images/pic3.jpeg',
+      ),
+      ProjectModel(
+        id: '4',
+        title: 'Innovation Hub',
+        description:
+            'A platform for creative minds to collaborate and innovate.',
+        collaborators: '7/10 Collaborators',
+        imagePath: 'images/pic4.jpeg',
+      ),
+      ProjectModel(
+        id: '5',
+        title: 'Gaming Experience',
+        description:
+            'Join the ultimate gaming adventure with exciting rewards and challenges.',
+        collaborators: '10/10 Collaborators',
+        imagePath: 'images/monceff.jpeg',
+      ),
+    ];
   }
 
   void _startAutoScroll() {
@@ -383,12 +456,22 @@ class _HomeContentPageState extends State<HomeContentPage> {
                     ),
                   ),
                 ),
+                // Title
+                const Text(
+                  'Add a new suggestion',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 24),
                 // Title field
                 TextFormField(
                   controller: _titleController,
                   decoration: InputDecoration(
-                    labelText: 'Title',
-                    hintText: 'Enter title',
+                    labelText: 'Project Title',
+                    hintText: 'Enter project title',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -414,13 +497,13 @@ class _HomeContentPageState extends State<HomeContentPage> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                // Content field
+                // Description field
                 TextFormField(
                   controller: _contentController,
                   maxLines: 5,
                   decoration: InputDecoration(
-                    labelText: 'Content',
-                    hintText: 'Enter content',
+                    labelText: 'Description',
+                    hintText: 'Enter project description',
                     alignLabelWithHint: true,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -447,30 +530,66 @@ class _HomeContentPageState extends State<HomeContentPage> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                // Send button
+                // Create Project button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
-                      // Get the title and content values
-                      // TODO: Send to Firebase DB
-                      // final title = _titleController.text;
-                      // final content = _contentController.text;
+                    onPressed: () async {
+                      final title = _titleController.text.trim();
+                      final description = _contentController.text.trim();
 
-                      // Clear fields after sending
-                      _titleController.clear();
-                      _contentController.clear();
+                      if (title.isEmpty || description.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please fill in all fields'),
+                            backgroundColor: AppColors.error,
+                          ),
+                        );
+                        return;
+                      }
 
-                      // Close bottom sheet
-                      Navigator.pop(context);
+                      try {
+                        // Create project in database
+                        final project = ProjectModel(
+                          id: '', // Will be generated by database
+                          title: title,
+                          description: description,
+                          collaborators: '0/1 Collaborators',
+                        );
 
-                      // Show success message (optional)
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Sent successfully!'),
-                          backgroundColor: AppColors.success,
-                        ),
-                      );
+                        await _dbService.createProject(project);
+
+                        // Clear fields after creating
+                        _titleController.clear();
+                        _contentController.clear();
+
+                        // Close bottom sheet
+                        if (mounted) {
+                          Navigator.pop(context);
+                        }
+
+                        // Reload projects
+                        await _loadProjects();
+
+                        // Show success message
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Project created successfully!'),
+                              backgroundColor: AppColors.success,
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Error creating project: $e'),
+                              backgroundColor: AppColors.error,
+                            ),
+                          );
+                        }
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
@@ -481,7 +600,7 @@ class _HomeContentPageState extends State<HomeContentPage> {
                       ),
                     ),
                     child: const Text(
-                      'Send',
+                      'Send suggestion',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -502,40 +621,13 @@ class _HomeContentPageState extends State<HomeContentPage> {
       backgroundColor: AppColors.background,
       drawer: _buildDrawer(),
       appBar: AppBar(
-            automaticallyImplyLeading: true,
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            surfaceTintColor: Colors.transparent,
-            leading: Builder(
-              builder:
-                  (context) => Container(
-                    margin: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.menu,
-                        color: AppColors.primary,
-                        size: 24,
-                      ),
-                      onPressed: () => Scaffold.of(context).openDrawer(),
-                    ),
-                  ),
-            ),
-            title: const Text(
-              'Youth Center',
-              style: TextStyle(
-                color: AppColors.primary,
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                letterSpacing: -0.5,
-              ),
-            ),
-            centerTitle: true,
-            actions: [
-              Container(
+        automaticallyImplyLeading: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        leading: Builder(
+          builder:
+              (context) => Container(
                 margin: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withOpacity(0.1),
@@ -543,189 +635,189 @@ class _HomeContentPageState extends State<HomeContentPage> {
                 ),
                 child: IconButton(
                   icon: const Icon(
-                    Icons.notifications,
+                    Icons.menu,
                     color: AppColors.primary,
                     size: 24,
                   ),
-                  onPressed: () {
-                    // TODO: Navigate to notifications
-                  },
+                  onPressed: () => Scaffold.of(context).openDrawer(),
                 ),
               ),
-            ],
+        ),
+        title: const Text(
+          'Youth Center',
+          style: TextStyle(
+            color: AppColors.primary,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            letterSpacing: -0.5,
           ),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Search Bar with Gradient Shadow
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.primary.withOpacity(0.1),
-                        blurRadius: 15,
-                        offset: const Offset(0, 5),
-                      ),
-                    ],
-                  ),
-                  child: TextFormField(
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                      hintText: 'Search for projects or skills...',
-                      prefixIcon: Container(
-                        padding: const EdgeInsets.all(12),
-                        child: const Icon(
-                          Icons.search,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide.none,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide.none,
-                      ),
-                      filled: true,
-                      fillColor: Colors.white,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 18,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 32),
-                SizedBox(
-                  height: 200,
-                  child: ListView(
-                    controller: _scrollController,
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    children: [
-                      _buildProjectCard(
-                        title: 'Djezzy Hachthon',
-                        description:
-                            'An app to connect local tutors with students for free educational support.',
-                        collaborators: '3/5 Collaborators',
-                        imagePath: 'images/pic1.jpeg',
-                      ),
-                      _buildProjectCard(
-                        title: 'Hachthon Youth digital innovation',
-                        description:
-                            'Organizing young tech enthusiasts to collaborate on innovative projects.',
-                        collaborators: '8/10 Collaborators',
-                        imagePath: 'images/pic2.jpeg',
-                      ),
-                      _buildProjectCard(
-                        title: 'Innovation Hub',
-                        description:
-                            'Community-led environmental project to promote sustainability.',
-                        collaborators: '5/7 Collaborators',
-                        imagePath: 'images/pic3.jpeg',
-                      ),
-                      _buildProjectCard(
-                        title: 'Innovation Hub',
-                        description:
-                            'A platform for creative minds to collaborate and innovate.',
-                        collaborators: '7/10 Collaborators',
-                        imagePath: 'images/pic4.jpeg',
-                      ),
-                      _buildProjectCard(
-                        title: 'Gaming Experience',
-                        description:
-                            'Join the ultimate gaming adventure with exciting rewards and challenges.',
-                        collaborators: '10/10 Collaborators',
-                        imagePath: 'images/monceff.jpeg',
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 40),
-                // Explore Categories Section
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [AppColors.primary, AppColors.primaryLight],
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(
-                        Icons.grid_view_rounded,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    const Text(
-                      'Explore Categories',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                GridView.count(
-                  crossAxisCount: 2,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  childAspectRatio: 1.8,
-                  children:
-                      CategoryData.categories
-                          .map(
-                            (category) => _buildCategoryCard(
-                              icon: category.icon,
-                              title: category.name,
-                              iconColor: category.iconColor,
-                            ),
-                          )
-                          .toList(),
-                ),
-                const SizedBox(height: 80),
-              ],
-            ),
-          ),
-          floatingActionButton: Container(
+        ),
+        centerTitle: true,
+        actions: [
+          Container(
+            margin: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.primary.withOpacity(0.4),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                ),
-              ],
+              color: AppColors.primary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
             ),
-            child: FloatingActionButton.extended(
-              heroTag: "home_fab",
-              onPressed: _showBottomSheet,
-              backgroundColor: AppColors.primary,
-              elevation: 0,
-              icon: const Icon(Icons.add, color: Colors.white),
-              label: const Text(
-                'Suggestion',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+            child: IconButton(
+              icon: const Icon(
+                Icons.notifications,
+                color: AppColors.primary,
+                size: 24,
+              ),
+              onPressed: () {
+                // TODO: Navigate to notifications
+              },
+            ),
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Search Bar with Gradient Shadow
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary.withOpacity(0.1),
+                    blurRadius: 15,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: TextFormField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: 'Search for projects or skills...',
+                  prefixIcon: Container(
+                    padding: const EdgeInsets.all(12),
+                    child: const Icon(
+                      Icons.search,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 18,
+                  ),
                 ),
               ),
             ),
+            const SizedBox(height: 32),
+            SizedBox(
+              height: 200,
+              child:
+                  _isLoadingProjects
+                      ? const Center(child: CircularProgressIndicator())
+                      : ListView.builder(
+                        controller: _scrollController,
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        itemCount: _projects.length,
+                        itemBuilder: (context, index) {
+                          final project = _projects[index];
+                          return _buildProjectCard(
+                            title: project.title,
+                            description: project.description,
+                            collaborators: project.collaborators,
+                            imagePath: project.imagePath,
+                          );
+                        },
+                      ),
+            ),
+            const SizedBox(height: 40),
+            // Explore Categories Section
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [AppColors.primary, AppColors.primaryLight],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.grid_view_rounded,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                const Text(
+                  'Explore Categories',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            GridView.count(
+              crossAxisCount: 2,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              childAspectRatio: 1.8,
+              children:
+                  CategoryData.categories
+                      .map(
+                        (category) => _buildCategoryCard(
+                          icon: category.icon,
+                          title: category.name,
+                          iconColor: category.iconColor,
+                        ),
+                      )
+                      .toList(),
+            ),
+            const SizedBox(height: 80),
+          ],
+        ),
+      ),
+      floatingActionButton: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primary.withOpacity(0.4),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: FloatingActionButton.extended(
+          heroTag: "home_fab",
+          onPressed: _showBottomSheet,
+          backgroundColor: AppColors.primary,
+          elevation: 0,
+          icon: const Icon(Icons.add, color: Colors.white),
+          label: const Text(
+            'Suggestion',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
+        ),
+      ),
     );
   }
 }
