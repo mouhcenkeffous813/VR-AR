@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:youth_center/utils/app_colors.dart';
+import 'package:youth_center/screens/projects/live_page.dart';
 
 class ProjectDetailPage extends StatelessWidget {
   final String title;
@@ -236,7 +237,7 @@ class ProjectDetailPage extends StatelessWidget {
               ),
             ),
 
-            // Join Button
+            // Buttons
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -249,26 +250,78 @@ class ProjectDetailPage extends StatelessWidget {
                   ),
                 ],
               ),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    _showJoinDialog(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+              child: Column(
+                children: [
+                  // Join Project button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _showJoinDialog(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: const Text(
+                        'Join Project',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
-                    elevation: 0,
                   ),
-                  child: const Text(
-                    'Join Project',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ),
+                  // Join Live button (only for Hachthon Youth digital innovation)
+                  if (title.toLowerCase().contains('hachthon youth') ||
+                      title.toLowerCase().contains(
+                        'youth digital innovation',
+                      )) ...[
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => LivePage(projectTitle: title),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.fiber_manual_record, size: 16),
+                            SizedBox(width: 8),
+                            Text(
+                              'Join Live',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ),
           ],
