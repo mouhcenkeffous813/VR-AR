@@ -141,7 +141,7 @@ class _MapPageState extends State<MapPage> {
                           },
                           child: const Icon(
                             Icons.location_on,
-                            color: AppColors.success,
+                            color: Color(0xFF194CBF),
                             size: 40,
                           ),
                         ),

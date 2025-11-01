@@ -98,18 +98,6 @@ class _ProfilePageState extends State<ProfilePage> {
                           color: AppColors.textPrimary,
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      IconButton(
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Settings')),
-                          );
-                        },
-                        icon: const Icon(
-                          Icons.settings,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
                     ],
                   ),
                 ],
@@ -117,8 +105,16 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
 
             // Profile Header Section
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFF194CBF), Color(0xFF61A1FF)],
+                ),
+              ),
               child: Column(
                 children: [
                   // Profile Picture
@@ -127,16 +123,23 @@ class _ProfilePageState extends State<ProfilePage> {
                     height: 120,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: AppColors.success,
-                      border: Border.all(color: AppColors.grey300, width: 2),
+                      color: Colors.white,
+                      border: Border.all(color: Colors.white, width: 3),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 10,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
                     ),
                     child: ClipOval(
                       child: Image.asset(
-                        'images/OIP.jpg',
+                        'images/student.jpeg',
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
                           return Container(
-                            color: AppColors.success,
+                            color: const Color(0xFF194CBF),
                             child: const Icon(
                               Icons.person,
                               size: 60,
@@ -160,7 +163,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         )
                         .join(' '),
                     style: const TextStyle(
-                      color: AppColors.textPrimary,
+                      color: Colors.white,
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
@@ -169,8 +172,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   // Username
                   Text(
                     username,
-                    style: const TextStyle(
-                      color: AppColors.textSecondary,
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.9),
                       fontSize: 16,
                     ),
                   ),
@@ -183,8 +186,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.success,
-                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.white,
+                      foregroundColor: const Color(0xFF194CBF),
                       padding: const EdgeInsets.symmetric(
                         horizontal: 32,
                         vertical: 12,
@@ -272,7 +275,8 @@ class _ProfilePageState extends State<ProfilePage> {
           decoration: BoxDecoration(
             border: Border(
               bottom: BorderSide(
-                color: isSelected ? AppColors.success : Colors.transparent,
+                color:
+                    isSelected ? const Color(0xFF194CBF) : Colors.transparent,
                 width: 2,
               ),
             ),
@@ -281,7 +285,10 @@ class _ProfilePageState extends State<ProfilePage> {
             title,
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: isSelected ? AppColors.success : AppColors.textSecondary,
+              color:
+                  isSelected
+                      ? const Color(0xFF194CBF)
+                      : AppColors.textSecondary,
               fontSize: 14,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
             ),
@@ -337,12 +344,12 @@ class _ProfilePageState extends State<ProfilePage> {
             },
             child: Row(
               children: [
-                Icon(Icons.link, color: AppColors.success, size: 20),
+                Icon(Icons.link, color: const Color(0xFF194CBF), size: 20),
                 const SizedBox(width: 12),
                 Text(
                   'https://moncefaz.vercel.app',
-                  style: TextStyle(
-                    color: AppColors.success,
+                  style: const TextStyle(
+                    color: Color(0xFF194CBF),
                     fontSize: 15,
                     decoration: TextDecoration.underline,
                   ),
@@ -445,7 +452,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _buildInfoRow({required IconData icon, required String text}) {
     return Row(
       children: [
-        Icon(icon, color: AppColors.success, size: 20),
+        Icon(icon, color: const Color(0xFF194CBF), size: 20),
         const SizedBox(width: 12),
         Expanded(
           child: Text(

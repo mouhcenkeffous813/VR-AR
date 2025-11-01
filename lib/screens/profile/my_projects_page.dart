@@ -17,7 +17,7 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
           'Revamping the user interface for a local mobile banking application.',
       'teamMembers': 4,
       'status': 'In Progress',
-      'statusColor': AppColors.success,
+      'statusColor': const Color(0xFF194CBF),
       'icon': Icons.account_balance,
     },
     {
@@ -27,7 +27,7 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
           'A platform connecting local Algerian artisans with a global audience.',
       'teamMembers': 8,
       'status': 'Completed',
-      'statusColor': AppColors.success,
+      'statusColor': const Color(0xFF194CBF),
       'icon': Icons.store,
     },
     {
@@ -47,7 +47,7 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
           'Developing interactive learning modules for primary school students.',
       'teamMembers': 6,
       'status': 'In Progress',
-      'statusColor': AppColors.success,
+      'statusColor': const Color(0xFF194CBF),
       'icon': Icons.school,
     },
     {
@@ -73,7 +73,7 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: AppColors.success,
+                color: const Color(0xFF194CBF),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
@@ -112,7 +112,7 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
                       },
                       icon: const Icon(
                         Icons.add,
-                        color: AppColors.success,
+                        color: Color(0xFF194CBF),
                         size: 24,
                       ),
                     ),
@@ -182,10 +182,14 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: AppColors.successLight.withOpacity(0.2),
+              color: const Color(0xFF61A1FF).withOpacity(0.2),
               borderRadius: BorderRadius.circular(28),
             ),
-            child: Icon(project['icon'], color: AppColors.success, size: 28),
+            child: Icon(
+              project['icon'],
+              color: const Color(0xFF194CBF),
+              size: 28,
+            ),
           ),
           const SizedBox(width: 16),
 

@@ -23,7 +23,7 @@ class _AchievementsPageState extends State<AchievementsPage> {
       'title': 'Team Player',
       'description': 'Joined 5 teams',
       'icon': Icons.people,
-      'iconColor': AppColors.success,
+      'iconColor': const Color(0xFF194CBF),
       'unlocked': true,
     },
     {
@@ -39,7 +39,7 @@ class _AchievementsPageState extends State<AchievementsPage> {
       'title': 'Innovator',
       'description': 'Lead a project',
       'icon': Icons.rocket_launch,
-      'iconColor': AppColors.success,
+      'iconColor': const Color(0xFF194CBF),
       'unlocked': true,
     },
     {
@@ -47,7 +47,7 @@ class _AchievementsPageState extends State<AchievementsPage> {
       'title': 'Project Pro',
       'description': 'Completed 10 projects',
       'icon': Icons.verified,
-      'iconColor': AppColors.success,
+      'iconColor': const Color(0xFF194CBF),
       'unlocked': true,
     },
     {
@@ -55,7 +55,7 @@ class _AchievementsPageState extends State<AchievementsPage> {
       'title': 'Community Pillar',
       'description': 'Joined 1 year ago',
       'icon': Icons.emoji_events,
-      'iconColor': AppColors.success,
+      'iconColor': const Color(0xFF194CBF),
       'unlocked': true,
     },
     {
@@ -63,7 +63,7 @@ class _AchievementsPageState extends State<AchievementsPage> {
       'title': 'Mission Completed',
       'description': 'Completed a mission',
       'icon': Icons.flag,
-      'iconColor': AppColors.success,
+      'iconColor': const Color(0xFF194CBF),
       'unlocked': true,
     },
     {
@@ -71,7 +71,7 @@ class _AchievementsPageState extends State<AchievementsPage> {
       'title': 'Workshop Attend',
       'description': 'Attended a workshop',
       'icon': Icons.school,
-      'iconColor': AppColors.success,
+      'iconColor': const Color(0xFF194CBF),
       'unlocked': true,
     },
     {
@@ -79,7 +79,7 @@ class _AchievementsPageState extends State<AchievementsPage> {
       'title': 'Competition Joined',
       'description': 'Joined a competition',
       'icon': Icons.emoji_events_outlined,
-      'iconColor': AppColors.success,
+      'iconColor': const Color(0xFF194CBF),
       'unlocked': true,
     },
   ];
@@ -95,7 +95,7 @@ class _AchievementsPageState extends State<AchievementsPage> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: AppColors.success,
+                color: const Color(0xFF194CBF),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
