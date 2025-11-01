@@ -44,3 +44,6 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 images/IMG_9960.MOV
+
+# App Configuration (contains sensitive API keys)
+lib/config/app_config.dart

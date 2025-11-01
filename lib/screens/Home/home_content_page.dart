@@ -8,6 +8,7 @@ import 'package:youth_center/screens/career/career_campus_page.dart';
 import 'package:youth_center/screens/clubs/clubs_hub_page.dart';
 import 'package:youth_center/screens/volunteering/volunteering_page.dart';
 import 'package:youth_center/screens/projects/project_detail_page.dart';
+import 'package:youth_center/screens/ideas_expo/ideas_expo_page.dart';
 import 'package:youth_center/services/database_service.dart';
 import 'package:youth_center/models/project_model.dart';
 
@@ -62,16 +63,38 @@ class _HomeContentPageState extends State<HomeContentPage> {
       });
       final dbProjects = await _dbService.getProjects();
 
-      // Combine default projects with database projects
+      // Always ensure Ideas Expo is first, then combine other projects
+      final ideasExpoProject = ProjectModel(
+        id: 'ideas_expo',
+        title: 'Ideas Expo',
+        description:
+            'Share your business ideas, get feedback, and connect with innovators.',
+        collaborators: 'Active Community',
+        imagePath: 'images/pic4.jpeg',
+      );
+      
       final defaultProjects = _getDefaultProjects();
+      // Remove Ideas Expo from default if it exists, then add it at the start
+      final otherProjects = defaultProjects.where((p) => p.id != 'ideas_expo').toList();
+      
       setState(() {
-        _projects = [...defaultProjects, ...dbProjects];
+        _projects = [ideasExpoProject, ...otherProjects, ...dbProjects];
         _isLoadingProjects = false;
       });
     } catch (e) {
       // On error, show default projects
+      final ideasExpoProject = ProjectModel(
+        id: 'ideas_expo',
+        title: 'Ideas Expo',
+        description:
+            'Share your business ideas, get feedback, and connect with innovators.',
+        collaborators: 'Active Community',
+        imagePath: 'images/pic4.jpeg',
+      );
+      final defaultProjects = _getDefaultProjects();
+      final otherProjects = defaultProjects.where((p) => p.id != 'ideas_expo').toList();
       setState(() {
-        _projects = _getDefaultProjects();
+        _projects = [ideasExpoProject, ...otherProjects];
         _isLoadingProjects = false;
       });
     }
@@ -79,6 +102,14 @@ class _HomeContentPageState extends State<HomeContentPage> {
 
   List<ProjectModel> _getDefaultProjects() {
     return [
+      ProjectModel(
+        id: 'ideas_expo',
+        title: 'Ideas Expo',
+        description:
+            'Share your business ideas, get feedback, and connect with innovators.',
+        collaborators: 'Active Community',
+        imagePath: 'images/pic4.jpeg',
+      ),
       ProjectModel(
         id: '1',
         title: 'Djezzy Hachthon',
@@ -102,14 +133,6 @@ class _HomeContentPageState extends State<HomeContentPage> {
             'Community-led environmental project to promote sustainability.',
         collaborators: '5/7 Collaborators',
         imagePath: 'images/pic3.jpeg',
-      ),
-      ProjectModel(
-        id: '4',
-        title: 'Innovation Hub',
-        description:
-            'A platform for creative minds to collaborate and innovate.',
-        collaborators: '7/10 Collaborators',
-        imagePath: 'images/pic4.jpeg',
       ),
       ProjectModel(
         id: '5',
@@ -219,21 +242,32 @@ class _HomeContentPageState extends State<HomeContentPage> {
     required String description,
     required String collaborators,
     String? imagePath,
+    String? projectId,
   }) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder:
-                (context) => ProjectDetailPage(
-                  title: title,
-                  description: description,
-                  collaborators: collaborators,
-                  imagePath: imagePath,
-                ),
-          ),
-        );
+        // Special routing for Ideas Expo
+        if (projectId == 'ideas_expo') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const IdeasExpoPage(),
+            ),
+          );
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder:
+                  (context) => ProjectDetailPage(
+                    title: title,
+                    description: description,
+                    collaborators: collaborators,
+                    imagePath: imagePath,
+                  ),
+            ),
+          );
+        }
       },
       child: Container(
         width: 280,
@@ -258,6 +292,33 @@ class _HomeContentPageState extends State<HomeContentPage> {
                     fit: BoxFit.cover,
                     width: double.infinity,
                     height: 200,
+                    errorBuilder: (context, error, stackTrace) {
+                      // Fallback if image fails to load
+                      return Container(
+                        height: 200,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: projectId == 'ideas_expo'
+                                ? [AppColors.primaryLight, AppColors.primary]
+                                : [AppColors.primaryLight, AppColors.primary],
+                          ),
+                        ),
+                        child: projectId == 'ideas_expo'
+                            ? const Icon(
+                                Icons.lightbulb,
+                                size: 60,
+                                color: Colors.white,
+                              )
+                            : const Icon(
+                                Icons.image,
+                                size: 60,
+                                color: Colors.white,
+                              ),
+                      );
+                    },
                   )
                   : Container(
                     height: 200,
@@ -290,6 +351,115 @@ class _HomeContentPageState extends State<HomeContentPage> {
                   ),
                 ),
               ),
+              // Special badge and title for Ideas Expo
+              if (projectId == 'ideas_expo') ...[
+                Positioned(
+                  top: 12,
+                  right: 12,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.lightbulb,
+                          color: Colors.white,
+                          size: 16,
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          'New',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // Large title overlay for Ideas Expo
+                Positioned(
+                  bottom: 16,
+                  left: 16,
+                  right: 16,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black54,
+                              blurRadius: 8,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        description,
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.9),
+                          fontSize: 13,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black54,
+                              blurRadius: 6,
+                              offset: const Offset(0, 1),
+                            ),
+                          ],
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ] else
+                // Default title overlay for other projects
+                Positioned(
+                  bottom: 16,
+                  left: 16,
+                  right: 16,
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black54,
+                          blurRadius: 8,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
             ],
           ),
         ),
@@ -754,11 +924,16 @@ class _HomeContentPageState extends State<HomeContentPage> {
                         itemCount: _projects.length,
                         itemBuilder: (context, index) {
                           final project = _projects[index];
+                          // Debug: verify Ideas Expo is in the list
+                          if (project.id == 'ideas_expo') {
+                            debugPrint('Ideas Expo card found at index: $index');
+                          }
                           return _buildProjectCard(
                             title: project.title,
                             description: project.description,
                             collaborators: project.collaborators,
                             imagePath: project.imagePath,
+                            projectId: project.id,
                           );
                         },
                       ),
