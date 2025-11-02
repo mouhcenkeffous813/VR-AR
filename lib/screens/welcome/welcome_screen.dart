@@ -1,10 +1,14 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:youth_center/utils/app_colors.dart';
 import 'package:youth_center/models/category_model.dart';
+import 'package:youth_center/models/project_model.dart';
 import 'package:youth_center/screens/categories/category_detail_page.dart';
 import 'package:youth_center/screens/opportunities/opportunities_page.dart';
 import 'package:youth_center/screens/map/map_page.dart';
 import 'package:youth_center/screens/auth/pages/login.dart';
+import 'package:youth_center/screens/projects/project_detail_page.dart';
+import 'package:youth_center/services/database_service.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -28,37 +32,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       drawer: _buildDrawer(),
-      appBar: AppBar(
-        backgroundColor: AppColors.background,
-        elevation: 0,
-        surfaceTintColor: Colors.transparent,
-        leading: Builder(
-          builder:
-              (context) => IconButton(
-                icon: const Icon(Icons.menu, color: AppColors.textPrimary),
-                onPressed: () => Scaffold.of(context).openDrawer(),
-              ),
-        ),
-        title: const Text(
-          'HOME',
-          style: TextStyle(
-            color: AppColors.textPrimary,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 0.5,
-          ),
-        ),
-        centerTitle: false,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search, color: AppColors.textPrimary),
-            onPressed: () {
-              // TODO: Implement search functionality
-            },
-            tooltip: 'Search',
-          ),
-        ],
-      ),
       body: IndexedStack(index: _currentIndex, children: _pages),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
@@ -68,7 +41,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           });
         },
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: AppColors.primary,
+        selectedItemColor: const Color(0xFF194CBF),
         unselectedItemColor: AppColors.textSecondary,
         selectedFontSize: 12,
         unselectedFontSize: 12,
@@ -98,7 +71,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         padding: EdgeInsets.zero,
         children: [
           Container(
-            height: 200,
+            height: 180,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
@@ -109,41 +82,32 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             child: Stack(
               children: [
                 Positioned(
-                  top: 20,
+                  top: 40,
                   left: 20,
                   right: 20,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(
-                          Icons.group,
-                          color: Colors.white,
-                          size: 32,
-                        ),
+                      const Icon(
+                        Icons.group,
+                        size: 60,
+                        color: Colors.white,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
                       const Text(
-                        'Youth Center',
+                        'Guest',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 26,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text(
-                        'Welcome to our community',
+                      const Text(
+                        'Youth Center',
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.9),
+                          color: Color.fromARGB(179, 15, 71, 238),
                           fontSize: 14,
-                          fontWeight: FontWeight.w400,
                         ),
                       ),
                     ],
@@ -195,25 +159,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   context,
                   icon: Icons.people_rounded,
                   title: 'Community',
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                const SizedBox(height: 8),
-                const Divider(indent: 20, endIndent: 20, thickness: 1),
-                const SizedBox(height: 8),
-                _buildDrawerItem(
-                  context,
-                  icon: Icons.settings_rounded,
-                  title: 'Settings',
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                _buildDrawerItem(
-                  context,
-                  icon: Icons.help_outline_rounded,
-                  title: 'Help & Support',
                   onTap: () {
                     Navigator.pop(context);
                   },
@@ -272,12 +217,115 @@ class WelcomeContentPage extends StatefulWidget {
 
 class _WelcomeContentPageState extends State<WelcomeContentPage> {
   final TextEditingController _searchController = TextEditingController();
-  final FocusNode _searchFocusNode = FocusNode();
+  final ScrollController _scrollController = ScrollController();
+  final DatabaseService _dbService = DatabaseService();
+  Timer? _scrollTimer;
+  List<ProjectModel> _projects = [];
+  bool _isLoadingProjects = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _startAutoScroll();
+    _loadProjects();
+  }
+
+  Future<void> _loadProjects() async {
+    try {
+      setState(() {
+        _isLoadingProjects = true;
+      });
+      final dbProjects = await _dbService.getProjects();
+
+      // Combine default projects with database projects
+      final defaultProjects = _getDefaultProjects();
+      setState(() {
+        _projects = [...defaultProjects, ...dbProjects];
+        _isLoadingProjects = false;
+      });
+    } catch (e) {
+      // On error, show default projects
+      setState(() {
+        _projects = _getDefaultProjects();
+        _isLoadingProjects = false;
+      });
+    }
+  }
+
+  List<ProjectModel> _getDefaultProjects() {
+    return [
+      ProjectModel(
+        id: '1',
+        title: 'Djezzy Hachthon',
+        description:
+            'An app to connect local tutors with students for free educational support.',
+        collaborators: '3/5 Collaborators',
+        imagePath: 'images/pic1.jpeg',
+      ),
+      ProjectModel(
+        id: '2',
+        title: 'Hachthon Youth digital innovation',
+        description:
+            'Organizing young tech enthusiasts to collaborate on innovative projects.',
+        collaborators: '8/10 Collaborators',
+        imagePath: 'images/pic2.jpeg',
+      ),
+      ProjectModel(
+        id: '3',
+        title: 'Innovation Hub',
+        description:
+            'Community-led environmental project to promote sustainability.',
+        collaborators: '5/7 Collaborators',
+        imagePath: 'images/pic3.jpeg',
+      ),
+      ProjectModel(
+        id: '4',
+        title: 'Innovation Hub',
+        description:
+            'A platform for creative minds to collaborate and innovate.',
+        collaborators: '7/10 Collaborators',
+        imagePath: 'images/pic4.jpeg',
+      ),
+      ProjectModel(
+        id: '5',
+        title: 'Gaming Experience',
+        description:
+            'Join the ultimate gaming adventure with exciting rewards and challenges.',
+        collaborators: '10/10 Collaborators',
+        imagePath: 'images/monceff.jpeg',
+      ),
+    ];
+  }
+
+  void _startAutoScroll() {
+    _scrollTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      if (_scrollController.hasClients) {
+        final maxScroll = _scrollController.position.maxScrollExtent;
+        final currentScroll = _scrollController.position.pixels;
+        final cardWidth = 280.0 + 20.0; // card width + margin
+
+        if (currentScroll >= maxScroll - cardWidth) {
+          _scrollController.animateTo(
+            0,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+          );
+        } else {
+          _scrollController.animateTo(
+            currentScroll + cardWidth,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+          );
+        }
+      }
+    });
+  }
 
   @override
   void dispose() {
+    _scrollTimer?.cancel();
+    _scrollController.dispose();
     _searchController.dispose();
-    _searchFocusNode.dispose();
     super.dispose();
   }
 
@@ -301,22 +349,29 @@ class _WelcomeContentPageState extends State<WelcomeContentPage> {
         );
       },
       child: Container(
-        margin: const EdgeInsets.all(8),
+        margin: const EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.borderDefault, width: 1),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppColors.grey300, width: 1.5),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.grey300.withOpacity(0.3),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 40, color: iconColor),
-            const SizedBox(height: 12),
+            Icon(icon, size: 36, color: iconColor),
+            const SizedBox(height: 10),
             Text(
               title,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textPrimary,
               ),
@@ -333,88 +388,79 @@ class _WelcomeContentPageState extends State<WelcomeContentPage> {
     required String collaborators,
     String? imagePath,
   }) {
-    return Container(
-      width: 280,
-      margin: const EdgeInsets.only(right: 16),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.borderDefault, width: 1),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Image placeholder or actual image
-          Container(
-            height: 160,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: AppColors.grey300,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(16),
-              ),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) => ProjectDetailPage(
+                  title: title,
+                  description: description,
+                  collaborators: collaborators,
+                  imagePath: imagePath,
+                ),
+          ),
+        );
+      },
+      child: Container(
+        width: 280,
+        margin: const EdgeInsets.only(right: 20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primary.withOpacity(0.1),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
             ),
-            child:
-                imagePath != null
-                    ? ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Stack(
+            children: [
+              imagePath != null
+                  ? Image.asset(
+                    imagePath,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: 200,
+                  )
+                  : Container(
+                    height: 200,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [AppColors.primaryLight, AppColors.primary],
                       ),
-                      child: Image.asset(imagePath, fit: BoxFit.cover),
-                    )
-                    : const Icon(
+                    ),
+                    child: const Icon(
                       Icons.image,
                       size: 60,
-                      color: AppColors.textSecondary,
+                      color: Colors.white,
                     ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+                  ),
+              // Gradient overlay
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withOpacity(0.7),
+                      ],
+                    ),
                   ),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  description,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: AppColors.textSecondary,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.people,
-                      size: 18,
-                      color: AppColors.textSecondary,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      collaborators,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -423,125 +469,179 @@ class _WelcomeContentPageState extends State<WelcomeContentPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Welcome Message
-              const Text(
-                'Welcome to Youth Center!',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+      appBar: AppBar(
+        automaticallyImplyLeading: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        leading: Builder(
+          builder:
+              (context) => Container(
+                margin: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.menu,
+                    color: AppColors.primary,
+                    size: 24,
+                  ),
+                  onPressed: () => Scaffold.of(context).openDrawer(),
                 ),
               ),
-              const SizedBox(height: 20),
-              // Search Bar
-              TextFormField(
+        ),
+        title: const Text(
+          'Youth Center',
+          style: TextStyle(
+            color: AppColors.primary,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            letterSpacing: -0.5,
+          ),
+        ),
+        centerTitle: true,
+        actions: [
+          Container(
+            margin: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: IconButton(
+              icon: const Icon(
+                Icons.notifications,
+                color: AppColors.primary,
+                size: 24,
+              ),
+              onPressed: () {
+                // TODO: Navigate to notifications or show login prompt
+              },
+            ),
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Search Bar with Gradient Shadow
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary.withOpacity(0.1),
+                    blurRadius: 15,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: TextFormField(
                 controller: _searchController,
-                focusNode: _searchFocusNode,
                 decoration: InputDecoration(
-                  hintText: 'Search for events, members, or activities...',
-                  prefixIcon: const Icon(
-                    Icons.search,
-                    color: AppColors.textSecondary,
+                  hintText: 'Search for projects or skills...',
+                  prefixIcon: Container(
+                    padding: const EdgeInsets.all(12),
+                    child: const Icon(
+                      Icons.search,
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: AppColors.borderDefault,
-                    ),
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: AppColors.borderFocused,
-                      width: 2,
-                    ),
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
                   ),
                   filled: true,
-                  fillColor: AppColors.surface,
+                  fillColor: Colors.white,
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 16,
-                    vertical: 16,
+                    vertical: 18,
                   ),
                 ),
-                onChanged: (value) {
-                  // TODO: Implement search functionality
-                },
               ),
-              const SizedBox(height: 32),
-              // Trending Projects Section
-              const Text(
-                'Trending Projects',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                height: 320,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    _buildProjectCard(
-                      title: 'Community Learning App',
-                      description:
-                          'An app to connect local tutors with students for free educational support.',
-                      collaborators: '3/5 Collaborators',
+            ),
+            const SizedBox(height: 32),
+            SizedBox(
+              height: 200,
+              child:
+                  _isLoadingProjects
+                      ? const Center(child: CircularProgressIndicator())
+                      : ListView.builder(
+                        controller: _scrollController,
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        itemCount: _projects.length,
+                        itemBuilder: (context, index) {
+                          final project = _projects[index];
+                          return _buildProjectCard(
+                            title: project.title,
+                            description: project.description,
+                            collaborators: project.collaborators,
+                            imagePath: project.imagePath,
+                          );
+                        },
+                      ),
+            ),
+            const SizedBox(height: 40),
+            // Explore Categories Section
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [AppColors.primary, AppColors.primaryLight],
                     ),
-                    _buildProjectCard(
-                      title: 'Algiers Tech Hub',
-                      description:
-                          'Organizing young tech enthusiasts to collaborate on innovative projects.',
-                      collaborators: '8/10 Collaborators',
-                    ),
-                    _buildProjectCard(
-                      title: 'Green Initiative',
-                      description:
-                          'Community-led environmental project to promote sustainability.',
-                      collaborators: '5/7 Collaborators',
-                    ),
-                  ],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.grid_view_rounded,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 32),
-              // Explore Categories Section
-              const Text(
-                'Explore Categories',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                const SizedBox(width: 12),
+                const Text(
+                  'Explore Categories',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                    letterSpacing: -0.5,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              GridView.count(
-                crossAxisCount: 2,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                childAspectRatio: 1.5,
-                children:
-                    CategoryData.categories
-                        .map(
-                          (category) => _buildCategoryCard(
-                            icon: category.icon,
-                            title: category.name,
-                            iconColor: category.iconColor,
-                          ),
-                        )
-                        .toList(),
-              ),
-            ],
-          ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            GridView.count(
+              crossAxisCount: 2,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              childAspectRatio: 1.8,
+              children:
+                  CategoryData.categories
+                      .map(
+                        (category) => _buildCategoryCard(
+                          icon: category.icon,
+                          title: category.name,
+                          iconColor: category.iconColor,
+                        ),
+                      )
+                      .toList(),
+            ),
+            const SizedBox(height: 80),
+          ],
         ),
       ),
     );

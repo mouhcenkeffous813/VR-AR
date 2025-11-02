@@ -41,8 +41,8 @@ class _LivePageState extends State<LivePage> {
 
   Future<void> _initializeCamera() async {
     try {
-      // Small delay to ensure Flutter engine is fully initialized
-      await Future.delayed(const Duration(milliseconds: 100));
+      // Longer delay to ensure Flutter engine and native plugins are fully initialized
+      await Future.delayed(const Duration(milliseconds: 500));
 
       // Request camera permission first
       final cameraStatus = await Permission.camera.request();
@@ -61,19 +61,30 @@ class _LivePageState extends State<LivePage> {
 
       // Get available cameras with timeout and retry
       List<CameraDescription>? cameras;
-      int retries = 3;
+      int retries = 5;
+      Exception? lastError;
       while (retries > 0) {
         try {
           cameras = await availableCameras().timeout(
-            const Duration(seconds: 5),
+            const Duration(seconds: 10),
           );
           break;
         } catch (e) {
+          lastError = e is Exception ? e : Exception(e.toString());
           retries--;
           if (retries == 0) {
+            // If channel error, suggest rebuilding the app
+            if (e.toString().contains('channel') ||
+                e.toString().contains('ProcessCameraProvider')) {
+              throw Exception(
+                'Camera plugin connection failed. Please restart the app or rebuild.\n'
+                'Original error: $e',
+              );
+            }
             rethrow;
           }
-          await Future.delayed(const Duration(milliseconds: 500));
+          // Increase delay between retries
+          await Future.delayed(Duration(milliseconds: 500 * (6 - retries)));
         }
       }
 
