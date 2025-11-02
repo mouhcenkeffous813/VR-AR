@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:youth_center/utils/app_colors.dart';
+import 'package:youth_center/screens/projects/vr_room_experience_page.dart';
 
 class VRDetailPage extends StatefulWidget {
   const VRDetailPage({super.key});
@@ -138,10 +139,13 @@ class _VRDetailPageState extends State<VRDetailPage> {
             ),
             child: ElevatedButton(
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Joining $roomName...'),
-                    backgroundColor: color,
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => VRRoomExperiencePage(
+                      roomName: roomName,
+                      participants: participants,
+                    ),
                   ),
                 );
               },
