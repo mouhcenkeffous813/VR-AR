@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:youth_center/utils/app_colors.dart';
 import 'package:youth_center/screens/projects/vr_room_experience_page.dart';
 
@@ -54,10 +55,7 @@ class _VRDetailPageState extends State<VRDetailPage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: color.withOpacity(0.3),
-          width: 1.5,
-        ),
+        border: Border.all(color: color.withOpacity(0.3), width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.08),
@@ -106,7 +104,11 @@ class _VRDetailPageState extends State<VRDetailPage> {
                 const SizedBox(height: 6),
                 Row(
                   children: [
-                    Icon(Icons.people_rounded, size: 16, color: AppColors.textSecondary),
+                    Icon(
+                      Icons.people_rounded,
+                      size: 16,
+                      color: AppColors.textSecondary,
+                    ),
                     const SizedBox(width: 6),
                     Text(
                       '$participants people joined',
@@ -125,9 +127,7 @@ class _VRDetailPageState extends State<VRDetailPage> {
           Container(
             height: 44,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [color, color.withOpacity(0.8)],
-              ),
+              gradient: LinearGradient(colors: [color, color.withOpacity(0.8)]),
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
@@ -142,10 +142,11 @@ class _VRDetailPageState extends State<VRDetailPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => VRRoomExperiencePage(
-                      roomName: roomName,
-                      participants: participants,
-                    ),
+                    builder:
+                        (context) => VRRoomExperiencePage(
+                          roomName: roomName,
+                          participants: participants,
+                        ),
                   ),
                 );
               },
@@ -261,7 +262,9 @@ class _VRDetailPageState extends State<VRDetailPage> {
                             child: IconButton(
                               onPressed: () {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Share VR Space')),
+                                  const SnackBar(
+                                    content: Text('Share VR Space'),
+                                  ),
                                 );
                               },
                               icon: const Icon(
@@ -446,13 +449,36 @@ class _VRDetailPageState extends State<VRDetailPage> {
                     ],
                   ),
                   child: ElevatedButton(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Entering Virtual Reality...'),
-                          backgroundColor: Color(0xFF9C27B0),
-                        ),
+                    onPressed: () async {
+                      final url = Uri.parse(
+                        'https://emilian-kasemi-3d-art-gallery.vercel.app/',
                       );
+                      try {
+                        if (await canLaunchUrl(url)) {
+                          await launchUrl(
+                            url,
+                            mode: LaunchMode.externalApplication,
+                          );
+                        } else {
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Could not open the website'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        }
+                      } catch (e) {
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Error opening website: $e'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.transparent,
@@ -546,4 +572,3 @@ class _VRDetailPageState extends State<VRDetailPage> {
     );
   }
 }
-

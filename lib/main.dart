@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:youth_center/screens/welcome/welcome_screen.dart';
+import 'package:youth_center/screens/auth/services/auth_gate.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -10,6 +10,7 @@ void main() async {
   await dotenv.load(fileName: ".env");
 
   // Initialize Supabase with environment variables
+  // Supabase automatically persists sessions in secure local storage
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL']!,
     anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: WelcomeScreen(),
+      home: const AuthGate(),
     );
   }
 }

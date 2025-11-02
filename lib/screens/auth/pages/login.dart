@@ -112,7 +112,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Column(
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(20),
+                            width: 140,
+                            height: 140,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               shape: BoxShape.circle,
@@ -124,11 +125,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ],
                             ),
-                            child: Image.asset(
-                              'images/OIP.jpg',
-                              height: 100,
-                              width: 100,
-                              fit: BoxFit.contain,
+                            child: ClipOval(
+                              child: Image.asset(
+                                'images/OIP.jpg',
+                                width: 140,
+                                height: 140,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                           const SizedBox(height: 32),
