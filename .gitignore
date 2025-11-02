@@ -45,5 +45,8 @@ app.*.map.json
 /android/app/release
 images/IMG_9960.MOV
 
+# Environment variables (contains sensitive API keys)
+.env
+
 # App Configuration (contains sensitive API keys)
 lib/config/app_config.dart
