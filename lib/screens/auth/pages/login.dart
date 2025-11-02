@@ -215,7 +215,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   color: Color(0xFF194CBF),
                                   width: 2,
                                 ),
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),

@@ -204,7 +204,7 @@ class _VolunteeringPageState extends State<VolunteeringPage> {
                     child: Padding(
                       padding: EdgeInsets.all(32.0),
                       child: CircularProgressIndicator(),
-                    ),
+            ),
                   )
                 : _opportunities.isEmpty
                     ? Center(
@@ -215,7 +215,7 @@ class _VolunteeringPageState extends State<VolunteeringPage> {
                             style: TextStyle(
                               fontSize: 16,
                               color: AppColors.textSecondary,
-                            ),
+            ),
                           ),
                         ),
                       )
@@ -226,11 +226,11 @@ class _VolunteeringPageState extends State<VolunteeringPage> {
                           return Padding(
                             padding: EdgeInsets.only(
                               bottom: index < _opportunities.length - 1 ? 12 : 0,
-                            ),
+            ),
                             child: _buildOpportunityCard(opportunity),
                           );
                         }).toList(),
-                      ),
+            ),
           ],
         ),
       ),

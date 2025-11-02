@@ -5,6 +5,7 @@ import 'package:youth_center/screens/auth/pages/login.dart';
 import 'package:youth_center/screens/profile/my_projects_page.dart';
 import 'package:youth_center/screens/profile/achievements_page.dart';
 import 'package:youth_center/screens/profile/bookmarks_page.dart';
+import 'package:youth_center/screens/profile/coins_page.dart';
 import 'package:youth_center/screens/profile/edit_profile_page.dart';
 import 'package:youth_center/services/database_service.dart';
 import 'package:youth_center/models/user_profile_model.dart';
@@ -146,24 +147,48 @@ class _ProfilePageState extends State<ProfilePage>
                   // Points with coin icon aligned to the right
                   Align(
                     alignment: Alignment.centerRight,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.monetization_on,
-                          color: Colors.amber,
-                          size: 24,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CoinsPage(),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
                         ),
-                        const SizedBox(width: 4),
-                        const Text(
-                          '5',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                        decoration: BoxDecoration(
+                          color: Colors.amber.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: Colors.amber.withOpacity(0.3),
+                            width: 1,
                           ),
                         ),
-                      ],
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.monetization_on,
+                              color: Colors.amber,
+                              size: 24,
+                            ),
+                            const SizedBox(width: 4),
+                            const Text(
+                              '5',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ],
