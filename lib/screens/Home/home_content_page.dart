@@ -14,6 +14,44 @@ import 'package:youth_center/services/database_service.dart';
 import 'package:youth_center/models/project_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+enum NotificationType { enrollment, system, reminder }
+
+class NotificationModel {
+  final String id;
+  final String title;
+  final String message;
+  final NotificationType type;
+  final DateTime timestamp;
+  final bool isRead;
+
+  NotificationModel({
+    required this.id,
+    required this.title,
+    required this.message,
+    required this.type,
+    required this.timestamp,
+    this.isRead = false,
+  });
+
+  NotificationModel copyWith({
+    String? id,
+    String? title,
+    String? message,
+    NotificationType? type,
+    DateTime? timestamp,
+    bool? isRead,
+  }) {
+    return NotificationModel(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      message: message ?? this.message,
+      type: type ?? this.type,
+      timestamp: timestamp ?? this.timestamp,
+      isRead: isRead ?? this.isRead,
+    );
+  }
+}
+
 class HomeContentPage extends StatefulWidget {
   const HomeContentPage({super.key});
 
@@ -32,6 +70,7 @@ class _HomeContentPageState extends State<HomeContentPage> {
   List<ProjectModel> _projects = [];
   bool _isLoadingProjects = true;
   List<CategoryModel> _categories = [];
+  List<NotificationModel> _notifications = [];
 
   @override
   void initState() {
@@ -39,6 +78,81 @@ class _HomeContentPageState extends State<HomeContentPage> {
     _startAutoScroll();
     _loadProjects();
     _loadCategories();
+    _loadNotifications();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Reload notifications when screen is displayed
+    _loadNotifications();
+  }
+
+  Future<void> _loadNotifications() async {
+    try {
+      final enrollments = await _dbService.getMyEnrollments();
+      final categories = await _dbService.getCategories();
+
+      final List<NotificationModel> notifications = [];
+
+      for (final enrollment in enrollments) {
+        // Try to find the event by searching all categories
+        String eventName = 'Course';
+        try {
+          for (final category in categories) {
+            final events = await _dbService.getEventsByCategoryId(
+              category.id ?? '',
+            );
+            try {
+              final event = events.firstWhere(
+                (e) => e.id == enrollment.eventId,
+              );
+              if (event.name.isNotEmpty) {
+                eventName = event.name;
+                break;
+              }
+            } catch (e) {
+              // Event not found in this category, continue
+              continue;
+            }
+          }
+        } catch (e) {
+          debugPrint('Error finding event: $e');
+        }
+
+        notifications.add(
+          NotificationModel(
+            id: enrollment.id,
+            title: 'Course Enrollment',
+            message: 'You enrolled in $eventName',
+            type: NotificationType.enrollment,
+            timestamp: enrollment.enrolledAt,
+            isRead: false,
+          ),
+        );
+      }
+
+      setState(() {
+        _notifications = notifications;
+      });
+    } catch (e) {
+      debugPrint('Error loading notifications: $e');
+    }
+  }
+
+  void _markAsRead(String notificationId) {
+    setState(() {
+      final index = _notifications.indexWhere((n) => n.id == notificationId);
+      if (index != -1) {
+        _notifications[index] = _notifications[index].copyWith(isRead: true);
+      }
+    });
+  }
+
+  void _removeNotification(String notificationId) {
+    setState(() {
+      _notifications.removeWhere((n) => n.id == notificationId);
+    });
   }
 
   Future<void> _loadCategories() async {
@@ -66,25 +180,43 @@ class _HomeContentPageState extends State<HomeContentPage> {
       final dbProjects = await _dbService.getProjects();
 
       final defaultProjects = _getDefaultProjects();
-      // Remove Ideas Expo from default if it exists
+      // Remove Digital Expo from default if it exists
       final otherProjects =
           defaultProjects.where((p) => p.id != 'ideas_expo').toList();
 
       // Check if user is logged in
       final isLoggedIn = Supabase.instance.client.auth.currentUser != null;
 
-      // Only include Ideas Expo if user is logged in
+      // Only include Digital Expo if user is logged in
       List<ProjectModel> finalProjects = [];
       if (isLoggedIn) {
         final ideasExpoProject = ProjectModel(
           id: 'ideas_expo',
-          title: 'Ideas Expo',
+          title: 'Digital Expo',
           description:
               'Share your business ideas, get feedback, and connect with innovators.',
           collaborators: 'Active Community',
           imagePath: 'images/pic4.jpeg',
         );
-        finalProjects = [ideasExpoProject, ...otherProjects, ...dbProjects];
+        // Find Virtual Space and put it first, then Digital Expo, then others
+        final virtualSpace = otherProjects.firstWhere(
+          (p) => p.id == '1' || p.title.toLowerCase().contains('virtual space'),
+          orElse: () => otherProjects.first,
+        );
+        final otherProjectsWithoutVirtual =
+            otherProjects
+                .where(
+                  (p) =>
+                      p.id != '1' &&
+                      !p.title.toLowerCase().contains('virtual space'),
+                )
+                .toList();
+        finalProjects = [
+          virtualSpace,
+          ideasExpoProject,
+          ...otherProjectsWithoutVirtual,
+          ...dbProjects,
+        ];
       } else {
         finalProjects = [...otherProjects, ...dbProjects];
       }
@@ -102,18 +234,35 @@ class _HomeContentPageState extends State<HomeContentPage> {
       // Check if user is logged in
       final isLoggedIn = Supabase.instance.client.auth.currentUser != null;
 
-      // Only include Ideas Expo if user is logged in
+      // Only include Digital Expo if user is logged in
       List<ProjectModel> finalProjects = [];
       if (isLoggedIn) {
         final ideasExpoProject = ProjectModel(
           id: 'ideas_expo',
-          title: 'Ideas Expo',
+          title: 'Digital Expo',
           description:
               'Share your business ideas, get feedback, and connect with innovators.',
           collaborators: 'Active Community',
           imagePath: 'images/pic4.jpeg',
         );
-        finalProjects = [ideasExpoProject, ...otherProjects];
+        // Find Virtual Space and put it first, then Digital Expo, then others
+        final virtualSpace = otherProjects.firstWhere(
+          (p) => p.id == '1' || p.title.toLowerCase().contains('virtual space'),
+          orElse: () => otherProjects.first,
+        );
+        final otherProjectsWithoutVirtual =
+            otherProjects
+                .where(
+                  (p) =>
+                      p.id != '1' &&
+                      !p.title.toLowerCase().contains('virtual space'),
+                )
+                .toList();
+        finalProjects = [
+          virtualSpace,
+          ideasExpoProject,
+          ...otherProjectsWithoutVirtual,
+        ];
       } else {
         finalProjects = otherProjects;
       }
@@ -128,15 +277,22 @@ class _HomeContentPageState extends State<HomeContentPage> {
   List<ProjectModel> _getDefaultProjects() {
     return [
       ProjectModel(
+        id: '1',
+        title: 'Virtual Space',
+        description: 'Explore the virtual space with immersive experiences.',
+        collaborators: '5/7 Collaborators',
+        imagePath: 'images/vr.jpeg',
+      ),
+      ProjectModel(
         id: 'ideas_expo',
-        title: 'Ideas Expo',
+        title: 'Digital Expo',
         description:
             'Share your business ideas, get feedback, and connect with innovators.',
         collaborators: 'Active Community',
         imagePath: 'images/pic4.jpeg',
       ),
       ProjectModel(
-        id: '1',
+        id: '4',
         title: 'Djezzy Hachthon',
         description:
             'An app to connect local tutors with students for free educational support.',
@@ -158,13 +314,6 @@ class _HomeContentPageState extends State<HomeContentPage> {
             'An app to connect local tutors with students for free educational support.',
         collaborators: '3/5 Collaborators',
         imagePath: 'images/pic1.jpeg',
-      ),
-      ProjectModel(
-        id: '4',
-        title: 'Virtual Space',
-        description: 'Explore the virtual space with immersive experiences.',
-        collaborators: '5/7 Collaborators',
-        imagePath: 'images/vr.jpeg',
       ),
       ProjectModel(
         id: '5',
@@ -453,7 +602,7 @@ class _HomeContentPageState extends State<HomeContentPage> {
   }) {
     return GestureDetector(
       onTap: () {
-        // Special routing for Ideas Expo
+        // Special routing for Digital Expo
         if (projectId == 'ideas_expo') {
           Navigator.push(
             context,
@@ -571,7 +720,7 @@ class _HomeContentPageState extends State<HomeContentPage> {
                   ),
                 ),
               ),
-              // Special badge and title for Ideas Expo
+              // Special badge and title for Digital Expo
               if (projectId == 'ideas_expo') ...[
                 Positioned(
                   top: 12,
@@ -609,7 +758,7 @@ class _HomeContentPageState extends State<HomeContentPage> {
                     ),
                   ),
                 ),
-                // Large title overlay for Ideas Expo
+                // Large title overlay for Digital Expo
                 Positioned(
                   bottom: 16,
                   left: 16,
@@ -680,6 +829,175 @@ class _HomeContentPageState extends State<HomeContentPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildNotificationItem(NotificationModel notification) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color:
+            notification.isRead
+                ? Colors.grey[50]
+                : AppColors.primary.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color:
+              notification.isRead
+                  ? Colors.transparent
+                  : AppColors.primary.withOpacity(0.2),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(Icons.school, color: AppColors.primary, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  notification.title,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight:
+                        notification.isRead ? FontWeight.w500 : FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  notification.message,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  _formatTimestamp(notification.timestamp),
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.close, size: 18),
+            color: AppColors.textSecondary,
+            onPressed: () => _removeNotification(notification.id),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatTimestamp(DateTime timestamp) {
+    final now = DateTime.now();
+    final difference = now.difference(timestamp);
+
+    if (difference.inDays > 7) {
+      return '${timestamp.day}/${timestamp.month}/${timestamp.year}';
+    } else if (difference.inDays > 0) {
+      return '${difference.inDays} day${difference.inDays > 1 ? 's' : ''} ago';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours} hour${difference.inHours > 1 ? 's' : ''} ago';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes} minute${difference.inMinutes > 1 ? 's' : ''} ago';
+    } else {
+      return 'Just now';
+    }
+  }
+
+  void _showNotificationsDialog() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder:
+          (context) => Container(
+            height: MediaQuery.of(context).size.height * 0.75,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+            ),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Notifications',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child:
+                      _notifications.isEmpty
+                          ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.notifications_none,
+                                  size: 64,
+                                  color: Colors.grey[300],
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'No notifications',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                          : ListView.builder(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            itemCount: _notifications.length,
+                            itemBuilder: (context, index) {
+                              final notification = _notifications[index];
+                              return GestureDetector(
+                                onTap: () => _markAsRead(notification.id),
+                                child: _buildNotificationItem(notification),
+                              );
+                            },
+                          ),
+                ),
+              ],
+            ),
+          ),
     );
   }
 
@@ -1054,22 +1372,51 @@ class _HomeContentPageState extends State<HomeContentPage> {
         ),
         centerTitle: true,
         actions: [
-          Container(
-            margin: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: IconButton(
-              icon: const Icon(
-                Icons.notifications,
-                color: AppColors.primary,
-                size: 24,
+          Stack(
+            children: [
+              Container(
+                margin: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.notifications,
+                    color: AppColors.primary,
+                    size: 24,
+                  ),
+                  onPressed: () {
+                    _showNotificationsDialog();
+                  },
+                ),
               ),
-              onPressed: () {
-                // TODO: Navigate to notifications
-              },
-            ),
+              if (_notifications.where((n) => !n.isRead).isNotEmpty)
+                Positioned(
+                  right: 4,
+                  top: 4,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 18,
+                      minHeight: 18,
+                    ),
+                    child: Text(
+                      '${_notifications.where((n) => !n.isRead).length}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
           ),
         ],
       ),
@@ -1078,6 +1425,67 @@ class _HomeContentPageState extends State<HomeContentPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Notifications Section
+            if (_notifications.isNotEmpty) ...[
+              Container(
+                margin: const EdgeInsets.only(bottom: 16),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Notifications',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        if (_notifications.where((n) => !n.isRead).isNotEmpty)
+                          TextButton(
+                            onPressed: () {
+                              setState(() {
+                                _notifications =
+                                    _notifications
+                                        .map((n) => n.copyWith(isRead: true))
+                                        .toList();
+                              });
+                            },
+                            child: const Text(
+                              'Mark all as read',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    ..._notifications
+                        .take(3)
+                        .map(
+                          (notification) =>
+                              _buildNotificationItem(notification),
+                        ),
+                  ],
+                ),
+              ),
+            ],
             // Search Bar with Gradient Shadow
             Container(
               decoration: BoxDecoration(
@@ -1135,10 +1543,10 @@ class _HomeContentPageState extends State<HomeContentPage> {
                         itemCount: _projects.length,
                         itemBuilder: (context, index) {
                           final project = _projects[index];
-                          // Debug: verify Ideas Expo is in the list
+                          // Debug: verify Digital Expo is in the list
                           if (project.id == 'ideas_expo') {
                             debugPrint(
-                              'Ideas Expo card found at index: $index',
+                              'Digital Expo card found at index: $index',
                             );
                           }
                           return _buildProjectCard(

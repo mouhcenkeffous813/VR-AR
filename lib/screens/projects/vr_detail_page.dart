@@ -358,7 +358,7 @@ class _VRDetailPageState extends State<VRDetailPage> {
                       // About VR Section
                       _buildSectionCard(
                         icon: Icons.vrpano_rounded,
-                        title: 'About VR',
+                        title: 'Live section in 3d worlds',
                         child: Text(
                           'Step into the future with our immersive Virtual Reality platform. Connect with others in virtual spaces, learn through interactive experiences, play games, and socialize in a whole new dimension.',
                           style: const TextStyle(
@@ -374,30 +374,30 @@ class _VRDetailPageState extends State<VRDetailPage> {
                       // VR Rooms Section
                       _buildSectionCard(
                         icon: Icons.door_sliding_rounded,
-                        title: 'VR Rooms',
+                        title: '3D Rooms',
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             _buildVRRoomCard(
-                              roomName: 'VR Education',
+                              roomName: '3D Education',
                               participants: _roomParticipants['VR Education']!,
                               icon: Icons.school_rounded,
                               color: const Color(0xFF9C27B0),
                             ),
                             _buildVRRoomCard(
-                              roomName: 'VR Sport',
+                              roomName: '3D Sport',
                               participants: _roomParticipants['VR Sport']!,
                               icon: Icons.sports_esports_rounded,
                               color: const Color(0xFF4CAF50),
                             ),
                             _buildVRRoomCard(
-                              roomName: 'VR Gaming',
+                              roomName: '3D Gaming',
                               participants: _roomParticipants['VR Gaming']!,
                               icon: Icons.sports_esports_rounded,
                               color: const Color(0xFFFF9800),
                             ),
                             _buildVRRoomCard(
-                              roomName: 'VR Social',
+                              roomName: '3D Social',
                               participants: _roomParticipants['VR Social']!,
                               icon: Icons.people_rounded,
                               color: const Color(0xFF2196F3),
