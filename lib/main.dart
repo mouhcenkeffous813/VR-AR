@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:youth_center/screens/auth/pages/login.dart';
-import 'package:youth_center/screens/auth/services/auth_gate.dart';
+import 'package:youth_center/config/app_config.dart';
 import 'package:youth_center/screens/welcome/welcome_screen.dart';
 
 void main() async {
   await Supabase.initialize(
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJmb2hyempreXJ5a3NzaHVla3NxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE4NDEzNzIsImV4cCI6MjA3NzQxNzM3Mn0.0i31xwry-xwy-D5iEtptxhcULj-IOkHuT5gR5O2CRmU',
-    url: 'https://rfohrzjkyryksshueksq.supabase.co',
+    url: AppConfig.supabaseUrl,
+    anonKey: AppConfig.supabaseAnonKey,
   );
   runApp(const MyApp());
 }
