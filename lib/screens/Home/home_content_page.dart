@@ -8,6 +8,7 @@ import 'package:youth_center/screens/career/career_campus_page.dart';
 import 'package:youth_center/screens/clubs/clubs_hub_page.dart';
 import 'package:youth_center/screens/volunteering/volunteering_page.dart';
 import 'package:youth_center/screens/projects/project_detail_page.dart';
+import 'package:youth_center/screens/projects/vr_detail_page.dart';
 import 'package:youth_center/screens/ideas_expo/ideas_expo_page.dart';
 import 'package:youth_center/services/database_service.dart';
 import 'package:youth_center/models/project_model.dart';
@@ -152,11 +153,18 @@ class _HomeContentPageState extends State<HomeContentPage> {
       ),
       ProjectModel(
         id: '3',
-        title: 'Innovation Hub',
+        title: 'Djezzy Hachthon',
         description:
-            'Community-led environmental project to promote sustainability.',
+            'An app to connect local tutors with students for free educational support.',
+        collaborators: '3/5 Collaborators',
+        imagePath: 'images/pic1.jpeg',
+      ),
+      ProjectModel(
+        id: '4',
+        title: 'Virtual Space',
+        description: 'Explore the virtual space with immersive experiences.',
         collaborators: '5/7 Collaborators',
-        imagePath: 'images/pic3.jpeg',
+        imagePath: 'images/vr.jpeg',
       ),
       ProjectModel(
         id: '5',
@@ -228,31 +236,206 @@ class _HomeContentPageState extends State<HomeContentPage> {
         );
       },
       child: Container(
-        margin: const EdgeInsets.all(4),
+        width: 140,
+        margin: const EdgeInsets.only(right: 16),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.grey300, width: 1.5),
+          borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: AppColors.grey300.withOpacity(0.3),
-              blurRadius: 8,
-              offset: const Offset(0, 3),
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 20,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 36, color: iconColor),
-            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [iconColor, iconColor.withOpacity(0.7)],
+                ),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: iconColor.withOpacity(0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Icon(icon, size: 32, color: Colors.white),
+            ),
+            const SizedBox(height: 14),
             Text(
               title,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
+                letterSpacing: 0.2,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEventCard({
+    required String imagePath,
+    required String title,
+    String? time,
+    String? location,
+  }) {
+    return Container(
+      width: 280,
+      margin: const EdgeInsets.only(right: 16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: Stack(
+          children: [
+            Image.asset(
+              imagePath,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: 200,
+              cacheWidth: 560,
+              cacheHeight: 400,
+              frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                if (wasSynchronouslyLoaded) return child;
+                return frame == null
+                    ? Container(
+                      height: 200,
+                      width: double.infinity,
+                      decoration: BoxDecoration(color: Colors.grey[200]),
+                      child: const Center(child: CircularProgressIndicator()),
+                    )
+                    : child;
+              },
+              errorBuilder: (context, error, stackTrace) {
+                debugPrint('Error loading image: $imagePath - $error');
+                return Container(
+                  height: 200,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        const Color(0xFF194CBF),
+                        const Color(0xFF61A1FF),
+                      ],
+                    ),
+                  ),
+                  child: const Icon(Icons.image, size: 60, color: Colors.white),
+                );
+              },
+            ),
+            // Gradient overlay
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
+                  ),
+                ),
+              ),
+            ),
+            // Content
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black54,
+                            blurRadius: 8,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    if (time != null || location != null) ...[
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          if (time != null) ...[
+                            const Icon(
+                              Icons.access_time_rounded,
+                              color: Colors.white70,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              time,
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.9),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            if (location != null) const SizedBox(width: 16),
+                          ],
+                          if (location != null) ...[
+                            const Icon(
+                              Icons.location_on_rounded,
+                              color: Colors.white70,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                location,
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.9),
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
               ),
             ),
           ],
@@ -275,6 +458,13 @@ class _HomeContentPageState extends State<HomeContentPage> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const IdeasExpoPage()),
+          );
+        } else if (projectId == '4' ||
+            title.toLowerCase().contains('virtual space')) {
+          // Special routing for Virtual Space VR project
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const VRDetailPage()),
           );
         } else {
           Navigator.push(
@@ -968,8 +1158,8 @@ class _HomeContentPageState extends State<HomeContentPage> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [AppColors.primary, AppColors.primaryLight],
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF194CBF), Color(0xFF61A1FF)],
                     ),
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -992,21 +1182,86 @@ class _HomeContentPageState extends State<HomeContentPage> {
               ],
             ),
             const SizedBox(height: 16),
-            GridView.count(
-              crossAxisCount: 2,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              childAspectRatio: 1.8,
-              children:
-                  _categories
-                      .map(
-                        (category) => _buildCategoryCard(
-                          icon: category.icon,
-                          title: category.name,
-                          iconColor: category.iconColor,
-                        ),
-                      )
-                      .toList(),
+            // Horizontal scrolling categories
+            SizedBox(
+              height: 160,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                itemCount: _categories.length,
+                itemBuilder: (context, index) {
+                  final category = _categories[index];
+                  return _buildCategoryCard(
+                    icon: category.icon,
+                    title: category.name,
+                    iconColor: category.iconColor,
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 40),
+            // Upcoming Events Section
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF194CBF), Color(0xFF61A1FF)],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.event_rounded,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                const Text(
+                  'Upcoming Events',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            // Horizontal scrolling events
+            SizedBox(
+              height: 220,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                itemCount: 3,
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    return _buildEventCard(
+                      imagePath: 'images/port.jpg',
+                      title: 'How to made portfolio',
+                      time: '10:00 AM',
+                      location: 'Main Hall',
+                    );
+                  } else if (index == 1) {
+                    return _buildEventCard(
+                      imagePath: 'images/bld.jpeg',
+                      title: 'Advanced 3D',
+                      time: '2:00 PM',
+                      location: 'Lab 2',
+                    );
+                  } else {
+                    return _buildEventCard(
+                      imagePath: 'images/bg.jpeg',
+                      title: 'How to fix bug',
+                      time: '4:00 PM',
+                      location: 'Workshop Room',
+                    );
+                  }
+                },
+              ),
             ),
             const SizedBox(height: 80),
           ],

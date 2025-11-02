@@ -24,7 +24,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     const WelcomeContentPage(),
     const OpportunitiesPage(),
     const MapPage(),
-    const LoginScreen(),
   ];
 
   @override
@@ -36,9 +35,17 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
+          // If login is tapped (index 3), navigate to LoginScreen separately
+          if (index == 3) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const LoginScreen()),
+            );
+          } else {
+            setState(() {
+              _currentIndex = index;
+            });
+          }
         },
         type: BottomNavigationBarType.fixed,
         selectedItemColor: const Color(0xFF194CBF),

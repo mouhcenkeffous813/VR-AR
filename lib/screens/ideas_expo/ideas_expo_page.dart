@@ -76,11 +76,11 @@ class _IdeasExpoPageState extends State<IdeasExpoPage> {
     // Static images for first 3 cards - no database needed
     String? cardImage;
     if (index == 0) {
-      cardImage = 'images/blender.jpeg';
+      cardImage = 'images/bld.jpeg';
     } else if (index == 1) {
-      cardImage = 'images/portfolio.jpeg';
+      cardImage = 'images/port.jpg';
     } else if (index == 2) {
-      cardImage = 'images/bug.jpeg';
+      cardImage = 'images/bg.jpeg';
     }
 
     return Container(
