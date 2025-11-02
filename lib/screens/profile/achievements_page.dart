@@ -153,14 +153,15 @@ class _AchievementsPageState extends State<AchievementsPage> {
                           const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3,
                             crossAxisSpacing: 16,
-                            mainAxisSpacing: 24,
-                            childAspectRatio: 0.75,
+                            mainAxisSpacing: 20,
+                            childAspectRatio: 0.82,
                           ),
                       itemCount: _achievements.length,
                       itemBuilder: (context, index) {
                         return _buildAchievementBadge(_achievements[index]);
                       },
                     ),
+                    const SizedBox(height: 8),
                   ],
                 ),
               ),
@@ -175,55 +176,103 @@ class _AchievementsPageState extends State<AchievementsPage> {
     final isUnlocked = achievement['unlocked'] == true;
     final iconColor = achievement['iconColor'] as Color;
 
-    return Column(
-      children: [
-        // Badge Icon
-        Container(
-          width: 80,
-          height: 80,
-          decoration: BoxDecoration(
-            color: isUnlocked ? iconColor.withOpacity(0.1) : AppColors.grey100,
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: isUnlocked ? iconColor : AppColors.grey300,
-              width: 2,
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: isUnlocked
+                ? iconColor.withOpacity(0.2)
+                : Colors.black.withOpacity(0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        border: Border.all(
+          color: isUnlocked
+              ? iconColor.withOpacity(0.3)
+              : AppColors.grey300.withOpacity(0.5),
+          width: 1.5,
+        ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Badge Icon
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              gradient: isUnlocked
+                  ? LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        iconColor,
+                        iconColor.withOpacity(0.7),
+                      ],
+                    )
+                  : null,
+              color: isUnlocked ? null : AppColors.grey100,
+              shape: BoxShape.circle,
+              boxShadow: isUnlocked
+                  ? [
+                      BoxShadow(
+                        color: iconColor.withOpacity(0.4),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Icon(
+              achievement['icon'],
+              color: isUnlocked ? Colors.white : AppColors.textDisabled,
+              size: 32,
             ),
           ),
-          child: Icon(
-            achievement['icon'],
-            color: isUnlocked ? iconColor : AppColors.textDisabled,
-            size: 40,
-          ),
-        ),
-        const SizedBox(height: 12),
+          const SizedBox(height: 10),
 
-        // Title
-        Text(
-          achievement['title'],
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.bold,
-            color: isUnlocked ? AppColors.textPrimary : AppColors.textDisabled,
+          // Title
+          Flexible(
+            child: Text(
+              achievement['title'],
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: isUnlocked
+                    ? AppColors.textPrimary
+                    : AppColors.textDisabled,
+                letterSpacing: 0.2,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-        const SizedBox(height: 4),
+          const SizedBox(height: 4),
 
-        // Description
-        Text(
-          achievement['description'],
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 11,
-            color:
-                isUnlocked ? AppColors.textSecondary : AppColors.textDisabled,
+          // Description
+          Flexible(
+            child: Text(
+              achievement['description'],
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 10,
+                color: isUnlocked
+                    ? AppColors.textSecondary
+                    : AppColors.textDisabled,
+                height: 1.2,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

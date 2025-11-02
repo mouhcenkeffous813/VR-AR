@@ -24,7 +24,7 @@ class OpportunityDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final typeColor = _getTypeColor(opportunity['type'] ?? '');
-    
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Stack(
@@ -35,24 +35,21 @@ class OpportunityDetailPage extends StatelessWidget {
             left: 0,
             right: 0,
             child: Container(
-              constraints: const BoxConstraints(
-                maxHeight: 250,
-                minHeight: 220,
-              ),
+              constraints: const BoxConstraints(maxHeight: 250, minHeight: 220),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [
-                    typeColor,
-                    typeColor.withOpacity(0.7),
-                  ],
+                  colors: [typeColor, typeColor.withOpacity(0.7)],
                 ),
               ),
               child: SafeArea(
                 bottom: false,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
+                  ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -116,28 +113,30 @@ class OpportunityDetailPage extends StatelessWidget {
                               offset: const Offset(0, 6),
                             ),
                           ],
-                          image: opportunity['image'] != null
-                              ? DecorationImage(
-                                  image: AssetImage(opportunity['image']),
-                                  fit: BoxFit.cover,
-                                )
-                              : null,
+                          image:
+                              opportunity['image'] != null
+                                  ? DecorationImage(
+                                    image: AssetImage(opportunity['image']),
+                                    fit: BoxFit.cover,
+                                  )
+                                  : null,
                         ),
-                        child: opportunity['image'] == null
-                            ? Center(
-                                child: Text(
-                                  opportunity['company']
-                                      .toString()
-                                      .substring(0, 2)
-                                      .toUpperCase(),
-                                  style: TextStyle(
-                                    color: typeColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 26,
+                        child:
+                            opportunity['image'] == null
+                                ? Center(
+                                  child: Text(
+                                    opportunity['company']
+                                        .toString()
+                                        .substring(0, 2)
+                                        .toUpperCase(),
+                                    style: TextStyle(
+                                      color: typeColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 26,
+                                    ),
                                   ),
-                                ),
-                              )
-                            : null,
+                                )
+                                : null,
                       ),
                     ],
                   ),
@@ -150,8 +149,8 @@ class OpportunityDetailPage extends StatelessWidget {
           Positioned.fill(
             top: 220,
             child: DraggableScrollableSheet(
-              initialChildSize: 0.68,
-              minChildSize: 0.68,
+              initialChildSize: 0.95,
+              minChildSize: 0.85,
               maxChildSize: 0.95,
               builder: (context, scrollController) {
                 return Container(
@@ -169,218 +168,224 @@ class OpportunityDetailPage extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                      // Company and Title Section
-                      Center(
-                        child: Container(
-                          width: 50,
-                          height: 4,
-                          margin: const EdgeInsets.only(bottom: 12),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[300],
-                            borderRadius: BorderRadius.circular(2),
+                        // Company and Title Section
+                        Center(
+                          child: Container(
+                            width: 50,
+                            height: 4,
+                            margin: const EdgeInsets.only(bottom: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[300],
+                              borderRadius: BorderRadius.circular(2),
+                            ),
                           ),
                         ),
-                      ),
-                      Center(
-                        child: Text(
-                          opportunity['company'] ?? '',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: typeColor,
+                        Center(
+                          child: Text(
+                            opportunity['company'] ?? '',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: typeColor,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          textAlign: TextAlign.center,
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      Center(
-                        child: Text(
-                          opportunity['title'] ?? '',
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
-                            height: 1.3,
+                        const SizedBox(height: 8),
+                        Center(
+                          child: Text(
+                            opportunity['title'] ?? '',
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textPrimary,
+                              height: 1.3,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          textAlign: TextAlign.center,
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      Center(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.location_on_rounded,
-                              size: 16,
+                        const SizedBox(height: 10),
+                        Center(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.location_on_rounded,
+                                size: 16,
+                                color: AppColors.textSecondary,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                opportunity['location'] ?? '',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: AppColors.textSecondary,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 18),
+
+                        // Tags
+                        Wrap(
+                          alignment: WrapAlignment.center,
+                          spacing: 10,
+                          runSpacing: 10,
+                          children:
+                              (opportunity['tags'] as List<dynamic>?)
+                                  ?.map(
+                                    (tag) => Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 10,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            typeColor.withOpacity(0.15),
+                                            typeColor.withOpacity(0.08),
+                                          ],
+                                        ),
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                          color: typeColor.withOpacity(0.3),
+                                          width: 1,
+                                        ),
+                                      ),
+                                      child: Text(
+                                        tag.toString(),
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: typeColor,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                  .toList() ??
+                              [],
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        // About the Role Section
+                        _buildSectionCard(
+                          icon: Icons.info_outline_rounded,
+                          title: 'About the Role',
+                          child: Text(
+                            _getRoleDescription(opportunity['type'] ?? ''),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              height: 1.6,
                               color: AppColors.textSecondary,
                             ),
-                            const SizedBox(width: 6),
-                            Text(
-                              opportunity['location'] ?? '',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: AppColors.textSecondary,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
+                          ),
+                          color: typeColor,
                         ),
-                      ),
-                      const SizedBox(height: 18),
 
-                      // Tags
-                      Wrap(
-                        alignment: WrapAlignment.center,
-                        spacing: 10,
-                        runSpacing: 10,
-                        children:
-                            (opportunity['tags'] as List<dynamic>?)
-                                ?.map(
-                                  (tag) => Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 10,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          typeColor.withOpacity(0.15),
-                                          typeColor.withOpacity(0.08),
-                                        ],
+                        const SizedBox(height: 14),
+
+                        // Key Responsibilities Section
+                        _buildSectionCard(
+                          icon: Icons.checklist_rounded,
+                          title: 'Key Responsibilities',
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: List.generate(
+                              4,
+                              (index) => Padding(
+                                padding: EdgeInsets.only(
+                                  bottom: index < 3 ? 12 : 0,
+                                ),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      margin: const EdgeInsets.only(
+                                        top: 5,
+                                        right: 12,
                                       ),
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                        color: typeColor.withOpacity(0.3),
-                                        width: 1,
+                                      padding: const EdgeInsets.all(5),
+                                      decoration: BoxDecoration(
+                                        color: typeColor.withOpacity(0.15),
+                                        shape: BoxShape.circle,
                                       ),
-                                    ),
-                                    child: Text(
-                                      tag.toString(),
-                                      style: TextStyle(
-                                        fontSize: 13,
+                                      child: Icon(
+                                        Icons.check_rounded,
+                                        size: 12,
                                         color: typeColor,
-                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
-                                  ),
-                                )
-                                .toList() ??
-                            [],
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      // About the Role Section
-                      _buildSectionCard(
-                        icon: Icons.info_outline_rounded,
-                        title: 'About the Role',
-                        child: Text(
-                          _getRoleDescription(opportunity['type'] ?? ''),
-                          style: const TextStyle(
-                            fontSize: 14,
-                            height: 1.6,
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                        color: typeColor,
-                      ),
-
-                      const SizedBox(height: 14),
-
-                      // Key Responsibilities Section
-                      _buildSectionCard(
-                        icon: Icons.checklist_rounded,
-                        title: 'Key Responsibilities',
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: List.generate(
-                            4,
-                            (index) => Padding(
-                              padding: EdgeInsets.only(
-                                bottom: index < 3 ? 12 : 0,
-                              ),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    margin: const EdgeInsets.only(top: 5, right: 12),
-                                    padding: const EdgeInsets.all(5),
-                                    decoration: BoxDecoration(
-                                      color: typeColor.withOpacity(0.15),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Icon(
-                                      Icons.check_rounded,
-                                      size: 12,
-                                      color: typeColor,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                      _getResponsibility(index, opportunity),
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        height: 1.5,
-                                        color: AppColors.textSecondary,
+                                    Expanded(
+                                      child: Text(
+                                        _getResponsibility(index, opportunity),
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          height: 1.5,
+                                          color: AppColors.textSecondary,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ),
+                          color: typeColor,
                         ),
-                        color: typeColor,
-                      ),
 
-                      const SizedBox(height: 14),
+                        const SizedBox(height: 14),
 
-                      // Requirements Section
-                      _buildSectionCard(
-                        icon: Icons.verified_user_rounded,
-                        title: 'Requirements',
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: List.generate(
-                            3,
-                            (index) => Padding(
-                              padding: EdgeInsets.only(
-                                bottom: index < 2 ? 12 : 0,
-                              ),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    margin: const EdgeInsets.only(top: 5, right: 12),
-                                    padding: const EdgeInsets.all(5),
-                                    decoration: BoxDecoration(
-                                      color: typeColor.withOpacity(0.15),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Icon(
-                                      Icons.star_rounded,
-                                      size: 12,
-                                      color: typeColor,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                      _getRequirement(index, opportunity),
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        height: 1.5,
-                                        color: AppColors.textSecondary,
+                        // Requirements Section
+                        _buildSectionCard(
+                          icon: Icons.verified_user_rounded,
+                          title: 'Requirements',
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: List.generate(
+                              3,
+                              (index) => Padding(
+                                padding: EdgeInsets.only(
+                                  bottom: index < 2 ? 12 : 0,
+                                ),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      margin: const EdgeInsets.only(
+                                        top: 5,
+                                        right: 12,
+                                      ),
+                                      padding: const EdgeInsets.all(5),
+                                      decoration: BoxDecoration(
+                                        color: typeColor.withOpacity(0.15),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Icon(
+                                        Icons.star_rounded,
+                                        size: 12,
+                                        color: typeColor,
                                       ),
                                     ),
-                                  ),
-                                ],
+                                    Expanded(
+                                      child: Text(
+                                        _getRequirement(index, opportunity),
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          height: 1.5,
+                                          color: AppColors.textSecondary,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
+                          color: typeColor,
                         ),
-                        color: typeColor,
-                      ),
                       ],
                     ),
                   ),
@@ -411,10 +416,7 @@ class OpportunityDetailPage extends StatelessWidget {
                   height: 56,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [
-                        typeColor,
-                        typeColor.withOpacity(0.8),
-                      ],
+                      colors: [typeColor, typeColor.withOpacity(0.8)],
                     ),
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
@@ -472,10 +474,7 @@ class OpportunityDetailPage extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: color.withOpacity(0.2),
-          width: 1.5,
-        ),
+        border: Border.all(color: color.withOpacity(0.2), width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -496,11 +495,7 @@ class OpportunityDetailPage extends StatelessWidget {
                   color: color.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: 22,
-                ),
+                child: Icon(icon, color: color, size: 22),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -575,161 +570,163 @@ class OpportunityDetailPage extends StatelessWidget {
 
   void _showApplyDialog(BuildContext context) {
     final typeColor = _getTypeColor(opportunity['type'] ?? '');
-    
+
     showDialog(
       context: context,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Container(
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
-            color: Colors.white,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Icon
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: typeColor.withOpacity(0.15),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.work_outline_rounded,
-                  color: typeColor,
-                  size: 48,
-                ),
+      builder:
+          (context) => Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(24),
+                color: Colors.white,
               ),
-              const SizedBox(height: 20),
-              const Text(
-                'Apply for this Opportunity',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'Your application will be submitted. Make sure your profile is complete and up to date.',
-                style: TextStyle(
-                  fontSize: 15,
-                  color: AppColors.textSecondary,
-                  height: 1.5,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 32),
-              // Buttons
-              Row(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        side: BorderSide(
-                          color: Colors.grey[300]!,
-                          width: 1.5,
-                        ),
-                      ),
-                      child: const Text(
-                        'Cancel',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
+                  // Icon
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: typeColor.withOpacity(0.15),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.work_outline_rounded,
+                      color: typeColor,
+                      size: 48,
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    flex: 2,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            typeColor,
-                            typeColor.withOpacity(0.8),
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: typeColor.withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Apply for this Opportunity',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Your application will be submitted. Make sure your profile is complete and up to date.',
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: AppColors.textSecondary,
+                      height: 1.5,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 32),
+                  // Buttons
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            side: BorderSide(
+                              color: Colors.grey[300]!,
+                              width: 1.5,
+                            ),
                           ),
-                        ],
+                          child: const Text(
+                            'Cancel',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                        ),
                       ),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Row(
-                                children: [
-                                  const Icon(
-                                    Icons.check_circle_rounded,
-                                    color: Colors.white,
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Text(
-                                      'Application submitted for ${opportunity['title']}!',
-                                    ),
-                                  ),
-                                ],
+                      const SizedBox(width: 12),
+                      Expanded(
+                        flex: 2,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [typeColor, typeColor.withOpacity(0.8)],
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: typeColor.withOpacity(0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
                               ),
-                              backgroundColor: AppColors.success,
-                              behavior: SnackBarBehavior.floating,
+                            ],
+                          ),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.check_circle_rounded,
+                                        color: Colors.white,
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Text(
+                                          'Application submitted for ${opportunity['title']}!',
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  backgroundColor: AppColors.success,
+                                  behavior: SnackBarBehavior.floating,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.send_rounded,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Submit',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.send_rounded, color: Colors.white, size: 20),
-                            SizedBox(width: 8),
-                            Text(
-                              'Submit',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
     );
   }
 }
