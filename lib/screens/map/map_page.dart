@@ -136,7 +136,7 @@ class _MapPageState extends State<MapPage> {
                                 'rating': 4.5,
                                 'reviews': 120,
                                 'tags': ['Wilaya', 'Algeria'],
-                                'image': 'images/OIP.jpg',
+                                'image': 'images/Layer 1.png',
                               };
                             });
                           },
@@ -339,7 +339,7 @@ class _MapPageState extends State<MapPage> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Image.asset(
-                    place['image'] ?? 'images/OIP.jpg',
+                    place['image'] ?? 'images/Layer 1.png',
                     width: 100,
                     height: 100,
                     fit: BoxFit.cover,

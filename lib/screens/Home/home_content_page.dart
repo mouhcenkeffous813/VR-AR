@@ -1067,10 +1067,20 @@ class _HomeContentPageState extends State<HomeContentPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(
-                        Icons.account_circle,
-                        size: 60,
-                        color: Colors.white,
+                      Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.asset(
+                            'images/Layer 1.png',
+                            fit: BoxFit.contain,
+                          ),
+                        ),
                       ),
                       const SizedBox(height: 12),
                       Text(
@@ -1083,7 +1093,7 @@ class _HomeContentPageState extends State<HomeContentPage> {
                       ),
                       const SizedBox(height: 4),
                       const Text(
-                        'Youth Center',
+                        'Skill Center',
                         style: TextStyle(
                           color: Color.fromARGB(179, 15, 71, 238),
                           fontSize: 14,
@@ -1362,7 +1372,7 @@ class _HomeContentPageState extends State<HomeContentPage> {
               ),
         ),
         title: const Text(
-          'Youth Center',
+          'Skill Center',
           style: TextStyle(
             color: AppColors.primary,
             fontSize: 24,

@@ -1,6 +1,6 @@
 # Backend Setup Guide
 
-This guide will help you set up your Supabase database for the Youth Center app.
+This guide will help you set up your Supabase database for the Skill Center app.
 
 ## 📋 Prerequisites
 

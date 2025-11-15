@@ -127,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             child: ClipOval(
                               child: Image.asset(
-                                'images/OIP.jpg',
+                                'images/Layer 1.png',
                                 width: 140,
                                 height: 140,
                                 fit: BoxFit.cover,
@@ -238,7 +238,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Text(
                           "Don't have an account? ",
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.9),
+                            color: Colors.black.withOpacity(0.9),
                             fontSize: 15,
                           ),
                         ),
@@ -262,7 +262,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: const Text(
                             'Register',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Colors.black,
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
                               decoration: TextDecoration.underline,

@@ -108,7 +108,10 @@ class _RegisterPageState extends State<RegisterPage> {
                     Row(
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.arrow_back, color: Colors.white),
+                          icon: const Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                          ),
                           onPressed: () => Navigator.pop(context),
                         ),
                       ],
@@ -132,7 +135,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               ],
                             ),
                             child: Image.asset(
-                              'images/OIP.jpg',
+                              'images/Layer 1.png',
                               height: 100,
                               width: 100,
                               fit: BoxFit.contain,
@@ -194,7 +197,9 @@ class _RegisterPageState extends State<RegisterPage> {
                               onChanged: (_) {
                                 // Re-validate confirm password if it has content (for password matching)
                                 if (confirmPasswordController.text.isNotEmpty) {
-                                  Future.microtask(() => _formKey.currentState?.validate());
+                                  Future.microtask(
+                                    () => _formKey.currentState?.validate(),
+                                  );
                                 }
                               },
                             ),
@@ -223,7 +228,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         Text(
                           'Already have an account? ',
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.9),
+                            color: Colors.black.withOpacity(0.9),
                             fontSize: 15,
                           ),
                         ),
@@ -242,7 +247,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           child: const Text(
                             'Login',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Colors.black,
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
                               decoration: TextDecoration.underline,

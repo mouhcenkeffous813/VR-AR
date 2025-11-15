@@ -73,15 +73,18 @@ class _ProfilePageState extends State<ProfilePage>
     try {
       await authService.signOut();
       if (!context.mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Logged out')));
-
-      // Navigate directly to LoginScreen
-      Navigator.of(context).pushAndRemoveUntil(
+      
+      // Navigate directly to LoginScreen and remove all previous routes
+      Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => const LoginScreen()),
         (route) => false,
       );
+      
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Logged out')),
+        );
+      }
     } catch (e) {
       if (context.mounted) {
         String errorMessage = 'An error occurred';
@@ -90,9 +93,9 @@ class _ProfilePageState extends State<ProfilePage>
         } else if (e is Exception) {
           errorMessage = e.toString();
         }
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(errorMessage)));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage)),
+        );
       }
     }
   }
