@@ -40,7 +40,7 @@ class IconHelper {
       final hexCode = hexString.replaceFirst('#', '0xFF');
       return Color(int.parse(hexCode));
     } catch (e) {
-      return const Color(0xFF194CBF); // Default blue
+      return const Color(0xFFF6093D); // Default blue
     }
   }
 }

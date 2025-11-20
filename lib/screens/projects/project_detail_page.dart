@@ -39,7 +39,7 @@ class ProjectDetailPage extends StatelessWidget {
                       gradient: const LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
-                        colors: [Color(0xFF194CBF), Color(0xFF61A1FF)],
+                        colors: [Color(0xFFF6093D), Color(0xFF2C2225)],
                       ),
                     ),
                     child:
@@ -77,14 +77,14 @@ class ProjectDetailPage extends StatelessWidget {
                         children: [
                           Container(
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Color(0xFF2C2225).withOpacity(0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: IconButton(
                               onPressed: () => Navigator.of(context).pop(),
                               icon: const Icon(
                                 Icons.arrow_back_rounded,
-                                color: Colors.white,
+                                color: Color(0xFF2C2225),
                                 size: 24,
                               ),
                             ),
@@ -92,7 +92,7 @@ class ProjectDetailPage extends StatelessWidget {
                           const Spacer(),
                           Container(
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Color(0xFF2C2225).withOpacity(0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: IconButton(
@@ -103,13 +103,13 @@ class ProjectDetailPage extends StatelessWidget {
                                       children: [
                                         Icon(
                                           Icons.check_circle_rounded,
-                                          color: Colors.white,
+                                          color: Color(0xFF2C2225),
                                         ),
                                         SizedBox(width: 12),
                                         Text('Shared successfully!'),
                                       ],
                                     ),
-                                    backgroundColor: const Color(0xFF194CBF),
+                                    backgroundColor: const Color(0xFFF6093D),
                                     behavior: SnackBarBehavior.floating,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12),
@@ -119,7 +119,7 @@ class ProjectDetailPage extends StatelessWidget {
                               },
                               icon: const Icon(
                                 Icons.share_rounded,
-                                color: Colors.white,
+                                color: Color(0xFF2C2225),
                                 size: 24,
                               ),
                             ),
@@ -144,7 +144,7 @@ class ProjectDetailPage extends StatelessWidget {
                               vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.25),
+                              color: Color(0xFF2C2225).withOpacity(0.25),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Row(
@@ -152,14 +152,14 @@ class ProjectDetailPage extends StatelessWidget {
                               children: [
                                 const Icon(
                                   Icons.people_rounded,
-                                  color: Colors.white,
+                                  color: Color(0xFF2C2225),
                                   size: 16,
                                 ),
                                 const SizedBox(width: 6),
                                 Text(
                                   collaborators,
                                   style: const TextStyle(
-                                    color: Colors.white,
+                                    color: Color(0xFF2C2225),
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -171,7 +171,7 @@ class ProjectDetailPage extends StatelessWidget {
                           Text(
                             title,
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFF2C2225),
                               fontSize: 32,
                               fontWeight: FontWeight.bold,
                               shadows: [
@@ -196,7 +196,7 @@ class ProjectDetailPage extends StatelessWidget {
             builder: (context, scrollController) {
               return Container(
                 decoration: const BoxDecoration(
-                  color: Colors.white,
+                  color: Color(0xFF2C2225),
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(30),
                     topRight: Radius.circular(30),
@@ -317,7 +317,7 @@ class ProjectDetailPage extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Color(0xFF2C2225),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
@@ -335,12 +335,12 @@ class ProjectDetailPage extends StatelessWidget {
                       height: 56,
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [Color(0xFF194CBF), Color(0xFF61A1FF)],
+                          colors: [Color(0xFFF6093D), Color(0xFF2C2225)],
                         ),
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF194CBF).withOpacity(0.4),
+                            color: const Color(0xFFF6093D).withOpacity(0.4),
                             blurRadius: 15,
                             offset: const Offset(0, 8),
                           ),
@@ -362,7 +362,7 @@ class ProjectDetailPage extends StatelessWidget {
                           children: [
                             Icon(
                               Icons.group_add_rounded,
-                              color: Colors.white,
+                              color: Color(0xFF2C2225),
                               size: 22,
                             ),
                             SizedBox(width: 12),
@@ -371,7 +371,7 @@ class ProjectDetailPage extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: Color(0xFF2C2225),
                               ),
                             ),
                           ],
@@ -421,7 +421,7 @@ class ProjectDetailPage extends StatelessWidget {
                             children: [
                               Icon(
                                 Icons.fiber_manual_record_rounded,
-                                color: Colors.white,
+                                color: Color(0xFF2C2225),
                                 size: 18,
                               ),
                               SizedBox(width: 10),
@@ -430,7 +430,7 @@ class ProjectDetailPage extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                                  color: Color(0xFF2C2225),
                                 ),
                               ),
                             ],
@@ -456,10 +456,10 @@ class ProjectDetailPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Color(0xFF2C2225),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: const Color(0xFF194CBF).withOpacity(0.2),
+          color: const Color(0xFFF6093D).withOpacity(0.2),
           width: 1.5,
         ),
         boxShadow: [
@@ -479,10 +479,10 @@ class ProjectDetailPage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF194CBF).withOpacity(0.15),
+                  color: const Color(0xFFF6093D).withOpacity(0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(icon, color: const Color(0xFF194CBF), size: 22),
+                child: Icon(icon, color: const Color(0xFFF6093D), size: 22),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -516,10 +516,10 @@ class ProjectDetailPage extends StatelessWidget {
           margin: const EdgeInsets.only(top: 4),
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-            color: const Color(0xFF194CBF).withOpacity(0.1),
+            color: const Color(0xFFF6093D).withOpacity(0.1),
             shape: BoxShape.circle,
           ),
-          child: Icon(icon, size: 16, color: const Color(0xFF194CBF)),
+          child: Icon(icon, size: 16, color: const Color(0xFFF6093D)),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -557,18 +557,18 @@ class ProjectDetailPage extends StatelessWidget {
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
-              colors: [Color(0xFF194CBF), Color(0xFF61A1FF)],
+              colors: [Color(0xFFF6093D), Color(0xFF2C2225)],
             ),
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF194CBF).withOpacity(0.3),
+                color: const Color(0xFFF6093D).withOpacity(0.3),
                 blurRadius: 4,
                 offset: const Offset(0, 2),
               ),
             ],
           ),
-          child: Icon(icon, size: 18, color: Colors.white),
+          child: Icon(icon, size: 18, color: Color(0xFF2C2225)),
         ),
         const SizedBox(width: 14),
         Expanded(
@@ -597,7 +597,7 @@ class ProjectDetailPage extends StatelessWidget {
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(24),
-                color: Colors.white,
+                color: Color(0xFF2C2225),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -606,12 +606,12 @@ class ProjectDetailPage extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF194CBF).withOpacity(0.15),
+                      color: const Color(0xFFF6093D).withOpacity(0.15),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
                       Icons.group_add_rounded,
-                      color: Color(0xFF194CBF),
+                      color: Color(0xFFF6093D),
                       size: 48,
                     ),
                   ),
@@ -668,12 +668,12 @@ class ProjectDetailPage extends StatelessWidget {
                         child: Container(
                           decoration: BoxDecoration(
                             gradient: const LinearGradient(
-                              colors: [Color(0xFF194CBF), Color(0xFF61A1FF)],
+                              colors: [Color(0xFFF6093D), Color(0xFF2C2225)],
                             ),
                             borderRadius: BorderRadius.circular(12),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFF194CBF).withOpacity(0.3),
+                                color: const Color(0xFFF6093D).withOpacity(0.3),
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
@@ -688,7 +688,7 @@ class ProjectDetailPage extends StatelessWidget {
                                     children: [
                                       const Icon(
                                         Icons.check_circle_rounded,
-                                        color: Colors.white,
+                                        color: Color(0xFF2C2225),
                                       ),
                                       const SizedBox(width: 12),
                                       Expanded(
@@ -719,7 +719,7 @@ class ProjectDetailPage extends StatelessWidget {
                               children: [
                                 Icon(
                                   Icons.group_add_rounded,
-                                  color: Colors.white,
+                                  color: Color(0xFF2C2225),
                                   size: 20,
                                 ),
                                 SizedBox(width: 8),
@@ -728,7 +728,7 @@ class ProjectDetailPage extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                    color: Color(0xFF2C2225),
                                   ),
                                 ),
                               ],

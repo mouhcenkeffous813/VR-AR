@@ -86,8 +86,8 @@ class _RegisterPageState extends State<RegisterPage> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              const Color(0xFF194CBF),
-              const Color(0xFF61A1FF),
+              const Color(0xFFF6093D),
+              const Color(0xFF2C2225),
               Colors.white,
             ],
             stops: const [0.0, 0.5, 1.0],
@@ -122,7 +122,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       child: Column(
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(20),
+                            width: 140,
+                            height: 140,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               shape: BoxShape.circle,
@@ -134,11 +135,21 @@ class _RegisterPageState extends State<RegisterPage> {
                                 ),
                               ],
                             ),
-                            child: Image.asset(
-                              'images/Layer 1.png',
-                              height: 100,
-                              width: 100,
-                              fit: BoxFit.contain,
+                            child: Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: ClipOval(
+                                child: Image.asset(
+                                  'images/djeey.png',
+                                  fit: BoxFit.contain,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    debugPrint('Error loading image: $error');
+                                    return Container(
+                                      color: Colors.grey[200],
+                                      child: const Icon(Icons.image, size: 60),
+                                    );
+                                  },
+                                ),
+                              ),
                             ),
                           ),
                           const SizedBox(height: 32),

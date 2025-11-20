@@ -20,29 +20,23 @@ class CategoryModel {
     final iconName = json['icon_name'] as String? ?? 'category';
     
     switch (iconName) {
-      case 'sports_soccer':
-        iconData = Icons.sports_soccer;
+      case 'medical_services':
+        iconData = Icons.medical_services;
         break;
-      case 'design_services':
-        iconData = Icons.design_services;
+      case 'science':
+        iconData = Icons.science;
         break;
-      case 'memory':
-        iconData = Icons.memory;
+      case 'engineering':
+        iconData = Icons.engineering;
         break;
-      case 'code':
-        iconData = Icons.code;
+      case 'build':
+        iconData = Icons.build;
         break;
-      case 'lightbulb':
-        iconData = Icons.lightbulb;
+      case 'crop_free':
+        iconData = Icons.crop_free;
         break;
-      case 'business':
-        iconData = Icons.business;
-        break;
-      case 'library_books':
-        iconData = Icons.library_books;
-        break;
-      case 'videocam':
-        iconData = Icons.videocam;
+      case 'architecture':
+        iconData = Icons.architecture;
         break;
       default:
         iconData = Icons.category;
@@ -68,14 +62,12 @@ class CategoryModel {
   Map<String, dynamic> toJson() {
     // Map IconData to icon_name
     String iconName = 'category';
-    if (icon == Icons.sports_soccer) iconName = 'sports_soccer';
-    else if (icon == Icons.design_services) iconName = 'design_services';
-    else if (icon == Icons.memory) iconName = 'memory';
-    else if (icon == Icons.code) iconName = 'code';
-    else if (icon == Icons.lightbulb) iconName = 'lightbulb';
-    else if (icon == Icons.business) iconName = 'business';
-    else if (icon == Icons.library_books) iconName = 'library_books';
-    else if (icon == Icons.videocam) iconName = 'videocam';
+    if (icon == Icons.medical_services) iconName = 'medical_services';
+    else if (icon == Icons.science) iconName = 'science';
+    else if (icon == Icons.engineering) iconName = 'engineering';
+    else if (icon == Icons.build) iconName = 'build';
+    else if (icon == Icons.crop_free) iconName = 'crop_free';
+    else if (icon == Icons.architecture) iconName = 'architecture';
 
     return {
       'id': id,
@@ -89,36 +81,28 @@ class CategoryModel {
 class CategoryData {
   static const List<CategoryModel> categories = [
     CategoryModel(
-      name: 'Sport Activities',
-      icon: Icons.sports_soccer,
+      name: 'Medicine',
+      icon: Icons.medical_services,
     ),
     CategoryModel(
-      name: 'Digital Design Lab',
-      icon: Icons.design_services,
+      name: 'Chemistry',
+      icon: Icons.science,
     ),
     CategoryModel(
-      name: 'Robotics Garage',
-      icon: Icons.memory,
+      name: 'Engineering',
+      icon: Icons.engineering,
     ),
     CategoryModel(
-      name: 'Dev Room',
-      icon: Icons.code,
+      name: 'Mechanics',
+      icon: Icons.build,
     ),
     CategoryModel(
-      name: 'Innovation Space',
-      icon: Icons.lightbulb,
+      name: 'Geometry',
+      icon: Icons.crop_free,
     ),
     CategoryModel(
-      name: 'Startup Corner',
-      icon: Icons.business,
-    ),
-    CategoryModel(
-      name: 'Library',
-      icon: Icons.library_books,
-    ),
-    CategoryModel(
-      name: 'Creative Media',
-      icon: Icons.videocam,
+      name: 'Architecture',
+      icon: Icons.architecture,
     ),
   ];
 }

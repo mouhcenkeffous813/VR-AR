@@ -63,113 +63,24 @@ class _HomeContentPageState extends State<HomeContentPage> {
   final TextEditingController _searchController = TextEditingController();
   final AuthService _authService = AuthService();
   final DatabaseService _dbService = DatabaseService();
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _contentController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   Timer? _scrollTimer;
   List<ProjectModel> _projects = [];
   bool _isLoadingProjects = true;
   List<CategoryModel> _categories = [];
-  List<NotificationModel> _notifications = [];
 
   @override
   void initState() {
     super.initState();
     _startAutoScroll();
     _loadProjects();
-    _loadCategories();
-    _loadNotifications();
+    _loadCategoriesStatic();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Reload notifications when screen is displayed
-    _loadNotifications();
-  }
-
-  Future<void> _loadNotifications() async {
-    try {
-      final enrollments = await _dbService.getMyEnrollments();
-      final categories = await _dbService.getCategories();
-
-      final List<NotificationModel> notifications = [];
-
-      for (final enrollment in enrollments) {
-        // Try to find the event by searching all categories
-        String eventName = 'Course';
-        try {
-          for (final category in categories) {
-            final events = await _dbService.getEventsByCategoryId(
-              category.id ?? '',
-            );
-            try {
-              final event = events.firstWhere(
-                (e) => e.id == enrollment.eventId,
-              );
-              if (event.name.isNotEmpty) {
-                eventName = event.name;
-                break;
-              }
-            } catch (e) {
-              // Event not found in this category, continue
-              continue;
-            }
-          }
-        } catch (e) {
-          debugPrint('Error finding event: $e');
-        }
-
-        notifications.add(
-          NotificationModel(
-            id: enrollment.id,
-            title: 'Course Enrollment',
-            message: 'You enrolled in $eventName',
-            type: NotificationType.enrollment,
-            timestamp: enrollment.enrolledAt,
-            isRead: false,
-          ),
-        );
-      }
-
-      setState(() {
-        _notifications = notifications;
-      });
-    } catch (e) {
-      debugPrint('Error loading notifications: $e');
-    }
-  }
-
-  void _markAsRead(String notificationId) {
+  void _loadCategoriesStatic() {
     setState(() {
-      final index = _notifications.indexWhere((n) => n.id == notificationId);
-      if (index != -1) {
-        _notifications[index] = _notifications[index].copyWith(isRead: true);
-      }
+      _categories = CategoryData.categories;
     });
-  }
-
-  void _removeNotification(String notificationId) {
-    setState(() {
-      _notifications.removeWhere((n) => n.id == notificationId);
-    });
-  }
-
-  Future<void> _loadCategories() async {
-    try {
-      final dbCategories = await _dbService.getCategories();
-
-      // If database has categories, use them; otherwise use default
-      setState(() {
-        _categories =
-            dbCategories.isNotEmpty ? dbCategories : CategoryData.categories;
-      });
-    } catch (e) {
-      // Fallback to default categories on error
-      setState(() {
-        _categories = CategoryData.categories;
-      });
-    }
   }
 
   Future<void> _loadProjects() async {
@@ -355,8 +266,6 @@ class _HomeContentPageState extends State<HomeContentPage> {
     _scrollTimer?.cancel();
     _scrollController.dispose();
     _searchController.dispose();
-    _titleController.dispose();
-    _contentController.dispose();
     super.dispose();
   }
 
@@ -405,15 +314,15 @@ class _HomeContentPageState extends State<HomeContentPage> {
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [iconColor, iconColor.withOpacity(0.7)],
+                  colors: [Color(0xFFF6093D), Color(0xFF2C2225)],
                 ),
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: iconColor.withOpacity(0.3),
+                    color: const Color(0xFFF6093D).withOpacity(0.3),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -491,8 +400,8 @@ class _HomeContentPageState extends State<HomeContentPage> {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        const Color(0xFF194CBF),
-                        const Color(0xFF61A1FF),
+                        const Color(0xFFF6093D),
+                        const Color(0xFF2C2225),
                       ],
                     ),
                   ),
@@ -696,7 +605,7 @@ class _HomeContentPageState extends State<HomeContentPage> {
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
-                        colors: [AppColors.primaryLight, AppColors.primary],
+                        colors: [Color(0xFFF6093D), Color(0xFF2C2225)],
                       ),
                     ),
                     child: const Icon(
@@ -832,175 +741,6 @@ class _HomeContentPageState extends State<HomeContentPage> {
     );
   }
 
-  Widget _buildNotificationItem(NotificationModel notification) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color:
-            notification.isRead
-                ? Colors.grey[50]
-                : AppColors.primary.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color:
-              notification.isRead
-                  ? Colors.transparent
-                  : AppColors.primary.withOpacity(0.2),
-          width: 1,
-        ),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(Icons.school, color: AppColors.primary, size: 20),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  notification.title,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight:
-                        notification.isRead ? FontWeight.w500 : FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  notification.message,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  _formatTimestamp(notification.timestamp),
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.close, size: 18),
-            color: AppColors.textSecondary,
-            onPressed: () => _removeNotification(notification.id),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _formatTimestamp(DateTime timestamp) {
-    final now = DateTime.now();
-    final difference = now.difference(timestamp);
-
-    if (difference.inDays > 7) {
-      return '${timestamp.day}/${timestamp.month}/${timestamp.year}';
-    } else if (difference.inDays > 0) {
-      return '${difference.inDays} day${difference.inDays > 1 ? 's' : ''} ago';
-    } else if (difference.inHours > 0) {
-      return '${difference.inHours} hour${difference.inHours > 1 ? 's' : ''} ago';
-    } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes} minute${difference.inMinutes > 1 ? 's' : ''} ago';
-    } else {
-      return 'Just now';
-    }
-  }
-
-  void _showNotificationsDialog() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder:
-          (context) => Container(
-            height: MediaQuery.of(context).size.height * 0.75,
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-              ),
-            ),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Notifications',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child:
-                      _notifications.isEmpty
-                          ? Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.notifications_none,
-                                  size: 64,
-                                  color: Colors.grey[300],
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  'No notifications',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                          : ListView.builder(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            itemCount: _notifications.length,
-                            itemBuilder: (context, index) {
-                              final notification = _notifications[index];
-                              return GestureDetector(
-                                onTap: () => _markAsRead(notification.id),
-                                child: _buildNotificationItem(notification),
-                              );
-                            },
-                          ),
-                ),
-              ],
-            ),
-          ),
-    );
-  }
-
   Widget _buildDrawerItem({
     required IconData icon,
     required String title,
@@ -1055,7 +795,7 @@ class _HomeContentPageState extends State<HomeContentPage> {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [AppColors.primary, AppColors.primaryDark],
+                colors: [Color(0xFFF6093D), Color(0xFF2C2225)],
               ),
             ),
             child: Stack(
@@ -1077,7 +817,7 @@ class _HomeContentPageState extends State<HomeContentPage> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(12),
                           child: Image.asset(
-                            'images/Layer 1.png',
+                            'images/djeey.png',
                             fit: BoxFit.contain,
                           ),
                         ),
@@ -1093,7 +833,7 @@ class _HomeContentPageState extends State<HomeContentPage> {
                       ),
                       const SizedBox(height: 4),
                       const Text(
-                        'Skill Center',
+                        'NextVerse',
                         style: TextStyle(
                           color: Color.fromARGB(179, 15, 71, 238),
                           fontSize: 14,
@@ -1153,196 +893,6 @@ class _HomeContentPageState extends State<HomeContentPage> {
     );
   }
 
-  void _showBottomSheet() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder:
-          (context) => Container(
-            decoration: const BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-              ),
-            ),
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-              left: 16,
-              right: 16,
-              top: 16,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Handle bar
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    margin: const EdgeInsets.only(bottom: 16),
-                    decoration: BoxDecoration(
-                      color: AppColors.borderDefault,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ),
-                // Title
-                const Text(
-                  'Add a new suggestion',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                // Title field
-                TextFormField(
-                  controller: _titleController,
-                  decoration: InputDecoration(
-                    labelText: 'Project Title',
-                    hintText: 'Enter project title',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: AppColors.borderDefault,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: AppColors.borderFocused,
-                        width: 2,
-                      ),
-                    ),
-                    filled: true,
-                    fillColor: AppColors.background,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 16,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                // Description field
-                TextFormField(
-                  controller: _contentController,
-                  maxLines: 5,
-                  decoration: InputDecoration(
-                    labelText: 'Description',
-                    hintText: 'Enter project description',
-                    alignLabelWithHint: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: AppColors.borderDefault,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: AppColors.borderFocused,
-                        width: 2,
-                      ),
-                    ),
-                    filled: true,
-                    fillColor: AppColors.background,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 16,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                // Create Project button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      final title = _titleController.text.trim();
-                      final description = _contentController.text.trim();
-
-                      if (title.isEmpty || description.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Please fill in all fields'),
-                            backgroundColor: AppColors.error,
-                          ),
-                        );
-                        return;
-                      }
-
-                      try {
-                        // Create suggestion in database
-                        await _dbService.createSuggestion(
-                          title: title,
-                          description: description,
-                        );
-
-                        // Clear fields after creating
-                        _titleController.clear();
-                        _contentController.clear();
-
-                        // Close bottom sheet
-                        if (mounted) {
-                          Navigator.pop(context);
-                        }
-
-                        // Show success message
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                'Suggestion submitted successfully!',
-                              ),
-                              backgroundColor: AppColors.success,
-                            ),
-                          );
-                        }
-                      } catch (e) {
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Error submitting suggestion: $e'),
-                              backgroundColor: AppColors.error,
-                            ),
-                          );
-                        }
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text(
-                      'Send suggestion',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-              ],
-            ),
-          ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1372,7 +922,7 @@ class _HomeContentPageState extends State<HomeContentPage> {
               ),
         ),
         title: const Text(
-          'Skill Center',
+          'NextVerse',
           style: TextStyle(
             color: AppColors.primary,
             fontSize: 24,
@@ -1382,51 +932,22 @@ class _HomeContentPageState extends State<HomeContentPage> {
         ),
         centerTitle: true,
         actions: [
-          Stack(
-            children: [
-              Container(
-                margin: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.notifications,
-                    color: AppColors.primary,
-                    size: 24,
-                  ),
-                  onPressed: () {
-                    _showNotificationsDialog();
-                  },
-                ),
+          Container(
+            margin: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: IconButton(
+              icon: const Icon(
+                Icons.notifications,
+                color: AppColors.primary,
+                size: 24,
               ),
-              if (_notifications.where((n) => !n.isRead).isNotEmpty)
-                Positioned(
-                  right: 4,
-                  top: 4,
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: const BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
-                    ),
-                    constraints: const BoxConstraints(
-                      minWidth: 18,
-                      minHeight: 18,
-                    ),
-                    child: Text(
-                      '${_notifications.where((n) => !n.isRead).length}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-            ],
+              onPressed: () {
+                // Notification icon - no action
+              },
+            ),
           ),
         ],
       ),
@@ -1435,67 +956,6 @@ class _HomeContentPageState extends State<HomeContentPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Notifications Section
-            if (_notifications.isNotEmpty) ...[
-              Container(
-                margin: const EdgeInsets.only(bottom: 16),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Notifications',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                        if (_notifications.where((n) => !n.isRead).isNotEmpty)
-                          TextButton(
-                            onPressed: () {
-                              setState(() {
-                                _notifications =
-                                    _notifications
-                                        .map((n) => n.copyWith(isRead: true))
-                                        .toList();
-                              });
-                            },
-                            child: const Text(
-                              'Mark all as read',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: AppColors.primary,
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    ..._notifications
-                        .take(3)
-                        .map(
-                          (notification) =>
-                              _buildNotificationItem(notification),
-                        ),
-                  ],
-                ),
-              ),
-            ],
             // Search Bar with Gradient Shadow
             Container(
               decoration: BoxDecoration(
@@ -1577,7 +1037,7 @@ class _HomeContentPageState extends State<HomeContentPage> {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [Color(0xFF194CBF), Color(0xFF61A1FF)],
+                      colors: [Color(0xFFF6093D), Color(0xFF2C2225)],
                     ),
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -1625,7 +1085,7 @@ class _HomeContentPageState extends State<HomeContentPage> {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [Color(0xFF194CBF), Color(0xFF61A1FF)],
+                      colors: [Color(0xFFF6093D), Color(0xFF2C2225)],
                     ),
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -1683,29 +1143,6 @@ class _HomeContentPageState extends State<HomeContentPage> {
             ),
             const SizedBox(height: 80),
           ],
-        ),
-      ),
-      floatingActionButton: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primary.withOpacity(0.4),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
-            ),
-          ],
-        ),
-        child: FloatingActionButton.extended(
-          heroTag: "home_fab",
-          onPressed: _showBottomSheet,
-          backgroundColor: AppColors.primary,
-          elevation: 0,
-          icon: const Icon(Icons.add, color: Colors.white),
-          label: const Text(
-            'Suggestion',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
         ),
       ),
     );

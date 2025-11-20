@@ -76,7 +76,7 @@ class _CoinsPageState extends State<CoinsPage> {
                     Text(
                       '$currentCoins',
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: Color(0xFF61A1FF),
                         fontSize: 48,
                         fontWeight: FontWeight.bold,
                       ),
@@ -85,7 +85,7 @@ class _CoinsPageState extends State<CoinsPage> {
                     Text(
                       '/ $maxCoins coins',
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.9),
+                        color: Color(0xFF61A1FF).withOpacity(0.9),
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
                       ),
@@ -101,7 +101,7 @@ class _CoinsPageState extends State<CoinsPage> {
                             Text(
                               'Progress',
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.9),
+                                color: Color(0xFF61A1FF).withOpacity(0.9),
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -109,7 +109,7 @@ class _CoinsPageState extends State<CoinsPage> {
                             Text(
                               '${(progress * 100).toStringAsFixed(1)}%',
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.9),
+                                color: Color(0xFF61A1FF).withOpacity(0.9),
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -120,7 +120,7 @@ class _CoinsPageState extends State<CoinsPage> {
                         Container(
                           height: 12,
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.3),
+                            color: Color(0xFF61A1FF).withOpacity(0.3),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Stack(
@@ -154,9 +154,9 @@ class _CoinsPageState extends State<CoinsPage> {
                                         begin: Alignment.centerLeft,
                                         end: Alignment.centerRight,
                                         colors: [
-                                          Colors.white.withOpacity(0.0),
-                                          Colors.white.withOpacity(0.3),
-                                          Colors.white.withOpacity(0.0),
+                                          Color(0xFF61A1FF).withOpacity(0.0),
+                                          Color(0xFF61A1FF).withOpacity(0.3),
+                                          Color(0xFF61A1FF).withOpacity(0.0),
                                         ],
                                         stops: const [0.0, 0.5, 1.0],
                                       ),
@@ -173,7 +173,7 @@ class _CoinsPageState extends State<CoinsPage> {
                             vertical: 8,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
+                            color: Color(0xFF61A1FF).withOpacity(0.2),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Row(
@@ -181,7 +181,7 @@ class _CoinsPageState extends State<CoinsPage> {
                             children: [
                               Icon(
                                 Icons.info_outline,
-                                color: Colors.white.withOpacity(0.9),
+                                color: Color(0xFF61A1FF).withOpacity(0.9),
                                 size: 16,
                               ),
                               const SizedBox(width: 8),
@@ -189,7 +189,7 @@ class _CoinsPageState extends State<CoinsPage> {
                                 child: Text(
                                   '$coinsNeeded more coins to unlock next reward',
                                   style: TextStyle(
-                                    color: Colors.white.withOpacity(0.9),
+                                    color: Color(0xFF61A1FF).withOpacity(0.9),
                                     fontSize: 12,
                                   ),
                                   textAlign: TextAlign.center,
@@ -302,7 +302,7 @@ class _CoinsPageState extends State<CoinsPage> {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Color(0xFF61A1FF),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: canAfford ? color.withOpacity(0.3) : Colors.grey[300]!,
@@ -483,7 +483,7 @@ class _CoinsPageState extends State<CoinsPage> {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF194CBF),
-              foregroundColor: Colors.white,
+              foregroundColor: Color(0xFF61A1FF),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),

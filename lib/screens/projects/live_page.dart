@@ -128,7 +128,7 @@ class _LivePageState extends State<LivePage> {
             duration: const Duration(seconds: 5),
             action: SnackBarAction(
               label: 'Settings',
-              textColor: Colors.white,
+              textColor: Color(0xFF2C2225),
               onPressed: () {
                 openAppSettings();
               },
@@ -222,7 +222,7 @@ class _LivePageState extends State<LivePage> {
         backgroundColor: Colors.black,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF2C2225)),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Column(
@@ -235,7 +235,7 @@ class _LivePageState extends State<LivePage> {
                 Text(
                   'LIVE',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Color(0xFF2C2225),
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -244,7 +244,7 @@ class _LivePageState extends State<LivePage> {
             ),
             Text(
               widget.projectTitle,
-              style: const TextStyle(color: Colors.white70, fontSize: 12),
+              style: const TextStyle(color: Color(0xFF2C2225), fontSize: 12),
             ),
           ],
         ),
@@ -269,11 +269,11 @@ class _LivePageState extends State<LivePage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          CircularProgressIndicator(color: Colors.white),
+                          CircularProgressIndicator(color: Color(0xFF2C2225)),
                           SizedBox(height: 16),
                           Text(
                             'Initializing camera...',
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(color: Color(0xFF2C2225)),
                           ),
                         ],
                       ),
@@ -300,7 +300,7 @@ class _LivePageState extends State<LivePage> {
                           ),
                           child: Icon(
                             _isMuted ? Icons.mic_off : Icons.mic,
-                            color: Colors.white,
+                            color: Color(0xFF2C2225),
                             size: 24,
                           ),
                         ),
@@ -324,7 +324,7 @@ class _LivePageState extends State<LivePage> {
                           ),
                           child: Icon(
                             _isCameraOff ? Icons.videocam_off : Icons.videocam,
-                            color: Colors.white,
+                            color: Color(0xFF2C2225),
                             size: 24,
                           ),
                         ),
@@ -339,9 +339,9 @@ class _LivePageState extends State<LivePage> {
                     child: Container(
                       color: Colors.black,
                       child: const Center(
-                        child: Icon(
+                        child: const Icon(
                           Icons.videocam_off,
-                          color: Colors.white70,
+                          color: Color(0xFF2C2225),
                           size: 64,
                         ),
                       ),
@@ -370,7 +370,7 @@ class _LivePageState extends State<LivePage> {
                       vertical: 12,
                     ),
                     decoration: const BoxDecoration(
-                      color: Color(0xFF194CBF),
+                      color: Color(0xFFF6093D),
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(20),
                         topRight: Radius.circular(20),
@@ -378,12 +378,12 @@ class _LivePageState extends State<LivePage> {
                     ),
                     child: const Row(
                       children: [
-                        Icon(Icons.chat, color: Colors.white, size: 20),
+                        Icon(Icons.chat, color: Color(0xFF2C2225), size: 20),
                         SizedBox(width: 8),
                         Text(
                           'Live Chat',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Color(0xFF2C2225),
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -428,7 +428,7 @@ class _LivePageState extends State<LivePage> {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Color(0xFF2C2225),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.05),
@@ -459,7 +459,7 @@ class _LivePageState extends State<LivePage> {
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(24),
                                 borderSide: const BorderSide(
-                                  color: Color(0xFF194CBF),
+                                  color: Color(0xFFF6093D),
                                   width: 2,
                                 ),
                               ),
@@ -478,12 +478,12 @@ class _LivePageState extends State<LivePage> {
                         const SizedBox(width: 12),
                         Container(
                           decoration: const BoxDecoration(
-                            color: Color(0xFF194CBF),
+                            color: Color(0xFFF6093D),
                             shape: BoxShape.circle,
                           ),
                           child: IconButton(
                             onPressed: _sendMessage,
-                            icon: const Icon(Icons.send, color: Colors.white),
+                            icon: const Icon(Icons.send, color: Color(0xFF2C2225)),
                           ),
                         ),
                       ],
@@ -533,7 +533,7 @@ class _LivePageState extends State<LivePage> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 color:
-                    isMyMessage ? const Color(0xFF194CBF) : AppColors.grey100,
+                    isMyMessage ? const Color(0xFFF6093D) : AppColors.grey100,
                 borderRadius: BorderRadius.circular(20).copyWith(
                   bottomRight:
                       isMyMessage
@@ -549,7 +549,7 @@ class _LivePageState extends State<LivePage> {
                 message.message,
                 style: TextStyle(
                   fontSize: 15,
-                  color: isMyMessage ? Colors.white : AppColors.textPrimary,
+                  color: isMyMessage ? Color(0xFF2C2225) : AppColors.textPrimary,
                 ),
               ),
             ),

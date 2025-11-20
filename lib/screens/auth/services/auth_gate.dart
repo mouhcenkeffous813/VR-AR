@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:youth_center/screens/Home/home.dart';
-import 'package:youth_center/screens/welcome/welcome_screen.dart';
+import 'package:youth_center/screens/auth/pages/login.dart';
 
 class AuthGate extends StatefulWidget {
   const AuthGate({super.key});
@@ -35,11 +35,7 @@ class _AuthGateState extends State<AuthGate> {
   Widget build(BuildContext context) {
     // Show loading while checking initial session
     if (_isCheckingSession) {
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     // Listen to auth state changes for real-time updates
@@ -47,14 +43,17 @@ class _AuthGateState extends State<AuthGate> {
       stream: Supabase.instance.client.auth.onAuthStateChange,
       builder: (context, snapshot) {
         // Use the stream session if available, otherwise use the initial check
-        final session = snapshot.hasData 
-            ? snapshot.data!.session 
-            : (_isAuthenticated ? Supabase.instance.client.auth.currentSession : null);
-        
+        final session =
+            snapshot.hasData
+                ? snapshot.data!.session
+                : (_isAuthenticated
+                    ? Supabase.instance.client.auth.currentSession
+                    : null);
+
         if (session != null) {
           return const HomeScreen();
         } else {
-          return const WelcomeScreen();
+          return const LoginScreen();
         }
       },
     );

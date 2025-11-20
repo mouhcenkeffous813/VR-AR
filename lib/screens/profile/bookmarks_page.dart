@@ -96,7 +96,7 @@ class _BookmarksPageState extends State<BookmarksPage> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Color(0xFF2C2225),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.05),
@@ -191,7 +191,7 @@ class _BookmarksPageState extends State<BookmarksPage> {
         margin: const EdgeInsets.only(bottom: 16),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Color(0xFF2C2225),
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(

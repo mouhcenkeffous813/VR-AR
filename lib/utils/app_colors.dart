@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Primary Colors
-  static const Color primary = Color(0xFF1976D2); // Blue 700
-  static const Color primaryLight = Color(0xFF64B5F6); // Blue 300
-  static const Color primaryDark = Color(0xFF1565C0); // Blue 800
-  static const Color primaryShadow = Color(0xFF90CAF9); // Blue 200
+  // Primary Colors - Red gradient theme
+  static const Color primary = Color(0xFFF6093D); // Red/Pink primary
+  static const Color primaryLight = Color(0xFFF6093D); // Red/Pink primary
+  static const Color primaryDark = Color(0xFF2C2225); // Dark gray/black
+  static const Color primaryShadow = Color(0xFFF6093D); // Red/Pink primary
 
   // Secondary Colors
   static const Color secondary = Color(0xFF7B1FA2); // Purple 700
@@ -16,7 +16,7 @@ class AppColors {
   static const Color background = Color(0xFFFFFFFF);
   static const Color surface = Color(0xFFFAFAFA); // Grey 50
   static const Color onSurface = Color(0xFF212121); // Grey 900
-  
+
   // Grey Scale
   static const Color grey50 = Color(0xFFFAFAFA);
   static const Color grey100 = Color(0xFFF5F5F5);
@@ -31,8 +31,8 @@ class AppColors {
   static const Color successLight = Color(0xFF66BB6A); // Green 400
   static const Color warning = Color(0xFFF57C00); // Orange 700
   static const Color warningLight = Color(0xFFFFA726); // Orange 400
-  static const Color info = Color(0xFF1976D2); // Blue 700
-  static const Color infoLight = Color(0xFF42A5F5); // Blue 400
+  static const Color info = Color(0xFFF6093D); // Red/Pink primary
+  static const Color infoLight = Color(0xFFF6093D); // Red/Pink primary
 
   // Text Colors
   static const Color textPrimary = Color(0xFF212121); // Grey 900
@@ -42,11 +42,10 @@ class AppColors {
 
   // Border Colors
   static const Color borderDefault = Color(0xFFE0E0E0); // Grey 300
-  static const Color borderFocused = Color(0xFF1976D2); // Primary
+  static const Color borderFocused = Color(0xFFF6093D); // Primary
   static const Color borderError = Color(0xFFD32F2F); // Error
 
   // Disabled Colors
   static const Color disabledBackground = Color(0xFFE0E0E0); // Grey 300
   static const Color disabledForeground = Color(0xFF757575); // Grey 600
 }
-

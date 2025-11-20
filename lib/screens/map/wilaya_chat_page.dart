@@ -118,10 +118,10 @@ class _WilayaChatPageState extends State<WilayaChatPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF194CBF),
+        backgroundColor: const Color(0xFFF6093D),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF2C2225)),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Column(
@@ -130,7 +130,7 @@ class _WilayaChatPageState extends State<WilayaChatPage> {
             const Text(
               'Chat',
               style: TextStyle(
-                color: Colors.white,
+                color: Color(0xFF2C2225),
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -138,7 +138,7 @@ class _WilayaChatPageState extends State<WilayaChatPage> {
             Text(
               widget.wilayaName,
               style: const TextStyle(
-                color: Colors.white70,
+                color: Color(0xFF2C2225)70,
                 fontSize: 14,
               ),
             ),
@@ -196,7 +196,7 @@ class _WilayaChatPageState extends State<WilayaChatPage> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Color(0xFF2C2225),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.05),
@@ -223,7 +223,7 @@ class _WilayaChatPageState extends State<WilayaChatPage> {
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(24),
                         borderSide: const BorderSide(
-                          color: Color(0xFF194CBF),
+                          color: Color(0xFFF6093D),
                           width: 2,
                         ),
                       ),
@@ -242,12 +242,12 @@ class _WilayaChatPageState extends State<WilayaChatPage> {
                 const SizedBox(width: 12),
                 Container(
                   decoration: const BoxDecoration(
-                    color: Color(0xFF194CBF),
+                    color: Color(0xFFF6093D),
                     shape: BoxShape.circle,
                   ),
                   child: IconButton(
                     onPressed: _sendMessage,
-                    icon: const Icon(Icons.send, color: Colors.white),
+                    icon: const Icon(Icons.send, color: Color(0xFF2C2225)),
                   ),
                 ),
               ],
@@ -293,7 +293,7 @@ class _WilayaChatPageState extends State<WilayaChatPage> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 color: isMyMessage
-                    ? const Color(0xFF194CBF)
+                    ? const Color(0xFFF6093D)
                     : AppColors.grey100,
                 borderRadius: BorderRadius.circular(20).copyWith(
                   bottomRight: isMyMessage
@@ -308,7 +308,7 @@ class _WilayaChatPageState extends State<WilayaChatPage> {
                 message.message,
                 style: TextStyle(
                   fontSize: 15,
-                  color: isMyMessage ? Colors.white : AppColors.textPrimary,
+                  color: isMyMessage ? Color(0xFF2C2225) : AppColors.textPrimary,
                 ),
               ),
             ),

@@ -74,7 +74,7 @@ class _QRScannerPageState extends State<QRScannerPage> {
         backgroundColor: Colors.black,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF2C2225)),
           onPressed: () {
             controller.stop();
             Navigator.pop(context);
@@ -82,7 +82,7 @@ class _QRScannerPageState extends State<QRScannerPage> {
         ),
         title: const Text(
           'QR Code Scanner',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Color(0xFF2C2225)),
         ),
         centerTitle: true,
       ),
@@ -100,7 +100,7 @@ class _QRScannerPageState extends State<QRScannerPage> {
                   children: [
                     const Icon(
                       Icons.error_outline,
-                      color: Colors.white,
+                      color: Color(0xFF2C2225),
                       size: 48,
                     ),
                     const SizedBox(height: 16),
@@ -108,7 +108,7 @@ class _QRScannerPageState extends State<QRScannerPage> {
                       padding: const EdgeInsets.symmetric(horizontal: 24),
                       child: Text(
                         'Camera Error: $errorMessage',
-                        style: const TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Color(0xFF2C2225)),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -141,7 +141,7 @@ class _QRScannerPageState extends State<QRScannerPage> {
                 'Position the QR code within the frame',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Color(0xFF2C2225),
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                 ),

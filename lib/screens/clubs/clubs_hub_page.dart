@@ -123,13 +123,13 @@ class _ClubsHubPageState extends State<ClubsHubPage> {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Color(0xFF194CBF),
-                  Color(0xFF61A1FF),
+                  Color(0xFFF6093D),
+                  Color(0xFF2C2225),
                 ],
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Color(0xFF194CBF),
+                  color: Color(0xFFF6093D),
                   blurRadius: 20,
                   offset: Offset(0, 10),
                 ),
@@ -360,7 +360,7 @@ class _ClubsHubPageState extends State<ClubsHubPage> {
                               vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF194CBF).withOpacity(0.1),
+                              color: const Color(0xFFF6093D).withOpacity(0.1),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Row(
@@ -369,14 +369,14 @@ class _ClubsHubPageState extends State<ClubsHubPage> {
                                 const Icon(
                                   Icons.people_rounded,
                                   size: 16,
-                                  color: Color(0xFF194CBF),
+                                  color: Color(0xFFF6093D),
                                 ),
                                 const SizedBox(width: 6),
                                 Text(
                                   '${club.memberCount} members',
                                   style: const TextStyle(
                                     fontSize: 13,
-                                    color: Color(0xFF194CBF),
+                                    color: Color(0xFFF6093D),
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),

@@ -120,8 +120,8 @@ class _IdeasExpoPageState extends State<IdeasExpoPage> {
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               colors: [
-                                const Color(0xFF194CBF).withOpacity(0.1),
-                                const Color(0xFF61A1FF).withOpacity(0.1),
+                                const Color(0xFFF6093D).withOpacity(0.1),
+                                Colors.white.withOpacity(0.1),
                               ],
                             ),
                           ),
@@ -129,7 +129,7 @@ class _IdeasExpoPageState extends State<IdeasExpoPage> {
                             child: Icon(
                               Icons.image_outlined,
                               size: 48,
-                              color: Color(0xFF194CBF),
+                              color: Color(0xFFF6093D),
                             ),
                           ),
                         );
@@ -141,8 +141,8 @@ class _IdeasExpoPageState extends State<IdeasExpoPage> {
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                           colors: [
-                            const Color(0xFF194CBF).withOpacity(0.1),
-                            const Color(0xFF61A1FF).withOpacity(0.1),
+                            const Color(0xFFF6093D).withOpacity(0.1),
+                            Colors.white.withOpacity(0.1),
                           ],
                         ),
                       ),
@@ -150,7 +150,7 @@ class _IdeasExpoPageState extends State<IdeasExpoPage> {
                         child: Icon(
                           Icons.image_outlined,
                           size: 48,
-                          color: Color(0xFF194CBF),
+                          color: Color(0xFFF6093D),
                         ),
                       ),
                     ),
@@ -171,14 +171,14 @@ class _IdeasExpoPageState extends State<IdeasExpoPage> {
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
                           colors: [
-                            Color(0xFF194CBF),
-                            Color(0xFF61A1FF),
+                            Color(0xFFF6093D),
+                            Colors.white,
                           ],
                         ),
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF194CBF).withOpacity(0.3),
+                            color: const Color(0xFFF6093D).withOpacity(0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 4),
                           ),
@@ -214,14 +214,14 @@ class _IdeasExpoPageState extends State<IdeasExpoPage> {
                                 decoration: BoxDecoration(
                                   gradient: const LinearGradient(
                                     colors: [
-                                      Color(0xFF194CBF),
-                                      Color(0xFF61A1FF),
+                                      Color(0xFFF6093D),
+                                      Colors.white,
                                     ],
                                   ),
                                   borderRadius: BorderRadius.circular(8),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: const Color(0xFF194CBF)
+                                      color: const Color(0xFFF6093D)
                                           .withOpacity(0.3),
                                       blurRadius: 4,
                                       offset: const Offset(0, 2),
@@ -282,7 +282,7 @@ class _IdeasExpoPageState extends State<IdeasExpoPage> {
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF194CBF).withOpacity(0.1),
+                        color: const Color(0xFFF6093D).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Row(
@@ -291,14 +291,14 @@ class _IdeasExpoPageState extends State<IdeasExpoPage> {
                           const Icon(
                             Icons.chat_bubble_rounded,
                             size: 16,
-                            color: Color(0xFF194CBF),
+                            color: Color(0xFFF6093D),
                           ),
                           const SizedBox(width: 6),
                           Text(
                             '${question.replies} replies',
                             style: const TextStyle(
                               fontSize: 13,
-                              color: Color(0xFF194CBF),
+                              color: Color(0xFFF6093D),
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -566,13 +566,13 @@ class _IdeasExpoPageState extends State<IdeasExpoPage> {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Color(0xFF194CBF),
-                  Color(0xFF61A1FF),
+                  Color(0xFFF6093D),
+                  Colors.white,
                 ],
               ),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF194CBF).withOpacity(0.3),
+                  color: const Color(0xFFF6093D).withOpacity(0.3),
                   blurRadius: 20,
                   offset: const Offset(0, 10),
                 ),
@@ -664,13 +664,13 @@ class _IdeasExpoPageState extends State<IdeasExpoPage> {
           borderRadius: BorderRadius.circular(16),
           gradient: const LinearGradient(
             colors: [
-              Color(0xFF194CBF),
-              Color(0xFF61A1FF),
+              Color(0xFFF6093D),
+              Colors.white,
             ],
           ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF194CBF).withOpacity(0.4),
+              color: const Color(0xFFF6093D).withOpacity(0.4),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),

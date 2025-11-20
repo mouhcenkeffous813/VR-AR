@@ -125,7 +125,7 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: const Color(0xFF194CBF),
+                color: const Color(0xFFF6093D),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
@@ -164,7 +164,7 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
                       },
                       icon: const Icon(
                         Icons.add,
-                        color: Color(0xFF194CBF),
+                        color: Color(0xFFF6093D),
                         size: 24,
                       ),
                     ),
@@ -236,14 +236,14 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
     if (progress >= 1.0) {
       progressColor = const Color(0xFF4CAF50); // Green for complete
     } else if (progress >= 0.7) {
-      progressColor = const Color(0xFF61A1FF); // Blue for good progress
+      progressColor = Colors.white; // White for good progress
     } else {
       progressColor = const Color(0xFFFFA726); // Orange for low progress
     }
 
     // Default icon based on project title or use a general one
     IconData projectIcon = Icons.work_outline;
-    Color iconColor = const Color(0xFF194CBF);
+    Color iconColor = const Color(0xFFF6093D);
 
     if (project.title.toLowerCase().contains('fintech') ||
         project.title.toLowerCase().contains('bank')) {
@@ -570,7 +570,7 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF194CBF),
+                  backgroundColor: const Color(0xFFF6093D),
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),

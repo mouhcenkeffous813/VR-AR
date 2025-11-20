@@ -89,8 +89,8 @@ class _LoginScreenState extends State<LoginScreen> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              const Color(0xFF194CBF),
-              const Color(0xFF61A1FF),
+              const Color(0xFFF6093D),
+              const Color(0xFF2C2225),
               Colors.white,
             ],
             stops: const [0.0, 0.5, 1.0],
@@ -125,12 +125,20 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ],
                             ),
-                            child: ClipOval(
-                              child: Image.asset(
-                                'images/Layer 1.png',
-                                width: 140,
-                                height: 140,
-                                fit: BoxFit.cover,
+                            child: Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: ClipOval(
+                                child: Image.asset(
+                                  'images/djeey.png',
+                                  fit: BoxFit.contain,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    debugPrint('Error loading image: $error');
+                                    return Container(
+                                      color: Colors.grey[200],
+                                      child: const Icon(Icons.image, size: 60),
+                                    );
+                                  },
+                                ),
                               ),
                             ),
                           ),
@@ -213,9 +221,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ),
                               style: OutlinedButton.styleFrom(
-                                foregroundColor: const Color(0xFF194CBF),
+                                foregroundColor: const Color(0xFFF6093D),
                                 side: const BorderSide(
-                                  color: Color(0xFF194CBF),
+                                  color: Color(0xFFF6093D),
                                   width: 2,
                                 ),
                                 padding: const EdgeInsets.symmetric(

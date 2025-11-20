@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:youth_center/utils/app_colors.dart';
 import 'package:youth_center/screens/Home/home_content_page.dart';
-import 'package:youth_center/screens/opportunities/opportunities_page.dart';
-import 'package:youth_center/screens/map/map_page.dart';
+import 'package:youth_center/screens/ar/augmented_reality_page.dart';
 import 'package:youth_center/screens/profile/profile_page.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -17,8 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _pages = [
     const HomeContentPage(),
-    const OpportunitiesPage(),
-    const MapPage(),
+    const AugmentedRealityPage(),
     const ProfilePage(),
   ];
 
@@ -34,17 +32,16 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         },
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: const Color(0xFF194CBF),
+        selectedItemColor: const Color(0xFFF6093D),
         unselectedItemColor: AppColors.textSecondary,
         selectedFontSize: 12,
         unselectedFontSize: 12,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(
-            icon: Icon(Icons.work),
-            label: 'Opportunities',
+            icon: Icon(Icons.view_in_ar),
+            label: 'AR',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),

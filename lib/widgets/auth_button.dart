@@ -18,16 +18,16 @@ class AuthButton extends StatelessWidget {
       height: 56,
       width: double.infinity,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           colors: [
-            const Color(0xFF194CBF),
-            const Color(0xFF61A1FF),
+            Color(0xFFF6093D),
+            Color(0xFFFFFFFF),
           ],
         ),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF194CBF).withOpacity(0.3),
+            color: const Color(0xFFF6093D).withOpacity(0.3),
             blurRadius: 12,
             offset: const Offset(0, 6),
           ),

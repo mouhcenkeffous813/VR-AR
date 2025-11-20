@@ -17,7 +17,7 @@ class OpportunityDetailPage extends StatelessWidget {
       case 'Projects':
         return const Color(0xFFF57C00);
       default:
-        return const Color(0xFF194CBF);
+        return const Color(0xFFF6093D);
     }
   }
 
@@ -58,14 +58,14 @@ class OpportunityDetailPage extends StatelessWidget {
                         children: [
                           Container(
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Color(0xFF2C2225).withOpacity(0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: IconButton(
                               onPressed: () => Navigator.of(context).pop(),
                               icon: const Icon(
                                 Icons.arrow_back_rounded,
-                                color: Colors.white,
+                                color: Color(0xFF2C2225),
                                 size: 24,
                               ),
                             ),
@@ -73,7 +73,7 @@ class OpportunityDetailPage extends StatelessWidget {
                           const Spacer(),
                           Container(
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Color(0xFF2C2225).withOpacity(0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: IconButton(
@@ -81,13 +81,13 @@ class OpportunityDetailPage extends StatelessWidget {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text('Saved to bookmarks'),
-                                    backgroundColor: Color(0xFF194CBF),
+                                    backgroundColor: Color(0xFFF6093D),
                                   ),
                                 );
                               },
                               icon: const Icon(
                                 Icons.bookmark_border_rounded,
-                                color: Colors.white,
+                                color: Color(0xFF2C2225),
                                 size: 24,
                               ),
                             ),
@@ -104,7 +104,7 @@ class OpportunityDetailPage extends StatelessWidget {
                         width: 85,
                         height: 85,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Color(0xFF2C2225),
                           borderRadius: BorderRadius.circular(18),
                           boxShadow: [
                             BoxShadow(
@@ -155,7 +155,7 @@ class OpportunityDetailPage extends StatelessWidget {
               builder: (context, scrollController) {
                 return Container(
                   decoration: const BoxDecoration(
-                    color: Colors.white,
+                    color: Color(0xFF2C2225),
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(30),
                       topRight: Radius.circular(30),
@@ -402,7 +402,7 @@ class OpportunityDetailPage extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Color(0xFF2C2225),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
@@ -441,14 +441,14 @@ class OpportunityDetailPage extends StatelessWidget {
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.send_rounded, color: Colors.white, size: 22),
+                        Icon(Icons.send_rounded, color: Color(0xFF2C2225), size: 22),
                         SizedBox(width: 12),
                         Text(
                           'Apply Now',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: Color(0xFF2C2225),
                           ),
                         ),
                       ],
@@ -472,7 +472,7 @@ class OpportunityDetailPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Color(0xFF2C2225),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: color.withOpacity(0.2), width: 1.5),
         boxShadow: [
@@ -582,7 +582,7 @@ class OpportunityDetailPage extends StatelessWidget {
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(24),
-                color: Colors.white,
+                color: Color(0xFF2C2225),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -673,7 +673,7 @@ class OpportunityDetailPage extends StatelessWidget {
                                     children: [
                                       const Icon(
                                         Icons.check_circle_rounded,
-                                        color: Colors.white,
+                                        color: Color(0xFF2C2225),
                                       ),
                                       const SizedBox(width: 12),
                                       Expanded(
@@ -704,7 +704,7 @@ class OpportunityDetailPage extends StatelessWidget {
                               children: [
                                 Icon(
                                   Icons.send_rounded,
-                                  color: Colors.white,
+                                  color: Color(0xFF2C2225),
                                   size: 20,
                                 ),
                                 SizedBox(width: 8),
@@ -713,7 +713,7 @@ class OpportunityDetailPage extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                    color: Color(0xFF2C2225),
                                   ),
                                 ),
                               ],

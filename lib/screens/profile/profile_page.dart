@@ -73,7 +73,7 @@ class _ProfilePageState extends State<ProfilePage>
     try {
       await authService.signOut();
       if (!context.mounted) return;
-      
+
       // Navigate directly to LoginScreen and remove all previous routes
       Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => const LoginScreen()),
@@ -321,7 +321,7 @@ class _ProfilePageState extends State<ProfilePage>
                                         style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600,
-                                          color: Color(0xFF194CBF),
+                                          color: Color(0xFFF6093D),
                                         ),
                                       ),
                                     ),
@@ -405,7 +405,7 @@ class _ProfilePageState extends State<ProfilePage>
             border: Border(
               bottom: BorderSide(
                 color:
-                    isSelected ? const Color(0xFF194CBF) : Colors.transparent,
+                    isSelected ? const Color(0xFFF6093D) : Colors.transparent,
                 width: 2,
               ),
             ),
@@ -416,7 +416,7 @@ class _ProfilePageState extends State<ProfilePage>
             style: TextStyle(
               color:
                   isSelected
-                      ? const Color(0xFF194CBF)
+                      ? const Color(0xFFF6093D)
                       : AppColors.textSecondary,
               fontSize: 14,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
@@ -463,7 +463,7 @@ class _ProfilePageState extends State<ProfilePage>
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [Color(0xFF194CBF), Color(0xFF61A1FF)],
+                          colors: [Color(0xFFF6093D), Color(0xFF2C2225)],
                         ),
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -520,12 +520,12 @@ class _ProfilePageState extends State<ProfilePage>
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF194CBF).withOpacity(0.1),
+                    color: const Color(0xFFF6093D).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(
                     Icons.location_on_rounded,
-                    color: Color(0xFF194CBF),
+                    color: Color(0xFFF6093D),
                     size: 24,
                   ),
                 ),
@@ -581,12 +581,12 @@ class _ProfilePageState extends State<ProfilePage>
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF194CBF).withOpacity(0.1),
+                      color: const Color(0xFFF6093D).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(
                       Icons.workspace_premium_rounded,
-                      color: Color(0xFF194CBF),
+                      color: Color(0xFFF6093D),
                       size: 24,
                     ),
                   ),
@@ -652,7 +652,7 @@ class _ProfilePageState extends State<ProfilePage>
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [Color(0xFF194CBF), Color(0xFF61A1FF)],
+                        colors: [Color(0xFFF6093D), Color(0xFF2C2225)],
                       ),
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -679,7 +679,7 @@ class _ProfilePageState extends State<ProfilePage>
                         Text(
                           portfolio,
                           style: const TextStyle(
-                            color: Color(0xFF194CBF),
+                            color: Color(0xFFF6093D),
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                             decoration: TextDecoration.underline,
@@ -690,7 +690,7 @@ class _ProfilePageState extends State<ProfilePage>
                   ),
                   const Icon(
                     Icons.arrow_forward_ios_rounded,
-                    color: Color(0xFF194CBF),
+                    color: Color(0xFFF6093D),
                     size: 16,
                   ),
                 ],
@@ -761,7 +761,7 @@ class _ProfilePageState extends State<ProfilePage>
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFF194CBF), Color(0xFF61A1FF)],
+                    colors: [Color(0xFFF6093D), Color(0xFF2C2225)],
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -791,12 +791,12 @@ class _ProfilePageState extends State<ProfilePage>
               gradient: const LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [Color(0xFF194CBF), Color(0xFF61A1FF)],
+                colors: [Color(0xFFF6093D), Color(0xFF2C2225)],
               ),
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF194CBF).withOpacity(0.3),
+                  color: const Color(0xFFF6093D).withOpacity(0.3),
                   blurRadius: 20,
                   offset: const Offset(0, 8),
                 ),
@@ -848,7 +848,7 @@ class _ProfilePageState extends State<ProfilePage>
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFF194CBF), Color(0xFF61A1FF)],
+                    colors: [Color(0xFFF6093D), Color(0xFF2C2225)],
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -878,12 +878,12 @@ class _ProfilePageState extends State<ProfilePage>
               gradient: const LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [Color(0xFF194CBF), Color(0xFF61A1FF)],
+                colors: [Color(0xFFF6093D), Color(0xFF2C2225)],
               ),
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF194CBF).withOpacity(0.3),
+                  color: const Color(0xFFF6093D).withOpacity(0.3),
                   blurRadius: 20,
                   offset: const Offset(0, 8),
                 ),
@@ -932,7 +932,7 @@ class _ProfilePageState extends State<ProfilePage>
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
-                      foregroundColor: const Color(0xFF194CBF),
+                      foregroundColor: const Color(0xFFF6093D),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -973,7 +973,7 @@ class _ProfilePageState extends State<ProfilePage>
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF194CBF), Color(0xFF61A1FF)],
+          colors: [Color(0xFFF6093D), Color(0xFF2C2225)],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
@@ -1009,7 +1009,7 @@ class _ProfilePageState extends State<ProfilePage>
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
-                    color: const Color(0xFF194CBF),
+                    color: const Color(0xFFF6093D),
                     child: const Icon(
                       Icons.person,
                       size: 60,
@@ -1093,7 +1093,7 @@ class _ProfilePageState extends State<ProfilePage>
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF194CBF), Color(0xFF61A1FF)],
+          colors: [Color(0xFFF6093D), Color(0xFF2C2225)],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [

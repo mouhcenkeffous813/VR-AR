@@ -108,7 +108,7 @@ CREATE POLICY "Users can unenroll from opportunities"
 -- Insert default volunteering opportunities
 INSERT INTO public.volunteering_opportunities (title, description, location, icon_name, color, enrolled_count) VALUES
     ('Healthcare Support', 'Assist in community health programs and clinics', 'Various locations', 'local_hospital_outlined', '#F44336', 0),
-    ('Education Tutoring', 'Help students with homework and learning support', 'Skill Center', 'school_outlined', '#194CBF', 0),
+    ('Education Tutoring', 'Help students with homework and learning support', 'NextVerse', 'school_outlined', '#F6093D', 0),
     ('Environmental Cleanup', 'Participate in beach and park cleaning initiatives', 'Public spaces', 'eco_outlined', '#4CAF50', 0),
     ('Elderly Care', 'Visit and assist elderly members of the community', 'Care centers', 'volunteer_activism', '#61A1FF', 0),
     ('Food Distribution', 'Help organize and distribute food to those in need', 'Community centers', 'food_bank_outlined', '#FF9800', 0);

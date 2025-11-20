@@ -136,13 +136,13 @@ class _MapPageState extends State<MapPage> {
                                 'rating': 4.5,
                                 'reviews': 120,
                                 'tags': ['Wilaya', 'Algeria'],
-                                'image': 'images/Layer 1.png',
+                                'image': 'images/djeey.png',
                               };
                             });
                           },
                           child: const Icon(
                             Icons.location_on,
-                            color: Color(0xFF194CBF),
+                            color: const Color(0xFFF6093D),
                             size: 40,
                           ),
                         ),
@@ -339,7 +339,7 @@ class _MapPageState extends State<MapPage> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Image.asset(
-                    place['image'] ?? 'images/Layer 1.png',
+                    place['image'] ?? 'images/djeey.png',
                     width: 100,
                     height: 100,
                     fit: BoxFit.cover,
@@ -465,7 +465,10 @@ class _MapPageState extends State<MapPage> {
                     ),
                     child: const Text(
                       'View Details',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
@@ -478,14 +481,15 @@ class _MapPageState extends State<MapPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => WilayaChatPage(
-                            wilayaName: place['title'] ?? '',
-                          ),
+                          builder:
+                              (context) => WilayaChatPage(
+                                wilayaName: place['title'] ?? '',
+                              ),
                         ),
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF194CBF),
+                      backgroundColor: const Color(0xFFF6093D),
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
@@ -494,7 +498,10 @@ class _MapPageState extends State<MapPage> {
                     ),
                     child: const Text(
                       'Join Chat',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),

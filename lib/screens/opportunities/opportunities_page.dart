@@ -193,13 +193,13 @@ class _OpportunitiesPageState extends State<OpportunitiesPage> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Color(0xFF194CBF),
-                    Color(0xFF61A1FF),
+                    Color(0xFFF6093D),
+                    Color(0xFF2C2225),
                   ],
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF194CBF).withOpacity(0.2),
+                    color: const Color(0xFFF6093D).withOpacity(0.2),
                     blurRadius: 15,
                     offset: const Offset(0, 5),
                   ),
@@ -233,7 +233,7 @@ class _OpportunitiesPageState extends State<OpportunitiesPage> {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text('Notifications'),
-                                    backgroundColor: Color(0xFF194CBF),
+                                    backgroundColor: Color(0xFFF6093D),
                                   ),
                                 );
                               },
@@ -270,7 +270,7 @@ class _OpportunitiesPageState extends State<OpportunitiesPage> {
                             ),
                             prefixIcon: const Icon(
                               Icons.search_rounded,
-                              color: Color(0xFF194CBF),
+                              color: Color(0xFFF6093D),
                             ),
                             suffixIcon: _searchController.text.isNotEmpty
                                 ? IconButton(
@@ -325,8 +325,8 @@ class _OpportunitiesPageState extends State<OpportunitiesPage> {
                             gradient: isSelected
                                 ? const LinearGradient(
                                     colors: [
-                                      Color(0xFF194CBF),
-                                      Color(0xFF61A1FF),
+                                      Color(0xFFF6093D),
+                                      Color(0xFF2C2225),
                                     ],
                                   )
                                 : null,
@@ -341,7 +341,7 @@ class _OpportunitiesPageState extends State<OpportunitiesPage> {
                             boxShadow: isSelected
                                 ? [
                                     BoxShadow(
-                                      color: const Color(0xFF194CBF)
+                                      color: const Color(0xFFF6093D)
                                           .withOpacity(0.3),
                                       blurRadius: 8,
                                       offset: const Offset(0, 4),
@@ -436,14 +436,14 @@ class _OpportunitiesPageState extends State<OpportunitiesPage> {
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             colors: [
-              Color(0xFF194CBF),
-              Color(0xFF61A1FF),
+              Color(0xFFF6093D),
+              Color(0xFF2C2225),
             ],
           ),
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF194CBF).withOpacity(0.4),
+              color: const Color(0xFFF6093D).withOpacity(0.4),
               blurRadius: 15,
               offset: const Offset(0, 8),
             ),
@@ -457,7 +457,7 @@ class _OpportunitiesPageState extends State<OpportunitiesPage> {
             ).showSnackBar(
               const SnackBar(
                 content: Text('Add new opportunity'),
-                backgroundColor: Color(0xFF194CBF),
+                backgroundColor: Color(0xFFF6093D),
               ),
             );
           },
@@ -624,7 +624,7 @@ class _OpportunitiesPageState extends State<OpportunitiesPage> {
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
                                     color: isBookmarked
-                                        ? const Color(0xFF194CBF)
+                                        ? const Color(0xFFF6093D)
                                             .withOpacity(0.1)
                                         : Colors.grey[100],
                                     borderRadius: BorderRadius.circular(12),
@@ -634,7 +634,7 @@ class _OpportunitiesPageState extends State<OpportunitiesPage> {
                                         ? Icons.bookmark_rounded
                                         : Icons.bookmark_border_rounded,
                                     color: isBookmarked
-                                        ? const Color(0xFF194CBF)
+                                        ? const Color(0xFFF6093D)
                                         : AppColors.textSecondary,
                                     size: 24,
                                   ),
@@ -658,15 +658,15 @@ class _OpportunitiesPageState extends State<OpportunitiesPage> {
                                       decoration: BoxDecoration(
                                         gradient: LinearGradient(
                                           colors: [
-                                            const Color(0xFF194CBF)
+                                            const Color(0xFFF6093D)
                                                 .withOpacity(0.1),
-                                            const Color(0xFF61A1FF)
+                                            const Color(0xFF2C2225)
                                                 .withOpacity(0.1),
                                           ],
                                         ),
                                         borderRadius: BorderRadius.circular(8),
                                         border: Border.all(
-                                          color: const Color(0xFF194CBF)
+                                          color: const Color(0xFFF6093D)
                                               .withOpacity(0.2),
                                           width: 1,
                                         ),
@@ -675,7 +675,7 @@ class _OpportunitiesPageState extends State<OpportunitiesPage> {
                                         tag.toString(),
                                         style: const TextStyle(
                                           fontSize: 12,
-                                          color: Color(0xFF194CBF),
+                                          color: Color(0xFFF6093D),
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
@@ -706,7 +706,7 @@ class _OpportunitiesPageState extends State<OpportunitiesPage> {
       case 'Projects':
         return const Color(0xFFF57C00);
       default:
-        return const Color(0xFF194CBF);
+        return const Color(0xFFF6093D);
     }
   }
 }

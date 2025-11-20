@@ -184,8 +184,8 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
           // Top stripe
           Container(
             height: 4,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(colors: [color, color.withOpacity(0.6)]),
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(colors: [Color(0xFFF6093D), Color(0xFF2C2225)]),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(24),
                 topRight: Radius.circular(24),
@@ -206,15 +206,15 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
+                        gradient: const LinearGradient(
                           colors: [
-                            color.withOpacity(0.2),
-                            color.withOpacity(0.1),
+                            Color(0xFFF6093D),
+                            Color(0xFF2C2225),
                           ],
                         ),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                          color: color.withOpacity(0.3),
+                          color: const Color(0xFFF6093D).withOpacity(0.3),
                           width: 1,
                         ),
                       ),
@@ -297,7 +297,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF194CBF).withOpacity(0.1),
+                        color: const Color(0xFFF6093D).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
@@ -327,7 +327,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF194CBF).withOpacity(0.1),
+                        color: const Color(0xFFF6093D).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
@@ -368,7 +368,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
                         isEnrolled
                             ? null
                             : LinearGradient(
-                              colors: [color, color.withOpacity(0.8)],
+                              colors: [const Color(0xFFF6093D), const Color(0xFF2C2225)],
                             ),
                     color: isEnrolled ? Colors.grey[100] : null,
                     borderRadius: BorderRadius.circular(12),
@@ -377,7 +377,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
                             ? null
                             : [
                               BoxShadow(
-                                color: color.withOpacity(0.4),
+                                color: const Color(0xFFF6093D).withOpacity(0.4),
                                 blurRadius: 12,
                                 offset: const Offset(0, 6),
                               ),
@@ -440,11 +440,11 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [Color(0xFF194CBF), Color(0xFF61A1FF)],
+                colors: [Color(0xFFF6093D), Color(0xFF2C2225)],
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Color(0xFF194CBF),
+                  color: Color(0xFFF6093D),
                   blurRadius: 20,
                   offset: Offset(0, 10),
                 ),

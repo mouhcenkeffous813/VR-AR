@@ -48,7 +48,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           }
         },
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: const Color(0xFF194CBF),
+        selectedItemColor: const Color(0xFFF6093D),
         unselectedItemColor: AppColors.textSecondary,
         selectedFontSize: 12,
         unselectedFontSize: 12,
@@ -105,7 +105,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(12),
                           child: Image.asset(
-                            'images/Layer 1.png',
+                            'images/djeey.png',
                             fit: BoxFit.contain,
                           ),
                         ),
@@ -121,7 +121,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       ),
                       const SizedBox(height: 4),
                       const Text(
-                        'Skill Center',
+                        'NextVerse',
                         style: TextStyle(
                           color: Color.fromARGB(179, 15, 71, 238),
                           fontSize: 14,
@@ -392,7 +392,25 @@ class _WelcomeContentPageState extends State<WelcomeContentPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 36, color: iconColor),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFFF6093D), Color(0xFF2C2225)],
+                ),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFF6093D).withOpacity(0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Icon(icon, size: 36, color: Colors.white),
+            ),
             const SizedBox(height: 10),
             Text(
               title,
@@ -461,7 +479,7 @@ class _WelcomeContentPageState extends State<WelcomeContentPage> {
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
-                        colors: [AppColors.primaryLight, AppColors.primary],
+                        colors: [Color(0xFFF6093D), Color(0xFF2C2225)],
                       ),
                     ),
                     child: const Icon(
@@ -520,7 +538,7 @@ class _WelcomeContentPageState extends State<WelcomeContentPage> {
               ),
         ),
         title: const Text(
-          'Skill Center',
+          'NextVerse',
           style: TextStyle(
             color: AppColors.primary,
             fontSize: 24,
@@ -628,7 +646,10 @@ class _WelcomeContentPageState extends State<WelcomeContentPage> {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [AppColors.primary, AppColors.primaryLight],
+                      colors: [
+                        const Color(0xFFF6093D),
+                        const Color(0xFF2C2225),
+                      ],
                     ),
                     borderRadius: BorderRadius.circular(12),
                   ),

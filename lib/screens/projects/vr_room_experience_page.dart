@@ -65,7 +65,7 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
             width: 4,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.6),
+              color: Color(0xFF2C2225).withOpacity(0.6),
               shape: BoxShape.circle,
             ),
           ),
@@ -159,7 +159,7 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
                                     onPressed: () => Navigator.of(context).pop(),
                                     icon: const Icon(
                                       Icons.close_rounded,
-                                      color: Colors.white,
+                                      color: Color(0xFF2C2225),
                                       size: 28,
                                     ),
                                   ),
@@ -175,16 +175,16 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
                                   ),
                                   child: Row(
                                     children: [
-                                      Icon(
+                                      const Icon(
                                         Icons.people_rounded,
-                                        color: Colors.white70,
+                                        color: Color(0xFF2C2225),
                                         size: 18,
                                       ),
                                       const SizedBox(width: 8),
                                       Text(
                                         '${widget.participants} Online',
                                         style: const TextStyle(
-                                          color: Colors.white,
+                                          color: Color(0xFF2C2225),
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -211,7 +211,7 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
                                     color: Colors.black.withOpacity(0.7),
                                     borderRadius: BorderRadius.circular(30),
                                     border: Border.all(
-                                      color: Colors.white.withOpacity(
+                                      color: Color(0xFF2C2225).withOpacity(
                                         0.3 + (_pulseController.value * 0.3),
                                       ),
                                       width: 2,
@@ -252,7 +252,7 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
                                         ),
                                         child: Icon(
                                           Icons.vrpano_rounded,
-                                          color: Colors.white,
+                                          color: Color(0xFF2C2225),
                                           size: isLandscape ? 48 : 64,
                                         ),
                                       ),
@@ -260,7 +260,7 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
                                       Text(
                                         'Put on your VR headset',
                                         style: TextStyle(
-                                          color: Colors.white,
+                                          color: Color(0xFF2C2225),
                                           fontSize: isLandscape ? 22 : 28,
                                           fontWeight: FontWeight.bold,
                                           shadows: [
@@ -276,9 +276,9 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
                                       SizedBox(height: isLandscape ? 8 : 12),
                                       Text(
                                         'Welcome to ${widget.roomName}',
-                                        style: TextStyle(
-                                          color: Colors.white70,
-                                          fontSize: isLandscape ? 15 : 18,
+                                        style: const TextStyle(
+                                          color: Color(0xFF2C2225),
+                                          fontSize: 18,
                                           fontWeight: FontWeight.w500,
                                         ),
                                         textAlign: TextAlign.center,
@@ -326,7 +326,7 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
                                           child: Text(
                                             'Continue in VR',
                                             style: TextStyle(
-                                              color: Colors.white,
+                                              color: Color(0xFF2C2225),
                                               fontSize: isLandscape ? 16 : 18,
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -339,7 +339,7 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
                                         child: Text(
                                           'Exit VR Space',
                                           style: TextStyle(
-                                            color: Colors.white70,
+                                            color: const Color(0xFF2C2225),
                                             fontSize: isLandscape ? 14 : 16,
                                           ),
                                         ),
@@ -374,7 +374,7 @@ class Grid3DPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.1)
+      ..color = Color(0xFF2C2225).withOpacity(0.1)
       ..strokeWidth = 1;
 
     final centerX = size.width / 2;

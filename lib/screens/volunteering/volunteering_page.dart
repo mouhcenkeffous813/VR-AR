@@ -61,7 +61,7 @@ class _VolunteeringPageState extends State<VolunteeringPage> {
             duration: const Duration(seconds: 5),
             action: SnackBarAction(
               label: 'OK',
-              textColor: Colors.white,
+              textColor: Color(0xFF2C2225),
               onPressed: () {},
             ),
           ),
@@ -134,15 +134,15 @@ class _VolunteeringPageState extends State<VolunteeringPage> {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Color(0xFF388E3C),
-                  Color(0xFF66BB6A),
+                  Color(0xFFF6093D),
+                  Color(0xFF2C2225),
                 ],
               ),
               boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF388E3C).withOpacity(0.3),
+                const BoxShadow(
+                  color: Color(0xFFF6093D),
                   blurRadius: 20,
-                  offset: const Offset(0, 10),
+                  offset: Offset(0, 10),
                 ),
               ],
             ),
@@ -278,7 +278,7 @@ class _VolunteeringPageState extends State<VolunteeringPage> {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Color(0xFF2C2225),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -335,7 +335,7 @@ class _VolunteeringPageState extends State<VolunteeringPage> {
                   ),
                   child: Icon(
                     icon,
-                    color: Colors.white,
+                    color: Color(0xFF2C2225),
                     size: 32,
                   ),
                 ),
@@ -390,7 +390,7 @@ class _VolunteeringPageState extends State<VolunteeringPage> {
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF388E3C).withOpacity(0.1),
+                          color: const Color(0xFFF6093D).withOpacity(0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Row(
@@ -399,14 +399,14 @@ class _VolunteeringPageState extends State<VolunteeringPage> {
                             const Icon(
                               Icons.people_rounded,
                               size: 16,
-                              color: Color(0xFF388E3C),
+                              color: Color(0xFFF6093D),
                             ),
                             const SizedBox(width: 6),
                             Text(
                               '${opportunity.enrolledCount} enrolled',
                               style: const TextStyle(
                                 fontSize: 13,
-                                color: Color(0xFF388E3C),
+                                color: Color(0xFFF6093D),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -461,7 +461,7 @@ class _VolunteeringPageState extends State<VolunteeringPage> {
                     children: [
                       Icon(
                         isEnrolled ? Icons.cancel_outlined : Icons.check_circle_outline_rounded,
-                        color: isEnrolled ? AppColors.textSecondary : Colors.white,
+                        color: isEnrolled ? AppColors.textSecondary : Color(0xFF2C2225),
                         size: 20,
                       ),
                       const SizedBox(width: 8),
@@ -470,7 +470,7 @@ class _VolunteeringPageState extends State<VolunteeringPage> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: isEnrolled ? AppColors.textSecondary : Colors.white,
+                          color: isEnrolled ? AppColors.textSecondary : Color(0xFF2C2225),
                         ),
                       ),
                     ],

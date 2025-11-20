@@ -53,7 +53,7 @@ class _VRDetailPageState extends State<VRDetailPage> {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Color(0xFF2C2225),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: color.withOpacity(0.3), width: 1.5),
         boxShadow: [
@@ -85,7 +85,7 @@ class _VRDetailPageState extends State<VRDetailPage> {
                 ),
               ],
             ),
-            child: Icon(icon, color: Colors.white, size: 28),
+            child: Icon(icon, color: Color(0xFF2C2225), size: 28),
           ),
           const SizedBox(width: 16),
           // Room info
@@ -161,7 +161,7 @@ class _VRDetailPageState extends State<VRDetailPage> {
               child: const Text(
                 'Join',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Color(0xFF2C2225),
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
                 ),
@@ -210,11 +210,11 @@ class _VRDetailPageState extends State<VRDetailPage> {
                         gradient: const LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                          colors: [Color(0xFF194CBF), Color(0xFF61A1FF)],
+                          colors: [Color(0xFFF6093D), Color(0xFF2C2225)],
                         ),
                       ),
                       child: const Center(
-                        child: CircularProgressIndicator(color: Colors.white),
+                        child: CircularProgressIndicator(color: Color(0xFF2C2225)),
                       ),
                     ),
                   // Gradient overlay
@@ -241,14 +241,14 @@ class _VRDetailPageState extends State<VRDetailPage> {
                         children: [
                           Container(
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Color(0xFF2C2225).withOpacity(0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: IconButton(
                               onPressed: () => Navigator.of(context).pop(),
                               icon: const Icon(
                                 Icons.arrow_back_rounded,
-                                color: Colors.white,
+                                color: Color(0xFF2C2225),
                                 size: 24,
                               ),
                             ),
@@ -256,7 +256,7 @@ class _VRDetailPageState extends State<VRDetailPage> {
                           const Spacer(),
                           Container(
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Color(0xFF2C2225).withOpacity(0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: IconButton(
@@ -269,7 +269,7 @@ class _VRDetailPageState extends State<VRDetailPage> {
                               },
                               icon: const Icon(
                                 Icons.share_rounded,
-                                color: Colors.white,
+                                color: Color(0xFF2C2225),
                                 size: 24,
                               ),
                             ),
@@ -289,7 +289,7 @@ class _VRDetailPageState extends State<VRDetailPage> {
                         const Text(
                           'Virtual Space',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Color(0xFF2C2225),
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
                             shadows: [
@@ -305,7 +305,7 @@ class _VRDetailPageState extends State<VRDetailPage> {
                         Text(
                           'Explore immersive virtual reality experiences',
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.9),
+                            color: Color(0xFF2C2225).withOpacity(0.9),
                             fontSize: 16,
                             shadows: const [
                               Shadow(
@@ -332,7 +332,7 @@ class _VRDetailPageState extends State<VRDetailPage> {
             builder: (context, scrollController) {
               return Container(
                 decoration: const BoxDecoration(
-                  color: Colors.white,
+                  color: Color(0xFF2C2225),
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(30),
                     topRight: Radius.circular(30),
@@ -423,7 +423,7 @@ class _VRDetailPageState extends State<VRDetailPage> {
             child: Container(
               padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Color(0xFF2C2225),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
@@ -492,7 +492,7 @@ class _VRDetailPageState extends State<VRDetailPage> {
                       children: [
                         Icon(
                           Icons.vrpano_rounded,
-                          color: Colors.white,
+                          color: Color(0xFF2C2225),
                           size: 22,
                         ),
                         SizedBox(width: 12),
@@ -501,7 +501,7 @@ class _VRDetailPageState extends State<VRDetailPage> {
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: Color(0xFF2C2225),
                           ),
                         ),
                       ],
@@ -524,7 +524,7 @@ class _VRDetailPageState extends State<VRDetailPage> {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Color(0xFF2C2225),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: const Color(0xFF9C27B0).withOpacity(0.2),

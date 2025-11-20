@@ -17,13 +17,13 @@ class CareerCampusPage extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Color(0xFF194CBF),
-                  Color(0xFF61A1FF),
+                  Color(0xFFF6093D),
+                  Color(0xFF2C2225),
                 ],
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Color(0xFF194CBF),
+                  color: Color(0xFFF6093D),
                   blurRadius: 20,
                   offset: Offset(0, 10),
                 ),
@@ -119,7 +119,7 @@ class CareerCampusPage extends StatelessWidget {
                   icon: Icons.work_outline_rounded,
                   title: 'Job Opportunities',
                   description: 'Browse available job listings and internships',
-                  color: const Color(0xFF194CBF),
+                  color: const Color(0xFFF6093D),
                 ),
                 const SizedBox(height: 16),
                 _buildResourceCard(
