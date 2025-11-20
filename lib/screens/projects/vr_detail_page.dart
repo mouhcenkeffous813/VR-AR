@@ -53,7 +53,7 @@ class _VRDetailPageState extends State<VRDetailPage> {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Color(0xFF2C2225),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: color.withOpacity(0.3), width: 1.5),
         boxShadow: [
@@ -85,7 +85,7 @@ class _VRDetailPageState extends State<VRDetailPage> {
                 ),
               ],
             ),
-            child: Icon(icon, color: Color(0xFF2C2225), size: 28),
+            child: Icon(icon, color: Colors.white, size: 28),
           ),
           const SizedBox(width: 16),
           // Room info
@@ -332,7 +332,7 @@ class _VRDetailPageState extends State<VRDetailPage> {
             builder: (context, scrollController) {
               return Container(
                 decoration: const BoxDecoration(
-                  color: Color(0xFF2C2225),
+                  color: AppColors.background,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(30),
                     topRight: Radius.circular(30),
@@ -423,7 +423,7 @@ class _VRDetailPageState extends State<VRDetailPage> {
             child: Container(
               padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
               decoration: BoxDecoration(
-                color: Color(0xFF2C2225),
+                color: Colors.white,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
@@ -524,7 +524,7 @@ class _VRDetailPageState extends State<VRDetailPage> {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Color(0xFF2C2225),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: const Color(0xFF9C27B0).withOpacity(0.2),

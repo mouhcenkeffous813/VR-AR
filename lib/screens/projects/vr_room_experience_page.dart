@@ -1,5 +1,8 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:youth_center/utils/app_colors.dart';
+import 'package:youth_center/screens/projects/webview_page.dart';
 
 class VRRoomExperiencePage extends StatefulWidget {
   final String roomName;
@@ -20,6 +23,39 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
   late AnimationController _rotationController;
   late AnimationController _pulseController;
   late AnimationController _fadeController;
+  Timer? _redirectTimer;
+  bool _isRedirecting = false;
+
+  String _getOnirixUrl() {
+    // URL do Onirix para Auto Mechanics e outros rooms de Mechanics
+    if (widget.roomName.toLowerCase().contains('auto mechanic')) {
+      return 'https://player.onirix.com/projects/479cf8a8dde14393955d3ed491f545f6/webar?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExMjY1LCJwcm9qZWN0SWQiOjEwMzM3MCwicm9sZSI6MywiaWF0IjoxNzQxMDgyMzQwfQ.KmMjL4-VDHKyF4ycQKL0v877t5HczKPryA9c-gFbBQo';
+    }
+    // Você pode adicionar outras URLs para outros rooms aqui
+    return 'https://player.onirix.com/projects/479cf8a8dde14393955d3ed491f545f6/webar?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExMjY1LCJwcm9qZWN0SWQiOjEwMzM3MCwicm9sZSI6MywiaWF0IjoxNzQxMDgyMzQwfQ.KmMjL4-VDHKyF4ycQKL0v877t5HczKPryA9c-gFbBQo';
+  }
+
+  void _startRedirectTimer() {
+    if (_isRedirecting) return;
+    
+    setState(() {
+      _isRedirecting = true;
+    });
+
+    _redirectTimer = Timer(const Duration(seconds: 7), () {
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => WebViewPage(
+              url: _getOnirixUrl(),
+              title: widget.roomName,
+            ),
+          ),
+        );
+      }
+    });
+  }
 
   @override
   void initState() {
@@ -43,6 +79,7 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
 
   @override
   void dispose() {
+    _redirectTimer?.cancel();
     _rotationController.dispose();
     _pulseController.dispose();
     _fadeController.dispose();
@@ -77,7 +114,7 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.background,
       body: Stack(
         children: [
           // Animated 3D-like background
@@ -152,14 +189,18 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
                               children: [
                                 Container(
                                   decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.5),
+                                    color: Colors.transparent,
                                     borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: const Color(0xFFF6093D).withOpacity(0.3),
+                                      width: 1.5,
+                                    ),
                                   ),
                                   child: IconButton(
                                     onPressed: () => Navigator.of(context).pop(),
                                     icon: const Icon(
                                       Icons.close_rounded,
-                                      color: Color(0xFF2C2225),
+                                      color: Colors.white,
                                       size: 28,
                                     ),
                                   ),
@@ -170,21 +211,25 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
                                     vertical: 8,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.5),
+                                    color: Colors.transparent,
                                     borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                      color: const Color(0xFFF6093D).withOpacity(0.3),
+                                      width: 1.5,
+                                    ),
                                   ),
                                   child: Row(
                                     children: [
                                       const Icon(
                                         Icons.people_rounded,
-                                        color: Color(0xFF2C2225),
+                                        color: Colors.white,
                                         size: 18,
                                       ),
                                       const SizedBox(width: 8),
                                       Text(
                                         '${widget.participants} Online',
                                         style: const TextStyle(
-                                          color: Color(0xFF2C2225),
+                                          color: Colors.white,
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -208,17 +253,17 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
                                 return Container(
                                   padding: EdgeInsets.all(isLandscape ? 24 : 32),
                                   decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.7),
+                                    color: Colors.transparent,
                                     borderRadius: BorderRadius.circular(30),
                                     border: Border.all(
-                                      color: Color(0xFF2C2225).withOpacity(
+                                      color: const Color(0xFFF6093D).withOpacity(
                                         0.3 + (_pulseController.value * 0.3),
                                       ),
                                       width: 2,
                                     ),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: const Color(0xFF9FA8DA).withOpacity(
+                                        color: const Color(0xFFF6093D).withOpacity(
                                           0.3 + (_pulseController.value * 0.2),
                                         ),
                                         blurRadius: 30,
@@ -233,18 +278,18 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
                                       Container(
                                         padding: EdgeInsets.all(isLandscape ? 16 : 24),
                                         decoration: BoxDecoration(
-                                          gradient: LinearGradient(
+                                          gradient: const LinearGradient(
                                             begin: Alignment.topLeft,
                                             end: Alignment.bottomRight,
                                             colors: [
-                                              const Color(0xFF9FA8DA),
-                                              const Color(0xFF7986CB),
+                                              Color(0xFFF6093D),
+                                              Color(0xFF2C2225),
                                             ],
                                           ),
                                           shape: BoxShape.circle,
                                           boxShadow: [
                                             BoxShadow(
-                                              color: const Color(0xFF9FA8DA).withOpacity(0.5),
+                                              color: const Color(0xFFF6093D).withOpacity(0.5),
                                               blurRadius: 20,
                                               spreadRadius: 5,
                                             ),
@@ -252,7 +297,7 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
                                         ),
                                         child: Icon(
                                           Icons.vrpano_rounded,
-                                          color: Color(0xFF2C2225),
+                                          color: Colors.white,
                                           size: isLandscape ? 48 : 64,
                                         ),
                                       ),
@@ -260,24 +305,17 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
                                       Text(
                                         'Put on your VR headset',
                                         style: TextStyle(
-                                          color: Color(0xFF2C2225),
+                                          color: AppColors.textPrimary,
                                           fontSize: isLandscape ? 22 : 28,
                                           fontWeight: FontWeight.bold,
-                                          shadows: [
-                                            Shadow(
-                                              color: Colors.black.withOpacity(0.5),
-                                              blurRadius: 10,
-                                              offset: const Offset(0, 2),
-                                            ),
-                                          ],
                                         ),
                                         textAlign: TextAlign.center,
                                       ),
                                       SizedBox(height: isLandscape ? 8 : 12),
                                       Text(
                                         'Welcome to ${widget.roomName}',
-                                        style: const TextStyle(
-                                          color: Color(0xFF2C2225),
+                                        style: TextStyle(
+                                          color: AppColors.textSecondary,
                                           fontSize: 18,
                                           fontWeight: FontWeight.w500,
                                         ),
@@ -288,30 +326,31 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
                                       Container(
                                         width: double.infinity,
                                         height: isLandscape ? 48 : 56,
-                                        decoration: BoxDecoration(
-                                          gradient: const LinearGradient(
-                                            colors: [
-                                              Color(0xFF9FA8DA),
-                                              Color(0xFF7986CB),
-                                            ],
-                                          ),
-                                          borderRadius: BorderRadius.circular(16),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: const Color(0xFF9FA8DA).withOpacity(0.5),
-                                              blurRadius: 20,
-                                              offset: const Offset(0, 8),
+                                          decoration: BoxDecoration(
+                                            gradient: const LinearGradient(
+                                              colors: [
+                                                Color(0xFFF6093D),
+                                                Color(0xFF2C2225),
+                                              ],
                                             ),
-                                          ],
+                                          borderRadius: BorderRadius.circular(16),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: const Color(0xFFF6093D).withOpacity(0.5),
+                                                blurRadius: 20,
+                                                offset: const Offset(0, 8),
+                                              ),
+                                            ],
                                         ),
                                         child: ElevatedButton(
                                           onPressed: () {
+                                            _startRedirectTimer();
                                             ScaffoldMessenger.of(context).showSnackBar(
                                               SnackBar(
                                                 content: Text(
-                                                  'Entering ${widget.roomName}...',
+                                                  'Entering ${widget.roomName} in 7 seconds...',
                                                 ),
-                                                backgroundColor: const Color(0xFF7986CB),
+                                                backgroundColor: const Color(0xFFF6093D),
                                                 duration: const Duration(seconds: 2),
                                               ),
                                             );
@@ -324,9 +363,9 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
                                             ),
                                           ),
                                           child: Text(
-                                            'Continue in VR',
+                                            _isRedirecting ? 'Loading...' : 'Continue in VR',
                                             style: TextStyle(
-                                              color: Color(0xFF2C2225),
+                                              color: Colors.white,
                                               fontSize: isLandscape ? 16 : 18,
                                               fontWeight: FontWeight.bold,
                                             ),

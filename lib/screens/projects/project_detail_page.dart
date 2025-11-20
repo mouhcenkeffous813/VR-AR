@@ -196,7 +196,7 @@ class ProjectDetailPage extends StatelessWidget {
             builder: (context, scrollController) {
               return Container(
                 decoration: const BoxDecoration(
-                  color: Color(0xFF2C2225),
+                  color: AppColors.background,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(30),
                     topRight: Radius.circular(30),
@@ -317,7 +317,7 @@ class ProjectDetailPage extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
               decoration: BoxDecoration(
-                color: Color(0xFF2C2225),
+                color: Colors.white,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
@@ -362,7 +362,7 @@ class ProjectDetailPage extends StatelessWidget {
                           children: [
                             Icon(
                               Icons.group_add_rounded,
-                              color: Color(0xFF2C2225),
+                              color: Colors.white,
                               size: 22,
                             ),
                             SizedBox(width: 12),
@@ -371,7 +371,7 @@ class ProjectDetailPage extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF2C2225),
+                                color: Colors.white,
                               ),
                             ),
                           ],
@@ -421,7 +421,7 @@ class ProjectDetailPage extends StatelessWidget {
                             children: [
                               Icon(
                                 Icons.fiber_manual_record_rounded,
-                                color: Color(0xFF2C2225),
+                                color: Colors.white,
                                 size: 18,
                               ),
                               SizedBox(width: 10),
@@ -430,7 +430,7 @@ class ProjectDetailPage extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
-                                  color: Color(0xFF2C2225),
+                                  color: Colors.white,
                                 ),
                               ),
                             ],
@@ -456,7 +456,7 @@ class ProjectDetailPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Color(0xFF2C2225),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: const Color(0xFFF6093D).withOpacity(0.2),
@@ -597,7 +597,7 @@ class ProjectDetailPage extends StatelessWidget {
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(24),
-                color: Color(0xFF2C2225),
+                color: Colors.white,
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -719,7 +719,7 @@ class ProjectDetailPage extends StatelessWidget {
                               children: [
                                 Icon(
                                   Icons.group_add_rounded,
-                                  color: Color(0xFF2C2225),
+                                  color: Colors.white,
                                   size: 20,
                                 ),
                                 SizedBox(width: 8),
@@ -728,7 +728,7 @@ class ProjectDetailPage extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
-                                    color: Color(0xFF2C2225),
+                                    color: Colors.white,
                                   ),
                                 ),
                               ],

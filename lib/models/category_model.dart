@@ -81,6 +81,10 @@ class CategoryModel {
 class CategoryData {
   static const List<CategoryModel> categories = [
     CategoryModel(
+      name: 'Mechanics',
+      icon: Icons.build,
+    ),
+    CategoryModel(
       name: 'Medicine',
       icon: Icons.medical_services,
     ),
@@ -91,10 +95,6 @@ class CategoryData {
     CategoryModel(
       name: 'Engineering',
       icon: Icons.engineering,
-    ),
-    CategoryModel(
-      name: 'Mechanics',
-      icon: Icons.build,
     ),
     CategoryModel(
       name: 'Geometry',

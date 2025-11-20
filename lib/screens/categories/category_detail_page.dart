@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:youth_center/utils/app_colors.dart';
-import 'package:intl/intl.dart';
-import 'package:youth_center/services/database_service.dart';
-import 'package:youth_center/models/event_model.dart';
+import 'package:youth_center/screens/projects/vr_room_experience_page.dart';
+
+class CategoryRoom {
+  final String name;
+  final int participants;
+  final IconData icon;
+  final Color color;
+
+  const CategoryRoom({
+    required this.name,
+    required this.participants,
+    required this.icon,
+    required this.color,
+  });
+}
 
 class CategoryDetailPage extends StatefulWidget {
   final String categoryName;
@@ -21,333 +33,274 @@ class CategoryDetailPage extends StatefulWidget {
 }
 
 class _CategoryDetailPageState extends State<CategoryDetailPage> {
-  final DatabaseService _dbService = DatabaseService();
-  List<EventModel> _events = [];
-  Set<String> _enrolledEventIds = {};
-  bool _isLoading = true;
+  List<CategoryRoom> _rooms = [];
 
   @override
   void initState() {
     super.initState();
-    _loadEvents();
+    _loadRooms();
   }
 
-  Future<void> _loadEvents() async {
-    try {
-      setState(() {
-        _isLoading = true;
-      });
-
-      final events = await _dbService.getEventsByCategoryName(
-        widget.categoryName,
-      );
-
-      setState(() {
-        _events = events;
-        _isLoading = false;
-      });
-
-      // Load enrollment status after events are loaded
-      if (widget.allowEnrollment) {
-        _loadEnrollments();
-      }
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error loading events: $e'),
-            backgroundColor: AppColors.error,
-          ),
-        );
-      }
+  void _loadRooms() {
+    // Define rooms for each category
+    final categoryName = widget.categoryName.toLowerCase();
+    
+    if (categoryName.contains('medicine')) {
+      _rooms = [
+        const CategoryRoom(
+          name: 'Anatomy Lab',
+          participants: 28,
+          icon: Icons.medical_services,
+          color: Color(0xFFE91E63),
+        ),
+        const CategoryRoom(
+          name: 'Surgery Room',
+          participants: 15,
+          icon: Icons.healing,
+          color: Color(0xFFF44336),
+        ),
+        const CategoryRoom(
+          name: 'Pharmacy Lab',
+          participants: 22,
+          icon: Icons.medication,
+          color: Color(0xFF9C27B0),
+        ),
+        const CategoryRoom(
+          name: 'Research Center',
+          participants: 18,
+          icon: Icons.science,
+          color: Color(0xFF3F51B5),
+        ),
+      ];
+    } else if (categoryName.contains('chemistry')) {
+      _rooms = [
+        const CategoryRoom(
+          name: 'Organic Chemistry Lab',
+          participants: 24,
+          icon: Icons.science,
+          color: Color(0xFF4CAF50),
+        ),
+        const CategoryRoom(
+          name: 'Inorganic Lab',
+          participants: 19,
+          icon: Icons.biotech,
+          color: Color(0xFF00BCD4),
+        ),
+        const CategoryRoom(
+          name: 'Analytical Lab',
+          participants: 16,
+          icon: Icons.analytics,
+          color: Color(0xFF009688),
+        ),
+        const CategoryRoom(
+          name: 'Physical Chemistry',
+          participants: 21,
+          icon: Icons.explore,
+          color: Color(0xFF795548),
+        ),
+      ];
+    } else if (categoryName.contains('engineering')) {
+      _rooms = [
+        const CategoryRoom(
+          name: 'Mechanical Engineering',
+          participants: 32,
+          icon: Icons.engineering,
+          color: Color(0xFFFF9800),
+        ),
+        const CategoryRoom(
+          name: 'Electrical Lab',
+          participants: 27,
+          icon: Icons.electrical_services,
+          color: Color(0xFFFFC107),
+        ),
+        const CategoryRoom(
+          name: 'Civil Engineering',
+          participants: 25,
+          icon: Icons.construction,
+          color: Color(0xFF607D8B),
+        ),
+        const CategoryRoom(
+          name: 'Software Lab',
+          participants: 35,
+          icon: Icons.computer,
+          color: Color(0xFF2196F3),
+        ),
+      ];
+    } else if (categoryName.contains('mechanics')) {
+      _rooms = [
+        const CategoryRoom(
+          name: 'Auto Mechanics',
+          participants: 20,
+          icon: Icons.build,
+          color: Color(0xFFFF5722),
+        ),
+        const CategoryRoom(
+          name: 'Industrial Mechanics',
+          participants: 18,
+          icon: Icons.precision_manufacturing,
+          color: Color(0xFFFF9800),
+        ),
+        const CategoryRoom(
+          name: 'Aerospace Lab',
+          participants: 14,
+          icon: Icons.flight,
+          color: Color(0xFF2196F3),
+        ),
+        const CategoryRoom(
+          name: 'Robotics Workshop',
+          participants: 23,
+          icon: Icons.smart_toy,
+          color: Color(0xFF9C27B0),
+        ),
+      ];
+    } else if (categoryName.contains('geometry')) {
+      _rooms = [
+        const CategoryRoom(
+          name: '2D Geometry',
+          participants: 26,
+          icon: Icons.crop_free,
+          color: Color(0xFF00BCD4),
+        ),
+        const CategoryRoom(
+          name: '3D Modeling',
+          participants: 29,
+          icon: Icons.view_in_ar,
+          color: Color(0xFF03A9F4),
+        ),
+        const CategoryRoom(
+          name: 'Analytical Geometry',
+          participants: 17,
+          icon: Icons.functions,
+          color: Color(0xFF0288D1),
+        ),
+        const CategoryRoom(
+          name: 'Spatial Design',
+          participants: 24,
+          icon: Icons.shape_line,
+          color: Color(0xFF01579B),
+        ),
+      ];
+    } else if (categoryName.contains('architecture')) {
+      _rooms = [
+        const CategoryRoom(
+          name: 'Design Studio',
+          participants: 31,
+          icon: Icons.architecture,
+          color: Color(0xFF795548),
+        ),
+        const CategoryRoom(
+          name: 'Urban Planning',
+          participants: 19,
+          icon: Icons.location_city,
+          color: Color(0xFF5D4037),
+        ),
+        const CategoryRoom(
+          name: 'Interior Design',
+          participants: 28,
+          icon: Icons.home,
+          color: Color(0xFF6D4C41),
+        ),
+        const CategoryRoom(
+          name: '3D Visualization',
+          participants: 22,
+          icon: Icons.view_in_ar,
+          color: Color(0xFF4E342E),
+        ),
+      ];
+    } else {
+      // Default rooms
+      _rooms = [
+        const CategoryRoom(
+          name: 'General Room 1',
+          participants: 20,
+          icon: Icons.meeting_room,
+          color: Color(0xFF9C27B0),
+        ),
+        const CategoryRoom(
+          name: 'General Room 2',
+          participants: 15,
+          icon: Icons.meeting_room,
+          color: Color(0xFF4CAF50),
+        ),
+      ];
     }
+    
+    setState(() {});
   }
 
-  Future<void> _loadEnrollments() async {
-    if (!widget.allowEnrollment || _events.isEmpty) return;
-
-    try {
-      // Load enrollment status for all events
-      for (final event in _events) {
-        final isEnrolled = await _dbService.isEnrolledInEvent(event.id);
-        setState(() {
-          if (isEnrolled) {
-            _enrolledEventIds.add(event.id);
-          } else {
-            _enrolledEventIds.remove(event.id);
-          }
-        });
-      }
-    } catch (e) {
-      print('Error loading enrollments: $e');
-    }
-  }
-
-  Future<void> _toggleEnrollment(String eventId, String eventName) async {
-    if (!widget.allowEnrollment) return;
-
-    try {
-      final isEnrolled = _enrolledEventIds.contains(eventId);
-
-      // Update UI immediately for better UX
-      setState(() {
-        if (isEnrolled) {
-          _enrolledEventIds.remove(eventId);
-        } else {
-          _enrolledEventIds.add(eventId);
-        }
-      });
-
-      final newStatus = await _dbService.toggleEnrollment(eventId);
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              newStatus
-                  ? 'Enrolled in $eventName'
-                  : 'Unenrolled from $eventName',
-            ),
-            backgroundColor: newStatus ? AppColors.success : AppColors.warning,
-            duration: const Duration(seconds: 2),
-          ),
-        );
-      }
-    } catch (e) {
-      // Revert UI change on error
-      setState(() {
-        if (_enrolledEventIds.contains(eventId)) {
-          _enrolledEventIds.remove(eventId);
-        } else {
-          _enrolledEventIds.add(eventId);
-        }
-      });
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: ${e.toString()}'),
-            backgroundColor: AppColors.error,
-            duration: const Duration(seconds: 3),
-          ),
-        );
-      }
-    }
-  }
-
-  Color _parseColor(String colorString) {
-    try {
-      return Color(int.parse(colorString.replaceFirst('#', '0xFF')));
-    } catch (e) {
-      return AppColors.primary;
-    }
-  }
-
-  Widget _buildActivityCard(EventModel event) {
-    final dateFormat = DateFormat('MMM dd, yyyy');
-    final formattedDate = dateFormat.format(event.eventDate);
-    final isEnrolled = _enrolledEventIds.contains(event.id);
-    final color = _parseColor(event.color);
-
-    IconData typeIcon;
-    switch (event.type.toLowerCase()) {
-      case 'workshop':
-        typeIcon = Icons.build_rounded;
-        break;
-      case 'event':
-        typeIcon = Icons.event_rounded;
-        break;
-      case 'lecture':
-        typeIcon = Icons.school_rounded;
-        break;
-      default:
-        typeIcon = Icons.calendar_today_rounded;
-    }
-
+  Widget _buildRoomCard({
+    required String roomName,
+    required int participants,
+    required IconData icon,
+    required Color color,
+  }) {
     return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withOpacity(0.3), width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.08),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
           ),
         ],
       ),
-      child: Column(
+      child: Row(
         children: [
-          // Top stripe
+          // Icon
           Container(
-            height: 4,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(colors: [Color(0xFFF6093D), Color(0xFF2C2225)]),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(24),
-                topRight: Radius.circular(24),
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [color, color.withOpacity(0.7)],
               ),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: color.withOpacity(0.3),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
+            child: Icon(icon, color: Colors.white, size: 28),
           ),
-          Padding(
-            padding: const EdgeInsets.all(20),
+          const SizedBox(width: 16),
+          // Room info
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header with type and enrolled badge
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [
-                            Color(0xFFF6093D),
-                            Color(0xFF2C2225),
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: const Color(0xFFF6093D).withOpacity(0.3),
-                          width: 1,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(typeIcon, size: 14, color: color),
-                          const SizedBox(width: 6),
-                          Text(
-                            event.type,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: color,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    if (isEnrolled) ...[
-                      const Spacer(),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF388E3C).withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(
-                              Icons.check_circle_rounded,
-                              size: 14,
-                              color: Color(0xFF388E3C),
-                            ),
-                            const SizedBox(width: 6),
-                            const Text(
-                              'Enrolled',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xFF388E3C),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-                const SizedBox(height: 16),
-                // Title and description
                 Text(
-                  event.name,
+                  roomName,
                   style: const TextStyle(
-                    fontSize: 20,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  event.description,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: AppColors.textSecondary,
-                    height: 1.5,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                // Date and time row
+                const SizedBox(height: 6),
                 Row(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF6093D).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.calendar_today_rounded,
-                            size: 14,
-                            color: AppColors.textSecondary.withOpacity(0.8),
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            formattedDate,
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: AppColors.textSecondary,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
+                    Icon(
+                      Icons.people_rounded,
+                      size: 16,
+                      color: AppColors.textSecondary,
                     ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF6093D).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.access_time_rounded,
-                            size: 14,
-                            color: AppColors.textSecondary.withOpacity(0.8),
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            event.eventTime,
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: AppColors.textSecondary,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
+                    const SizedBox(width: 6),
+                    Text(
+                      '$participants people joined',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
@@ -355,74 +308,106 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
               ],
             ),
           ),
-          // Button section
-          if (widget.allowEnrollment)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-              child: SizedBox(
-                width: double.infinity,
-                child: Container(
-                  height: 48,
-                  decoration: BoxDecoration(
-                    gradient:
-                        isEnrolled
-                            ? null
-                            : LinearGradient(
-                              colors: [const Color(0xFFF6093D), const Color(0xFF2C2225)],
-                            ),
-                    color: isEnrolled ? Colors.grey[100] : null,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow:
-                        isEnrolled
-                            ? null
-                            : [
-                              BoxShadow(
-                                color: const Color(0xFFF6093D).withOpacity(0.4),
-                                blurRadius: 12,
-                                offset: const Offset(0, 6),
-                              ),
-                            ],
-                  ),
-                  child: ElevatedButton(
-                    onPressed: () => _toggleEnrollment(event.id, event.name),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          isEnrolled
-                              ? Icons.check_circle_rounded
-                              : Icons.add_circle_outline_rounded,
-                          color:
-                              isEnrolled
-                                  ? AppColors.textSecondary
-                                  : Colors.white,
-                          size: 20,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          isEnrolled ? 'Enrolled' : 'Enroll Now',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color:
-                                isEnrolled
-                                    ? AppColors.textSecondary
-                                    : Colors.white,
-                          ),
-                        ),
-                      ],
+          // Join button
+          Container(
+            height: 44,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(colors: [color, color.withOpacity(0.8)]),
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: color.withOpacity(0.4),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => VRRoomExperiencePage(
+                      roomName: roomName,
+                      participants: participants,
                     ),
                   ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+              ),
+              child: const Text(
+                'Join',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionCard({
+    required IconData icon,
+    required String title,
+    required Widget child,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: const Color(0xFFF6093D).withOpacity(0.2),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFF6093D), Color(0xFF2C2225)],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, size: 20, color: Colors.white),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          child,
         ],
       ),
     );
@@ -513,7 +498,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
                               ),
                               const SizedBox(height: 6),
                               const Text(
-                                'Upcoming activities and events',
+                                'Explore interactive rooms',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 15,
@@ -533,41 +518,26 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
           ),
           // Content
           Expanded(
-            child:
-                _isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : _events.isEmpty
-                    ? Center(
+            child: _rooms.isEmpty
+                ? const Center(child: CircularProgressIndicator())
+                : SingleChildScrollView(
+                    padding: const EdgeInsets.all(20),
+                    child: _buildSectionCard(
+                      icon: Icons.door_sliding_rounded,
+                      title: '${widget.categoryName} Rooms',
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.event_busy_outlined,
-                            size: 64,
-                            color: AppColors.textSecondary.withOpacity(0.5),
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'No upcoming events',
-                            style: TextStyle(
-                              color: AppColors.textSecondary,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
+                        mainAxisSize: MainAxisSize.min,
+                        children: _rooms.map((room) {
+                          return _buildRoomCard(
+                            roomName: room.name,
+                            participants: room.participants,
+                            icon: room.icon,
+                            color: room.color,
+                          );
+                        }).toList(),
                       ),
-                    )
-                    : ListView.builder(
-                      padding: const EdgeInsets.all(20),
-                      itemCount: _events.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 16),
-                          child: _buildActivityCard(_events[index]),
-                        );
-                      },
                     ),
+                  ),
           ),
         ],
       ),
