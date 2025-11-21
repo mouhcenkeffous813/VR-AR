@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_android/webview_flutter_android.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:youth_center/utils/app_colors.dart';
 
 class WebViewPage extends StatefulWidget {
@@ -20,11 +23,46 @@ class _WebViewPageState extends State<WebViewPage> {
   late final WebViewController _controller;
   bool _isLoading = true;
   int _loadingProgress = 0;
+  static const MethodChannel _channel = MethodChannel(
+    'com.example.youth_center/webview_permissions',
+  );
 
   @override
   void initState() {
     super.initState();
+    _requestPermissions();
     _initializeWebView();
+  }
+
+  Future<void> _requestPermissions() async {
+    // Request camera permission automatically - CRITICAL for VR/AR
+    final cameraStatus = await Permission.camera.status;
+    if (!cameraStatus.isGranted) {
+      final result = await Permission.camera.request();
+      if (result.isDenied || result.isPermanentlyDenied) {
+        debugPrint('Camera permission denied! VR/AR will not work.');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Permission caméra requise pour la VR. Veuillez l\'activer dans les paramètres.',
+              ),
+              duration: Duration(seconds: 3),
+            ),
+          );
+        }
+      } else {
+        debugPrint('Camera permission granted!');
+      }
+    } else {
+      debugPrint('Camera permission already granted!');
+    }
+
+    // Request microphone permission if needed
+    final microphoneStatus = await Permission.microphone.status;
+    if (!microphoneStatus.isGranted) {
+      await Permission.microphone.request();
+    }
   }
 
   void _initializeWebView() {
@@ -50,12 +88,53 @@ class _WebViewPageState extends State<WebViewPage> {
                   });
                 }
               },
-              onPageFinished: (String url) {
+              onPageFinished: (String url) async {
                 if (mounted) {
                   setState(() {
                     _isLoading = false;
                     _loadingProgress = 100;
                   });
+
+                  // Verify permissions are granted before allowing VR/AR
+                  final cameraStatus = await Permission.camera.status;
+                  if (!cameraStatus.isGranted) {
+                    debugPrint(
+                      'Warning: Camera permission not granted when page finished loading',
+                    );
+                  }
+
+                  // Configure WebView permissions after page loads
+                  // This ensures the WebChromeClient is set up correctly
+                  Future.delayed(const Duration(milliseconds: 500), () async {
+                    try {
+                      await _channel.invokeMethod(
+                        'configureWebViewPermissions',
+                      );
+                      debugPrint(
+                        'WebView permissions configured after page load',
+                      );
+                    } catch (e) {
+                      debugPrint('Error configuring WebView permissions: $e');
+                    }
+                  });
+
+                  // Inject JavaScript to help with camera access for VR/AR
+                  // Don't request camera immediately - let the VR page do it
+                  // This avoids potential crashes from premature camera access
+                  try {
+                    await _controller.runJavaScript('''
+                      (function() {
+                        console.log('Camera access ready for VR/AR...');
+                        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                          console.log('getUserMedia is available');
+                        } else {
+                          console.error('getUserMedia is NOT available');
+                        }
+                      })();
+                    ''');
+                  } catch (e) {
+                    debugPrint('Error injecting JavaScript: $e');
+                  }
                 }
               },
               onWebResourceError: (WebResourceError error) {
@@ -68,6 +147,25 @@ class _WebViewPageState extends State<WebViewPage> {
               },
             ),
           );
+
+    // Configure Android-specific WebView settings for camera permissions
+    if (_controller.platform is AndroidWebViewController) {
+      AndroidWebViewController.enableDebugging(true);
+      final androidController =
+          _controller.platform as AndroidWebViewController;
+      androidController.setMediaPlaybackRequiresUserGesture(false);
+    }
+
+    // Configure WebView permissions via platform channel
+    // This will set up the custom WebChromeClient that auto-grants permissions
+    Future.delayed(const Duration(milliseconds: 300), () async {
+      try {
+        await _channel.invokeMethod('configureWebViewPermissions');
+        debugPrint('WebView permissions configured successfully');
+      } catch (e) {
+        debugPrint('Error configuring WebView permissions: $e');
+      }
+    });
 
     // Load URL after widget is built
     WidgetsBinding.instance.addPostFrameCallback((_) {

@@ -1,8 +1,8 @@
-import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:youth_center/utils/app_colors.dart';
-import 'package:youth_center/screens/projects/webview_page.dart';
 
 class VRRoomExperiencePage extends StatefulWidget {
   final String roomName;
@@ -23,44 +23,130 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
   late AnimationController _rotationController;
   late AnimationController _pulseController;
   late AnimationController _fadeController;
-  Timer? _redirectTimer;
   bool _isRedirecting = false;
+  static const MethodChannel _channel = MethodChannel(
+    'com.example.youth_center/webview_permissions',
+  );
 
   String _getOnirixUrl() {
-    // URL do Onirix para Auto Mechanics e outros rooms de Mechanics
-    if (widget.roomName.toLowerCase().contains('auto mechanic')) {
+    // URL Onirix pour Auto Mechanics et autres rooms
+    final roomNameLower = widget.roomName.toLowerCase();
+
+    // Vérifier pour Auto Mechanic(s) - avec ou sans 's'
+    if (roomNameLower.contains('auto mechanic')) {
       return 'https://player.onirix.com/projects/479cf8a8dde14393955d3ed491f545f6/webar?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExMjY1LCJwcm9qZWN0SWQiOjEwMzM3MCwicm9sZSI6MywiaWF0IjoxNzQxMDgyMzQwfQ.KmMjL4-VDHKyF4ycQKL0v877t5HczKPryA9c-gFbBQo';
     }
-    // Você pode adicionar outras URLs para outros rooms aqui
+
+    // URL par défaut pour tous les autres rooms
     return 'https://player.onirix.com/projects/479cf8a8dde14393955d3ed491f545f6/webar?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExMjY1LCJwcm9qZWN0SWQiOjEwMzM3MCwicm9sZSI6MywiaWF0IjoxNzQxMDgyMzQwfQ.KmMjL4-VDHKyF4ycQKL0v877t5HczKPryA9c-gFbBQo';
   }
 
-  void _startRedirectTimer() {
+  Future<void> _openVRDirectly() async {
     if (_isRedirecting) return;
-    
+
     setState(() {
       _isRedirecting = true;
     });
 
-    _redirectTimer = Timer(const Duration(seconds: 7), () {
+    final onirixUrl = _getOnirixUrl();
+    debugPrint('Opening VR URL for ${widget.roomName}: $onirixUrl');
+
+    try {
+      final url = Uri.parse(onirixUrl);
+
+      // Forcer l'ouverture directement sans vérifier canLaunchUrl
+      // car cela peut retourner false même si l'URL est valide
+      debugPrint('Attempting to launch URL: $url');
+
+      final launched = await launchUrl(
+        url,
+        mode: LaunchMode.externalApplication,
+      );
+
+      debugPrint('launchUrl returned: $launched');
+
+      if (launched) {
+        debugPrint('VR URL opened successfully');
+        // Réinitialiser après un court délai pour permettre l'ouverture
+        Future.delayed(const Duration(milliseconds: 500), () {
+          if (mounted) {
+            setState(() {
+              _isRedirecting = false;
+            });
+          }
+        });
+      } else {
+        // Si launchUrl retourne false, essayer avec LaunchMode.platformDefault
+        debugPrint('External application failed, trying platform default...');
+        final launched2 = await launchUrl(
+          url,
+          mode: LaunchMode.platformDefault,
+        );
+
+        if (launched2) {
+          debugPrint('VR URL opened successfully (platform default)');
+          Future.delayed(const Duration(milliseconds: 500), () {
+            if (mounted) {
+              setState(() {
+                _isRedirecting = false;
+              });
+            }
+          });
+        } else {
+          throw Exception('Failed to launch URL - both modes failed');
+        }
+      }
+    } catch (e) {
+      debugPrint('Error opening VR URL: $e');
+
+      // Essayer avec la méthode native Android comme solution de secours
+      try {
+        debugPrint('Trying native Android method as fallback...');
+        final success = await _channel.invokeMethod<bool>('openUrl', {
+          'url': onirixUrl,
+        });
+
+        if (success == true) {
+          debugPrint('VR URL opened successfully via native method');
+          Future.delayed(const Duration(milliseconds: 500), () {
+            if (mounted) {
+              setState(() {
+                _isRedirecting = false;
+              });
+            }
+          });
+          return;
+        }
+      } catch (nativeError) {
+        debugPrint('Native method also failed: $nativeError');
+      }
+
       if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => WebViewPage(
-              url: _getOnirixUrl(),
-              title: widget.roomName,
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erreur: Impossible d\'ouvrir le lien. $e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 4),
+            action: SnackBarAction(
+              label: 'Réessayer',
+              textColor: Colors.white,
+              onPressed: () {
+                _openVRDirectly();
+              },
             ),
           ),
         );
+        setState(() {
+          _isRedirecting = false;
+        });
       }
-    });
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    
+
     _rotationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 20),
@@ -79,7 +165,6 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
 
   @override
   void dispose() {
-    _redirectTimer?.cancel();
     _rotationController.dispose();
     _pulseController.dispose();
     _fadeController.dispose();
@@ -94,7 +179,7 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
         final radius = 100.0 + sin(controller.value * 2 * pi) * 30;
         final x = cos(angle) * radius;
         final y = sin(angle) * radius;
-        
+
         return Positioned(
           left: MediaQuery.of(context).size.width / 2 + x,
           top: MediaQuery.of(context).size.height / 2 + y,
@@ -145,10 +230,8 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
           // Floating particles
           ...List.generate(
             20,
-            (index) => _buildFloatingParticle(
-              _rotationController,
-              (index * pi) / 10,
-            ),
+            (index) =>
+                _buildFloatingParticle(_rotationController, (index * pi) / 10),
           ),
 
           // 3D Grid effect
@@ -170,14 +253,13 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
             child: SafeArea(
               child: LayoutBuilder(
                 builder: (context, constraints) {
-                  final isLandscape = constraints.maxWidth > constraints.maxHeight;
+                  final isLandscape =
+                      constraints.maxWidth > constraints.maxHeight;
                   final screenHeight = constraints.maxHeight;
-                  
+
                   return SingleChildScrollView(
                     child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minHeight: screenHeight,
-                      ),
+                      constraints: BoxConstraints(minHeight: screenHeight),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -192,12 +274,15 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
                                     color: Colors.transparent,
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
-                                      color: const Color(0xFFF6093D).withOpacity(0.3),
+                                      color: const Color(
+                                        0xFFF6093D,
+                                      ).withOpacity(0.3),
                                       width: 1.5,
                                     ),
                                   ),
                                   child: IconButton(
-                                    onPressed: () => Navigator.of(context).pop(),
+                                    onPressed:
+                                        () => Navigator.of(context).pop(),
                                     icon: const Icon(
                                       Icons.close_rounded,
                                       color: Colors.white,
@@ -214,7 +299,9 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
                                     color: Colors.transparent,
                                     borderRadius: BorderRadius.circular(20),
                                     border: Border.all(
-                                      color: const Color(0xFFF6093D).withOpacity(0.3),
+                                      color: const Color(
+                                        0xFFF6093D,
+                                      ).withOpacity(0.3),
                                       width: 1.5,
                                     ),
                                   ),
@@ -251,19 +338,25 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
                               animation: _pulseController,
                               builder: (context, child) {
                                 return Container(
-                                  padding: EdgeInsets.all(isLandscape ? 24 : 32),
+                                  padding: EdgeInsets.all(
+                                    isLandscape ? 24 : 32,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: Colors.transparent,
                                     borderRadius: BorderRadius.circular(30),
                                     border: Border.all(
-                                      color: const Color(0xFFF6093D).withOpacity(
+                                      color: const Color(
+                                        0xFFF6093D,
+                                      ).withOpacity(
                                         0.3 + (_pulseController.value * 0.3),
                                       ),
                                       width: 2,
                                     ),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: const Color(0xFFF6093D).withOpacity(
+                                        color: const Color(
+                                          0xFFF6093D,
+                                        ).withOpacity(
                                           0.3 + (_pulseController.value * 0.2),
                                         ),
                                         blurRadius: 30,
@@ -276,7 +369,9 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
                                     children: [
                                       // VR Headset icon
                                       Container(
-                                        padding: EdgeInsets.all(isLandscape ? 16 : 24),
+                                        padding: EdgeInsets.all(
+                                          isLandscape ? 16 : 24,
+                                        ),
                                         decoration: BoxDecoration(
                                           gradient: const LinearGradient(
                                             begin: Alignment.topLeft,
@@ -289,7 +384,9 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
                                           shape: BoxShape.circle,
                                           boxShadow: [
                                             BoxShadow(
-                                              color: const Color(0xFFF6093D).withOpacity(0.5),
+                                              color: const Color(
+                                                0xFFF6093D,
+                                              ).withOpacity(0.5),
                                               blurRadius: 20,
                                               spreadRadius: 5,
                                             ),
@@ -326,44 +423,42 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
                                       Container(
                                         width: double.infinity,
                                         height: isLandscape ? 48 : 56,
-                                          decoration: BoxDecoration(
-                                            gradient: const LinearGradient(
-                                              colors: [
-                                                Color(0xFFF6093D),
-                                                Color(0xFF2C2225),
-                                              ],
-                                            ),
-                                          borderRadius: BorderRadius.circular(16),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: const Color(0xFFF6093D).withOpacity(0.5),
-                                                blurRadius: 20,
-                                                offset: const Offset(0, 8),
-                                              ),
+                                        decoration: BoxDecoration(
+                                          gradient: const LinearGradient(
+                                            colors: [
+                                              Color(0xFFF6093D),
+                                              Color(0xFF2C2225),
                                             ],
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            16,
+                                          ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: const Color(
+                                                0xFFF6093D,
+                                              ).withOpacity(0.5),
+                                              blurRadius: 20,
+                                              offset: const Offset(0, 8),
+                                            ),
+                                          ],
                                         ),
                                         child: ElevatedButton(
                                           onPressed: () {
-                                            _startRedirectTimer();
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                              SnackBar(
-                                                content: Text(
-                                                  'Entering ${widget.roomName} in 7 seconds...',
-                                                ),
-                                                backgroundColor: const Color(0xFFF6093D),
-                                                duration: const Duration(seconds: 2),
-                                              ),
-                                            );
+                                            _openVRDirectly();
                                           },
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor: Colors.transparent,
                                             shadowColor: Colors.transparent,
                                             shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(16),
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
                                             ),
                                           ),
                                           child: Text(
-                                            _isRedirecting ? 'Loading...' : 'Continue in VR',
+                                            _isRedirecting
+                                                ? 'Loading...'
+                                                : 'Continue in VR',
                                             style: TextStyle(
                                               color: Colors.white,
                                               fontSize: isLandscape ? 16 : 18,
@@ -374,7 +469,8 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
                                       ),
                                       SizedBox(height: isLandscape ? 12 : 16),
                                       TextButton(
-                                        onPressed: () => Navigator.of(context).pop(),
+                                        onPressed:
+                                            () => Navigator.of(context).pop(),
                                         child: Text(
                                           'Exit VR Space',
                                           style: TextStyle(
@@ -412,40 +508,33 @@ class Grid3DPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Color(0xFF2C2225).withOpacity(0.1)
-      ..strokeWidth = 1;
+    final paint =
+        Paint()
+          ..color = Color(0xFF2C2225).withOpacity(0.1)
+          ..strokeWidth = 1;
 
     final centerX = size.width / 2;
     final centerY = size.height / 2;
-    
+
     // Draw 3D grid lines
     for (int i = -5; i <= 5; i++) {
       final offset = i * 80.0;
-      
+
       // Horizontal lines
       final startX = centerX - 300 + offset * cos(rotation);
       final startY = centerY + offset * sin(rotation);
       final endX = centerX + 300 + offset * cos(rotation);
       final endY = centerY + offset * sin(rotation);
-      
-      canvas.drawLine(
-        Offset(startX, startY),
-        Offset(endX, endY),
-        paint,
-      );
-      
+
+      canvas.drawLine(Offset(startX, startY), Offset(endX, endY), paint);
+
       // Vertical lines
       final vStartX = centerX + offset * cos(rotation);
       final vStartY = centerY - 300 + offset * sin(rotation);
       final vEndX = centerX + offset * cos(rotation);
       final vEndY = centerY + 300 + offset * sin(rotation);
-      
-      canvas.drawLine(
-        Offset(vStartX, vStartY),
-        Offset(vEndX, vEndY),
-        paint,
-      );
+
+      canvas.drawLine(Offset(vStartX, vStartY), Offset(vEndX, vEndY), paint);
     }
   }
 
@@ -454,4 +543,3 @@ class Grid3DPainter extends CustomPainter {
     return oldDelegate.rotation != rotation;
   }
 }
-
