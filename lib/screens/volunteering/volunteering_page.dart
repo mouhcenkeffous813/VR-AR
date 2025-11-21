@@ -32,7 +32,7 @@ class _VolunteeringPageState extends State<VolunteeringPage> {
     try {
       final opportunities = await _dbService.getVolunteeringOpportunities();
       final userId = Supabase.instance.client.auth.currentUser?.id;
-      
+
       Set<String> enrolledIds = {};
       if (userId != null) {
         final enrollments = await _dbService.getUserVolunteeringEnrollments();
@@ -53,10 +53,7 @@ class _VolunteeringPageState extends State<VolunteeringPage> {
         final errorMsg = e.toString().replaceFirst('Exception: ', '');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              errorMsg,
-              style: const TextStyle(fontSize: 14),
-            ),
+            content: Text(errorMsg, style: const TextStyle(fontSize: 14)),
             backgroundColor: AppColors.error,
             duration: const Duration(seconds: 5),
             action: SnackBarAction(
@@ -70,7 +67,9 @@ class _VolunteeringPageState extends State<VolunteeringPage> {
     }
   }
 
-  Future<void> _toggleEnrollment(VolunteeringOpportunityModel opportunity) async {
+  Future<void> _toggleEnrollment(
+    VolunteeringOpportunityModel opportunity,
+  ) async {
     final userId = Supabase.instance.client.auth.currentUser?.id;
     if (userId == null) {
       if (mounted) {
@@ -87,7 +86,7 @@ class _VolunteeringPageState extends State<VolunteeringPage> {
     try {
       final isEnrolled = _enrolledOpportunityIds.contains(opportunity.id);
       await _dbService.toggleVolunteeringEnrollment(opportunity.id);
-      
+
       setState(() {
         if (isEnrolled) {
           _enrolledOpportunityIds.remove(opportunity.id);
@@ -102,9 +101,11 @@ class _VolunteeringPageState extends State<VolunteeringPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(isEnrolled 
-              ? 'Unenrolled from ${opportunity.title} successfully' 
-              : 'Enrolled in ${opportunity.title} successfully'),
+            content: Text(
+              isEnrolled
+                  ? 'Unenrolled from ${opportunity.title} successfully'
+                  : 'Enrolled in ${opportunity.title} successfully',
+            ),
             backgroundColor: AppColors.success,
           ),
         );
@@ -113,7 +114,9 @@ class _VolunteeringPageState extends State<VolunteeringPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: ${e.toString().replaceFirst('Exception: ', '')}'),
+            content: Text(
+              'Error: ${e.toString().replaceFirst('Exception: ', '')}',
+            ),
             backgroundColor: AppColors.error,
           ),
         );
@@ -133,10 +136,7 @@ class _VolunteeringPageState extends State<VolunteeringPage> {
               gradient: const LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFFF6093D),
-                  Color(0xFF2C2225),
-                ],
+                colors: [Color(0xFFF6093D), Color(0xFF2C2225)],
               ),
               boxShadow: [
                 const BoxShadow(
@@ -229,42 +229,41 @@ class _VolunteeringPageState extends State<VolunteeringPage> {
           ),
           // Content
           Expanded(
-            child: _isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : _opportunities.isEmpty
+            child:
+                _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : _opportunities.isEmpty
                     ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.favorite_border_rounded,
-                              size: 64,
-                              color: AppColors.textSecondary.withOpacity(0.5),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.favorite_border_rounded,
+                            size: 64,
+                            color: AppColors.textSecondary.withOpacity(0.5),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No volunteering opportunities available',
+                            style: TextStyle(
+                              color: AppColors.textSecondary,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
                             ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'No volunteering opportunities available',
-                              style: TextStyle(
-                                color: AppColors.textSecondary,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : ListView.builder(
-                        padding: const EdgeInsets.all(20),
-                        itemCount: _opportunities.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: _buildOpportunityCard(_opportunities[index]),
-                          );
-                        },
+                          ),
+                        ],
                       ),
+                    )
+                    : ListView.builder(
+                      padding: const EdgeInsets.all(20),
+                      itemCount: _opportunities.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: _buildOpportunityCard(_opportunities[index]),
+                        );
+                      },
+                    ),
           ),
         ],
       ),
@@ -278,7 +277,7 @@ class _VolunteeringPageState extends State<VolunteeringPage> {
 
     return Container(
       decoration: BoxDecoration(
-        color: Color(0xFF2C2225),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -294,12 +293,7 @@ class _VolunteeringPageState extends State<VolunteeringPage> {
           Container(
             height: 4,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  color,
-                  color.withOpacity(0.6),
-                ],
-              ),
+              gradient: LinearGradient(colors: [color, color.withOpacity(0.6)]),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(24),
                 topRight: Radius.circular(24),
@@ -319,10 +313,7 @@ class _VolunteeringPageState extends State<VolunteeringPage> {
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: [
-                        color,
-                        color.withOpacity(0.8),
-                      ],
+                      colors: [color, color.withOpacity(0.8)],
                     ),
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: [
@@ -333,11 +324,7 @@ class _VolunteeringPageState extends State<VolunteeringPage> {
                       ),
                     ],
                   ),
-                  child: Icon(
-                    icon,
-                    color: Color(0xFF2C2225),
-                    size: 32,
-                  ),
+                  child: Icon(icon, color: Colors.white, size: 32),
                 ),
                 const SizedBox(width: 16),
                 // Content
@@ -427,25 +414,24 @@ class _VolunteeringPageState extends State<VolunteeringPage> {
               child: Container(
                 height: 48,
                 decoration: BoxDecoration(
-                  gradient: isEnrolled
-                      ? null
-                      : LinearGradient(
-                          colors: [
-                            color,
-                            color.withOpacity(0.8),
-                          ],
-                        ),
+                  gradient:
+                      isEnrolled
+                          ? null
+                          : LinearGradient(
+                            colors: [color, color.withOpacity(0.8)],
+                          ),
                   color: isEnrolled ? Colors.grey[100] : null,
                   borderRadius: BorderRadius.circular(12),
-                  boxShadow: isEnrolled
-                      ? null
-                      : [
-                          BoxShadow(
-                            color: color.withOpacity(0.4),
-                            blurRadius: 12,
-                            offset: const Offset(0, 6),
-                          ),
-                        ],
+                  boxShadow:
+                      isEnrolled
+                          ? null
+                          : [
+                            BoxShadow(
+                              color: color.withOpacity(0.4),
+                              blurRadius: 12,
+                              offset: const Offset(0, 6),
+                            ),
+                          ],
                 ),
                 child: ElevatedButton(
                   onPressed: () => _toggleEnrollment(opportunity),
@@ -460,8 +446,13 @@ class _VolunteeringPageState extends State<VolunteeringPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        isEnrolled ? Icons.cancel_outlined : Icons.check_circle_outline_rounded,
-                        color: isEnrolled ? AppColors.textSecondary : Color(0xFF2C2225),
+                        isEnrolled
+                            ? Icons.cancel_outlined
+                            : Icons.check_circle_outline_rounded,
+                        color:
+                            isEnrolled
+                                ? AppColors.textSecondary
+                                : Color(0xFF2C2225),
                         size: 20,
                       ),
                       const SizedBox(width: 8),
@@ -470,7 +461,10 @@ class _VolunteeringPageState extends State<VolunteeringPage> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: isEnrolled ? AppColors.textSecondary : Color(0xFF2C2225),
+                          color:
+                              isEnrolled
+                                  ? AppColors.textSecondary
+                                  : Color(0xFF2C2225),
                         ),
                       ),
                     ],
@@ -484,4 +478,3 @@ class _VolunteeringPageState extends State<VolunteeringPage> {
     );
   }
 }
-

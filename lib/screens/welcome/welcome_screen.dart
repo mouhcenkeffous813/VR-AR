@@ -121,7 +121,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       ),
                       const SizedBox(height: 4),
                       const Text(
-                        'NextVerse',
+                        'Ennoveria',
                         style: TextStyle(
                           color: Color.fromARGB(179, 15, 71, 238),
                           fontSize: 14,
@@ -538,7 +538,7 @@ class _WelcomeContentPageState extends State<WelcomeContentPage> {
               ),
         ),
         title: const Text(
-          'NextVerse',
+          'Ennoveria',
           style: TextStyle(
             color: AppColors.primary,
             fontSize: 24,

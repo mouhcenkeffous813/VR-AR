@@ -833,7 +833,7 @@ class _HomeContentPageState extends State<HomeContentPage> {
                       ),
                       const SizedBox(height: 4),
                       const Text(
-                        'NextVerse',
+                        'Ennoveria',
                         style: TextStyle(
                           color: Color.fromARGB(179, 15, 71, 238),
                           fontSize: 14,
@@ -922,7 +922,7 @@ class _HomeContentPageState extends State<HomeContentPage> {
               ),
         ),
         title: const Text(
-          'NextVerse',
+          'Ennoveria',
           style: TextStyle(
             color: AppColors.primary,
             fontSize: 24,
@@ -1119,7 +1119,7 @@ class _HomeContentPageState extends State<HomeContentPage> {
                   if (index == 0) {
                     return _buildEventCard(
                       imagePath: 'images/port.jpg',
-                      title: 'How to made portfolio',
+                      title: 'Mechanics & Medicine AR',
                       time: '10:00 AM',
                       location: 'Main Hall',
                     );

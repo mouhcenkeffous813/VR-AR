@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:youth_center/utils/app_colors.dart';
 import 'package:youth_center/screens/projects/vr_room_experience_page.dart';
+import 'package:youth_center/screens/projects/model_viewer_page.dart';
 
 class CategoryRoom {
   final String name;
@@ -44,7 +45,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
   void _loadRooms() {
     // Define rooms for each category
     final categoryName = widget.categoryName.toLowerCase();
-    
+
     if (categoryName.contains('medicine')) {
       _rooms = [
         const CategoryRoom(
@@ -224,7 +225,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
         ),
       ];
     }
-    
+
     setState(() {});
   }
 
@@ -272,11 +273,12 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
             ),
             child: Icon(icon, color: Colors.white, size: 28),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 12),
           // Room info
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   roomName,
@@ -285,6 +287,8 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
                   ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 6),
                 Row(
@@ -295,12 +299,15 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
                       color: AppColors.textSecondary,
                     ),
                     const SizedBox(width: 6),
-                    Text(
-                      '$participants people joined',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: AppColors.textSecondary,
-                        fontWeight: FontWeight.w500,
+                    Flexible(
+                      child: Text(
+                        '$participants people joined',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: AppColors.textSecondary,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
@@ -308,9 +315,11 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
               ],
             ),
           ),
+          const SizedBox(width: 8),
           // Join button
           Container(
             height: 44,
+            constraints: const BoxConstraints(minWidth: 70),
             decoration: BoxDecoration(
               gradient: LinearGradient(colors: [color, color.withOpacity(0.8)]),
               borderRadius: BorderRadius.circular(12),
@@ -324,15 +333,45 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
             ),
             child: ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => VRRoomExperiencePage(
-                      roomName: roomName,
-                      participants: participants,
+                // Show 3D model for specific rooms
+                if (roomName.toLowerCase().contains('anatomy lab')) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => ModelViewerPage(
+                            modelPath:
+                                'images/bacterioferritin_biological_unit.glb',
+                            roomName: roomName,
+                            participants: participants,
+                          ),
                     ),
-                  ),
-                );
+                  );
+                } else if (roomName.toLowerCase().contains('surgery room')) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => ModelViewerPage(
+                            modelPath: 'images/humain_skeleton.glb',
+                            roomName: roomName,
+                            participants: participants,
+                          ),
+                    ),
+                  );
+                } else {
+                  // Para outros rooms, ir direto para VR
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => VRRoomExperiencePage(
+                            roomName: roomName,
+                            participants: participants,
+                          ),
+                    ),
+                  );
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.transparent,
@@ -340,7 +379,12 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 0,
+                ),
+                minimumSize: const Size(70, 44),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
               child: const Text(
                 'Join',
@@ -518,26 +562,28 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
           ),
           // Content
           Expanded(
-            child: _rooms.isEmpty
-                ? const Center(child: CircularProgressIndicator())
-                : SingleChildScrollView(
-                    padding: const EdgeInsets.all(20),
-                    child: _buildSectionCard(
-                      icon: Icons.door_sliding_rounded,
-                      title: '${widget.categoryName} Rooms',
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: _rooms.map((room) {
-                          return _buildRoomCard(
-                            roomName: room.name,
-                            participants: room.participants,
-                            icon: room.icon,
-                            color: room.color,
-                          );
-                        }).toList(),
+            child:
+                _rooms.isEmpty
+                    ? const Center(child: CircularProgressIndicator())
+                    : SingleChildScrollView(
+                      padding: const EdgeInsets.all(20),
+                      child: _buildSectionCard(
+                        icon: Icons.door_sliding_rounded,
+                        title: '${widget.categoryName} Rooms',
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children:
+                              _rooms.map((room) {
+                                return _buildRoomCard(
+                                  roomName: room.name,
+                                  participants: room.participants,
+                                  icon: room.icon,
+                                  color: room.color,
+                                );
+                              }).toList(),
+                        ),
                       ),
                     ),
-                  ),
           ),
         ],
       ),

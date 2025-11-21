@@ -1,0 +1,92 @@
+[33m90afb17[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m Remove build files from git tracking
+ .../release/processReleaseResources/aapt_rules.txt |     63 [31m-[m
+ .../javaPreCompileDebug/annotationProcessors.json  |      1 [31m-[m
+ .../annotationProcessors.json                      |      1 [31m-[m
+ .../createDebugApkListingFileRedirect/redirect.txt |      2 [31m-[m
+ .../redirect.txt                                   |      2 [31m-[m
+ .../writeDebugAppMetadata/app-metadata.properties  |      2 [31m-[m
+ .../app-metadata.properties                        |      2 [31m-[m
+ .../flutter_assets/AssetManifest.bin               |      1 [31m-[m
+ .../flutter_assets/AssetManifest.json              |      1 [31m-[m
+ .../flutter_assets/FontManifest.json               |      1 [31m-[m
+ .../mergeDebugAssets/flutter_assets/NOTICES.Z      |    Bin [31m98027[m -> [32m0[m bytes
+ .../flutter_assets/NativeAssetsManifest.json       |      1 [31m-[m
+ .../flutter_assets/fonts/MaterialIcons-Regular.otf |    Bin [31m1645184[m -> [32m0[m bytes
+ .../flutter_assets/images/Layer%201.png            |    Bin [31m752806[m -> [32m0[m bytes
+ .../mergeDebugAssets/flutter_assets/images/OIP.jpg |    Bin [31m135811[m -> [32m0[m bytes
+ .../flutter_assets/images/OIP1.jpg                 |    Bin [31m16179[m -> [32m0[m bytes
+ .../flutter_assets/images/algerietelc.jpeg         |    Bin [31m11090[m -> [32m0[m bytes
+ .../mergeDebugAssets/flutter_assets/images/bg.jpeg |    Bin [31m12712[m -> [32m0[m bytes
+ .../flutter_assets/images/bld.jpeg                 |    Bin [31m8153[m -> [32m0[m bytes
+ .../flutter_assets/images/blender.png              |    Bin [31m4665000[m -> [32m0[m bytes
+ .../mergeDebugAssets/flutter_assets/images/bug.png |    Bin [31m1324238[m -> [32m0[m bytes
+ .../flutter_assets/images/djeey.png                |    Bin [31m162833[m -> [32m0[m bytes
+ .../flutter_assets/images/djezzy.jpeg              |    Bin [31m48776[m -> [32m0[m bytes
+ .../flutter_assets/images/ggg.jpeg                 |    Bin [31m3802[m -> [32m0[m bytes
+ .../flutter_assets/images/monceff.jpeg             |    Bin [31m76313[m -> [32m0[m bytes
+ .../flutter_assets/images/ooredo.jpeg              |    Bin [31m16163[m -> [32m0[m bytes
+ .../flutter_assets/images/pic1.jpeg                |    Bin [31m59266[m -> [32m0[m bytes
+ .../flutter_assets/images/pic2.jpeg                |    Bin [31m135599[m -> [32m0[m bytes
+ .../flutter_assets/images/pic3.jpeg                |    Bin [31m82428[m -> [32m0[m bytes
+ .../flutter_assets/images/pic4.jpeg                |    Bin [31m109795[m -> [32m0[m bytes
+ .../flutter_assets/images/pic5.jpeg                |    Bin [31m76313[m -> [32m0[m bytes
+ .../flutter_assets/images/port.jpg                 |    Bin [31m255186[m -> [32m0[m bytes
+ .../flutter_assets/images/portfolio.png            |    Bin [31m1784892[m -> [32m0[m bytes
+ .../flutter_assets/images/student.jpeg             |    Bin [31m8729[m -> [32m0[m bytes
+ .../mergeDebugAssets/flutter_assets/images/vr.jpeg |    Bin [31m78403[m -> [32m0[m bytes
+ .../flutter_assets/images/vrvideo.mp4              |    Bin [31m3945248[m -> [32m0[m bytes
+ .../flutter_assets/images/yassir.jpeg              |    Bin [31m28610[m -> [32m0[m bytes
+ .../flutter_assets/isolate_snapshot_data           |    Bin [31m10900400[m -> [32m0[m bytes
+ .../flutter_assets/kernel_blob.bin                 |    Bin [31m52263776[m -> [32m0[m bytes
+ .../cupertino_icons/assets/CupertinoIcons.ttf      |    Bin [31m257628[m -> [32m0[m bytes
+ .../flutter_map/lib/assets/flutter_map_logo.png    |    Bin [31m2424[m -> [32m0[m bytes
+ .../flutter_assets/shaders/ink_sparkle.frag        |    Bin [31m21320[m -> [32m0[m bytes
+ .../flutter_assets/vm_snapshot_data                |    Bin [31m14899[m -> [32m0[m bytes
+ .../barcode_ssd_mobilenet_v1_dmp25_quant.tflite    |    Bin [31m390456[m -> [32m0[m bytes
+ .../oned_auto_regressor_mobile.tflite              |    Bin [31m213880[m -> [32m0[m bytes
+ .../oned_feature_extractor_mobile.tflite           |    Bin [31m276552[m -> [32m0[m bytes
+ .../flutter_assets/AssetManifest.bin               |      1 [31m-[m
+ .../flutter_assets/AssetManifest.json              |      1 [31m-[m
+ .../flutter_assets/FontManifest.json               |      1 [31m-[m
+ .../mergeReleaseAssets/flutter_assets/NOTICES.Z    |    Bin [31m98027[m -> [32m0[m bytes
+ .../flutter_assets/NativeAssetsManifest.json       |      1 [31m-[m
+ .../flutter_assets/fonts/MaterialIcons-Regular.otf |    Bin [31m19704[m -> [32m0[m bytes
+ .../flutter_assets/images/Layer%201.png            |    Bin [31m752806[m -> [32m0[m bytes
+ .../flutter_assets/images/OIP.jpg                  |    Bin [31m135811[m -> [32m0[m bytes
+ .../flutter_assets/images/OIP1.jpg                 |    Bin [31m16179[m -> [32m0[m bytes
+ .../flutter_assets/images/algerietelc.jpeg         |    Bin [31m11090[m -> [32m0[m bytes
+ .../flutter_assets/images/bg.jpeg                  |    Bin [31m12712[m -> [32m0[m bytes
+ .../flutter_assets/images/bld.jpeg                 |    Bin [31m8153[m -> [32m0[m bytes
+ .../flutter_assets/images/blender.png              |    Bin [31m4665000[m -> [32m0[m bytes
+ .../flutter_assets/images/bug.png                  |    Bin [31m1324238[m -> [32m0[m bytes
+ .../flutter_assets/images/djeey.png                |    Bin [31m162833[m -> [32m0[m bytes
+ .../flutter_assets/images/djezzy.jpeg              |    Bin [31m48776[m -> [32m0[m bytes
+ .../flutter_assets/images/ggg.jpeg                 |    Bin [31m3802[m -> [32m0[m bytes
+ .../flutter_assets/images/monceff.jpeg             |    Bin [31m76313[m -> [32m0[m bytes
+ .../flutter_assets/images/ooredo.jpeg              |    Bin [31m16163[m -> [32m0[m bytes
+ .../flutter_assets/images/pic1.jpeg                |    Bin [31m59266[m -> [32m0[m bytes
+ .../flutter_assets/images/pic2.jpeg                |    Bin [31m135599[m -> [32m0[m bytes
+ .../flutter_assets/images/pic3.jpeg                |    Bin [31m82428[m -> [32m0[m bytes
+ .../flutter_assets/images/pic4.jpeg                |    Bin [31m109795[m -> [32m0[m bytes
+ .../flutter_assets/images/pic5.jpeg                |    Bin [31m76313[m -> [32m0[m bytes
+ .../flutter_assets/images/port.jpg                 |    Bin [31m255186[m -> [32m0[m bytes
+ .../flutter_assets/images/portfolio.png            |    Bin [31m1784892[m -> [32m0[m bytes
+ .../flutter_assets/images/student.jpeg             |    Bin [31m8729[m -> [32m0[m bytes
+ .../flutter_assets/images/vr.jpeg                  |    Bin [31m78403[m -> [32m0[m bytes
+ .../flutter_assets/images/vrvideo.mp4              |    Bin [31m3945248[m -> [32m0[m bytes
+ .../flutter_assets/images/yassir.jpeg              |    Bin [31m28610[m -> [32m0[m bytes
+ .../cupertino_icons/assets/CupertinoIcons.ttf      |    Bin [31m257628[m -> [32m0[m bytes
+ .../flutter_map/lib/assets/flutter_map_logo.png    |    Bin [31m2424[m -> [32m0[m bytes
+ .../flutter_assets/shaders/ink_sparkle.frag        |    Bin [31m21320[m -> [32m0[m bytes
+ .../barcode_ssd_mobilenet_v1_dmp25_quant.tflite    |    Bin [31m390456[m -> [32m0[m bytes
+ .../oned_auto_regressor_mobile.tflite              |    Bin [31m213880[m -> [32m0[m bytes
+ .../oned_feature_extractor_mobile.tflite           |    Bin [31m276552[m -> [32m0[m bytes
+ .../release/compileReleaseArtProfile/baseline.prof |    Bin [31m1062[m -> [32m0[m bytes
+ .../compileReleaseArtProfile/baseline.profm        |    Bin [31m205[m -> [32m0[m bytes
+ .../compileReleaseArtProfile/baseline-prof.txt     |    446 [31m-[m
+ .../output-metadata.json                           |     10 [31m-[m
+ .../output-metadata.json                           |     10 [31m-[m
+ .../debug/processDebugResources/R.jar              |    Bin [31m492443[m -> [32m0[m bytes
+ .../release/processReleaseResources/R.jar          |    Bin [31m492443[m -> [32m0[m bytes
+ .../out/assets/flutter_assets/.env.jar             |    Bin [31m409[m -> [32m0[m bytes
+ 

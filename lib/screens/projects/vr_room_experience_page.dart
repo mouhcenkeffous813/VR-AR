@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:youth_center/utils/app_colors.dart';
+import 'package:youth_center/screens/projects/model_viewer_page.dart';
 
 class VRRoomExperiencePage extends StatefulWidget {
   final String roomName;
@@ -29,15 +30,25 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
   );
 
   String _getOnirixUrl() {
-    // URL Onirix pour Auto Mechanics et autres rooms
+    // URL Onirix for different rooms
     final roomNameLower = widget.roomName.toLowerCase();
 
-    // Vérifier pour Auto Mechanic(s) - avec ou sans 's'
+    // Check for Robotics Workshop
+    if (roomNameLower.contains('robotics workshop')) {
+      return 'https://player.onirix.com/projects/6ecee6098be94d5cbc09cc4e2ecdafe2/webar?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExMjY1LCJwcm9qZWN0SWQiOjc1NzczLCJyb2xlIjozLCJpYXQiOjE3MTMxNzQ2NTd9.bDDMMT2PztVDvJaayj01HGaiXUce43kn10X9BSYmFiI';
+    }
+
+    // Check for Industrial Mechanics
+    if (roomNameLower.contains('industrial mechanic')) {
+      return 'https://player.onirix.com/projects/24b26271eb9f40c6b3b436723c7b7a68/webar?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExMjY1LCJwcm9qZWN0SWQiOjkwMzc2LCJyb2xlIjozLCJpYXQiOjE3MjgyOTM1NTB9.4evEpzHTeYlzQi3ZwFOOwLr2zFzinZE9-Mq-LR0Q9yU';
+    }
+
+    // Check for Auto Mechanic(s) - with or without 's'
     if (roomNameLower.contains('auto mechanic')) {
       return 'https://player.onirix.com/projects/479cf8a8dde14393955d3ed491f545f6/webar?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExMjY1LCJwcm9qZWN0SWQiOjEwMzM3MCwicm9sZSI6MywiaWF0IjoxNzQxMDgyMzQwfQ.KmMjL4-VDHKyF4ycQKL0v877t5HczKPryA9c-gFbBQo';
     }
 
-    // URL par défaut pour tous les autres rooms
+    // Default URL for all other rooms
     return 'https://player.onirix.com/projects/479cf8a8dde14393955d3ed491f545f6/webar?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExMjY1LCJwcm9qZWN0SWQiOjEwMzM3MCwicm9sZSI6MywiaWF0IjoxNzQxMDgyMzQwfQ.KmMjL4-VDHKyF4ycQKL0v877t5HczKPryA9c-gFbBQo';
   }
 
@@ -419,6 +430,116 @@ class _VRRoomExperiencePageState extends State<VRRoomExperiencePage>
                                         textAlign: TextAlign.center,
                                       ),
                                       SizedBox(height: isLandscape ? 20 : 32),
+                                      // Show 3D Model button for Anatomy Lab and Surgery Room
+                                      if (widget.roomName
+                                              .toLowerCase()
+                                              .contains('anatomy lab') ||
+                                          widget.roomName
+                                              .toLowerCase()
+                                              .contains('surgery room'))
+                                        Container(
+                                          width: double.infinity,
+                                          height: isLandscape ? 48 : 56,
+                                          margin: const EdgeInsets.only(
+                                            bottom: 12,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              colors:
+                                                  widget.roomName
+                                                          .toLowerCase()
+                                                          .contains(
+                                                            'anatomy lab',
+                                                          )
+                                                      ? const [
+                                                        Color(0xFFE91E63),
+                                                        Color(0xFFC2185B),
+                                                      ]
+                                                      : const [
+                                                        Color(0xFFF44336),
+                                                        Color(0xFFD32F2F),
+                                                      ],
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              16,
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: (widget.roomName
+                                                            .toLowerCase()
+                                                            .contains(
+                                                              'anatomy lab',
+                                                            )
+                                                        ? const Color(
+                                                          0xFFE91E63,
+                                                        )
+                                                        : const Color(
+                                                          0xFFF44336,
+                                                        ))
+                                                    .withOpacity(0.5),
+                                                blurRadius: 20,
+                                                offset: const Offset(0, 8),
+                                              ),
+                                            ],
+                                          ),
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              final String modelPath =
+                                                  widget.roomName
+                                                          .toLowerCase()
+                                                          .contains(
+                                                            'anatomy lab',
+                                                          )
+                                                      ? 'images/bacterioferritin_biological_unit.glb'
+                                                      : 'images/humain_skeleton.glb';
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder:
+                                                      (
+                                                        context,
+                                                      ) => ModelViewerPage(
+                                                        modelPath: modelPath,
+                                                        roomName:
+                                                            widget.roomName,
+                                                        participants:
+                                                            widget.participants,
+                                                      ),
+                                                ),
+                                              );
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  Colors.transparent,
+                                              shadowColor: Colors.transparent,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(16),
+                                              ),
+                                            ),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                const Icon(
+                                                  Icons.view_in_ar,
+                                                  color: Colors.white,
+                                                  size: 20,
+                                                ),
+                                                const SizedBox(width: 8),
+                                                Text(
+                                                  'View 3D Model',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize:
+                                                        isLandscape ? 16 : 18,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
                                       // Continue button
                                       Container(
                                         width: double.infinity,
