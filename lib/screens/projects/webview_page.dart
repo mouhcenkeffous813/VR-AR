@@ -28,45 +28,46 @@ class _WebViewPageState extends State<WebViewPage> {
   }
 
   void _initializeWebView() {
-    _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(Colors.transparent)
-      ..enableZoom(true)
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onProgress: (int progress) {
-            if (mounted) {
-              setState(() {
-                _loadingProgress = progress;
-              });
-            }
-          },
-          onPageStarted: (String url) {
-            if (mounted) {
-              setState(() {
-                _isLoading = true;
-                _loadingProgress = 0;
-              });
-            }
-          },
-          onPageFinished: (String url) {
-            if (mounted) {
-              setState(() {
-                _isLoading = false;
-                _loadingProgress = 100;
-              });
-            }
-          },
-          onWebResourceError: (WebResourceError error) {
-            debugPrint('WebView error: ${error.description}');
-            if (mounted) {
-              setState(() {
-                _isLoading = false;
-              });
-            }
-          },
-        ),
-      );
+    _controller =
+        WebViewController()
+          ..setJavaScriptMode(JavaScriptMode.unrestricted)
+          ..setBackgroundColor(Colors.transparent)
+          ..enableZoom(true)
+          ..setNavigationDelegate(
+            NavigationDelegate(
+              onProgress: (int progress) {
+                if (mounted) {
+                  setState(() {
+                    _loadingProgress = progress;
+                  });
+                }
+              },
+              onPageStarted: (String url) {
+                if (mounted) {
+                  setState(() {
+                    _isLoading = true;
+                    _loadingProgress = 0;
+                  });
+                }
+              },
+              onPageFinished: (String url) {
+                if (mounted) {
+                  setState(() {
+                    _isLoading = false;
+                    _loadingProgress = 100;
+                  });
+                }
+              },
+              onWebResourceError: (WebResourceError error) {
+                debugPrint('WebView error: ${error.description}');
+                if (mounted) {
+                  setState(() {
+                    _isLoading = false;
+                  });
+                }
+              },
+            ),
+          );
 
     // Load URL after widget is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -137,9 +138,7 @@ class _WebViewPageState extends State<WebViewPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const CircularProgressIndicator(
-                    color: Color(0xFFF6093D),
-                  ),
+                  const CircularProgressIndicator(color: Color(0xFFF6093D)),
                   const SizedBox(height: 20),
                   Text(
                     'Loading AR Experience...',
@@ -167,4 +166,3 @@ class _WebViewPageState extends State<WebViewPage> {
     );
   }
 }
-

@@ -138,7 +138,7 @@ class _WilayaChatPageState extends State<WilayaChatPage> {
             Text(
               widget.wilayaName,
               style: const TextStyle(
-                color: Color(0xFF2C2225)70,
+                color: Color(0xFF2C2225),
                 fontSize: 14,
               ),
             ),
