@@ -65,6 +65,7 @@ class _VRDetailPageState extends State<VRDetailPage> {
         ],
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Icon
           Container(
@@ -92,14 +93,17 @@ class _VRDetailPageState extends State<VRDetailPage> {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   roomName,
                   style: const TextStyle(
-                    fontSize: 18,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
                   ),
+                  maxLines: 2,
+                  overflow: TextOverflow.visible,
                 ),
                 const SizedBox(height: 6),
                 Row(
@@ -110,12 +114,15 @@ class _VRDetailPageState extends State<VRDetailPage> {
                       color: AppColors.textSecondary,
                     ),
                     const SizedBox(width: 6),
-                    Text(
-                      '$participants people joined',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: AppColors.textSecondary,
-                        fontWeight: FontWeight.w500,
+                    Flexible(
+                      child: Text(
+                        '$participants people joined',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: AppColors.textSecondary,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
@@ -123,9 +130,10 @@ class _VRDetailPageState extends State<VRDetailPage> {
               ],
             ),
           ),
+          const SizedBox(width: 12),
           // Join button
           Container(
-            height: 44,
+            constraints: const BoxConstraints(minWidth: 70, minHeight: 44),
             decoration: BoxDecoration(
               gradient: LinearGradient(colors: [color, color.withOpacity(0.8)]),
               borderRadius: BorderRadius.circular(12),
@@ -214,7 +222,9 @@ class _VRDetailPageState extends State<VRDetailPage> {
                         ),
                       ),
                       child: const Center(
-                        child: CircularProgressIndicator(color: Color(0xFF2C2225)),
+                        child: CircularProgressIndicator(
+                          color: Color(0xFF2C2225),
+                        ),
                       ),
                     ),
                   // Gradient overlay
@@ -286,9 +296,9 @@ class _VRDetailPageState extends State<VRDetailPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'Virtual Space',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Color(0xFF2C2225),
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
@@ -300,6 +310,8 @@ class _VRDetailPageState extends State<VRDetailPage> {
                               ),
                             ],
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 8),
                         Text(
@@ -315,6 +327,8 @@ class _VRDetailPageState extends State<VRDetailPage> {
                               ),
                             ],
                           ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
@@ -487,21 +501,25 @@ class _VRDetailPageState extends State<VRDetailPage> {
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.vrpano_rounded,
                           color: Color(0xFF2C2225),
                           size: 22,
                         ),
-                        SizedBox(width: 12),
-                        Text(
-                          'Enter VR Space',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF2C2225),
+                        const SizedBox(width: 12),
+                        Flexible(
+                          child: Text(
+                            'Enter VR Space',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF2C2225),
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
@@ -561,6 +579,8 @@ class _VRDetailPageState extends State<VRDetailPage> {
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
                   ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],

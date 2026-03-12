@@ -51,15 +51,12 @@ class _CoinsPageState extends State<CoinsPage> {
                   gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [
-                      Color(0xFF194CBF),
-                      Color(0xFF61A1FF),
-                    ],
+                    colors: [Color(0xFFF6093D), Color(0xFF2C2225)],
                   ),
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF194CBF).withOpacity(0.3),
+                      color: const Color(0xFFF6093D).withOpacity(0.3),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),
@@ -76,7 +73,7 @@ class _CoinsPageState extends State<CoinsPage> {
                     Text(
                       '$currentCoins',
                       style: const TextStyle(
-                        color: Color(0xFF61A1FF),
+                        color: Colors.white,
                         fontSize: 48,
                         fontWeight: FontWeight.bold,
                       ),
@@ -85,7 +82,7 @@ class _CoinsPageState extends State<CoinsPage> {
                     Text(
                       '/ $maxCoins coins',
                       style: TextStyle(
-                        color: Color(0xFF61A1FF).withOpacity(0.9),
+                        color: Colors.white.withOpacity(0.9),
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
                       ),
@@ -101,7 +98,7 @@ class _CoinsPageState extends State<CoinsPage> {
                             Text(
                               'Progress',
                               style: TextStyle(
-                                color: Color(0xFF61A1FF).withOpacity(0.9),
+                                color: Colors.white.withOpacity(0.9),
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -109,7 +106,7 @@ class _CoinsPageState extends State<CoinsPage> {
                             Text(
                               '${(progress * 100).toStringAsFixed(1)}%',
                               style: TextStyle(
-                                color: Color(0xFF61A1FF).withOpacity(0.9),
+                                color: Colors.white.withOpacity(0.9),
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -120,7 +117,7 @@ class _CoinsPageState extends State<CoinsPage> {
                         Container(
                           height: 12,
                           decoration: BoxDecoration(
-                            color: Color(0xFF61A1FF).withOpacity(0.3),
+                            color: Colors.white.withOpacity(0.3),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Stack(
@@ -154,9 +151,9 @@ class _CoinsPageState extends State<CoinsPage> {
                                         begin: Alignment.centerLeft,
                                         end: Alignment.centerRight,
                                         colors: [
-                                          Color(0xFF61A1FF).withOpacity(0.0),
-                                          Color(0xFF61A1FF).withOpacity(0.3),
-                                          Color(0xFF61A1FF).withOpacity(0.0),
+                                          Colors.white.withOpacity(0.0),
+                                          Colors.white.withOpacity(0.3),
+                                          Colors.white.withOpacity(0.0),
                                         ],
                                         stops: const [0.0, 0.5, 1.0],
                                       ),
@@ -173,7 +170,7 @@ class _CoinsPageState extends State<CoinsPage> {
                             vertical: 8,
                           ),
                           decoration: BoxDecoration(
-                            color: Color(0xFF61A1FF).withOpacity(0.2),
+                            color: Colors.white.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Row(
@@ -181,7 +178,7 @@ class _CoinsPageState extends State<CoinsPage> {
                             children: [
                               Icon(
                                 Icons.info_outline,
-                                color: Color(0xFF61A1FF).withOpacity(0.9),
+                                color: Colors.white.withOpacity(0.9),
                                 size: 16,
                               ),
                               const SizedBox(width: 8),
@@ -189,10 +186,12 @@ class _CoinsPageState extends State<CoinsPage> {
                                 child: Text(
                                   '$coinsNeeded more coins to unlock next reward',
                                   style: TextStyle(
-                                    color: Color(0xFF61A1FF).withOpacity(0.9),
+                                    color: Colors.white.withOpacity(0.9),
                                     fontSize: 12,
                                   ),
                                   textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ],
@@ -216,10 +215,7 @@ class _CoinsPageState extends State<CoinsPage> {
               const SizedBox(height: 8),
               Text(
                 'Exchange your coins for amazing rewards',
-                style: TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
               ),
               const SizedBox(height: 24),
               // Reward Cards
@@ -230,11 +226,7 @@ class _CoinsPageState extends State<CoinsPage> {
                 coinsRequired: 150,
                 color: const Color(0xFF1976D2),
                 onTap: () {
-                  _showRedeemDialog(
-                    context,
-                    'Air Algérie Discount',
-                    150,
-                  );
+                  _showRedeemDialog(context, 'Air Algérie Discount', 150);
                 },
               ),
               const SizedBox(height: 16),
@@ -245,11 +237,7 @@ class _CoinsPageState extends State<CoinsPage> {
                 coinsRequired: 200,
                 color: const Color(0xFF7B1FA2),
                 onTap: () {
-                  _showRedeemDialog(
-                    context,
-                    'Hotel Discount',
-                    200,
-                  );
+                  _showRedeemDialog(context, 'Hotel Discount', 200);
                 },
               ),
               const SizedBox(height: 16),
@@ -260,11 +248,7 @@ class _CoinsPageState extends State<CoinsPage> {
                 coinsRequired: 100,
                 color: const Color(0xFF388E3C),
                 onTap: () {
-                  _showRedeemDialog(
-                    context,
-                    'Restaurant Voucher',
-                    100,
-                  );
+                  _showRedeemDialog(context, 'Restaurant Voucher', 100);
                 },
               ),
               const SizedBox(height: 16),
@@ -275,11 +259,7 @@ class _CoinsPageState extends State<CoinsPage> {
                 coinsRequired: 120,
                 color: const Color(0xFFF57C00),
                 onTap: () {
-                  _showRedeemDialog(
-                    context,
-                    'Shopping Voucher',
-                    120,
-                  );
+                  _showRedeemDialog(context, 'Shopping Voucher', 120);
                 },
               ),
               const SizedBox(height: 32),
@@ -302,7 +282,7 @@ class _CoinsPageState extends State<CoinsPage> {
 
     return Container(
       decoration: BoxDecoration(
-        color: Color(0xFF61A1FF),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: canAfford ? color.withOpacity(0.3) : Colors.grey[300]!,
@@ -331,11 +311,7 @@ class _CoinsPageState extends State<CoinsPage> {
                     color: color.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(
-                    icon,
-                    color: color,
-                    size: 32,
-                  ),
+                  child: Icon(icon, color: color, size: 32),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -349,6 +325,8 @@ class _CoinsPageState extends State<CoinsPage> {
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 4),
                       Text(
@@ -357,46 +335,58 @@ class _CoinsPageState extends State<CoinsPage> {
                           color: AppColors.textSecondary,
                           fontSize: 14,
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.monetization_on,
-                          color: canAfford ? Colors.amber : Colors.grey[400],
-                          size: 20,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          '$coinsRequired',
-                          style: TextStyle(
-                            color: canAfford
-                                ? AppColors.textPrimary
-                                : Colors.grey[400],
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                const SizedBox(width: 12),
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.monetization_on,
+                            color: canAfford ? Colors.amber : Colors.grey[400],
+                            size: 20,
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      canAfford ? 'Available' : 'Not enough',
-                      style: TextStyle(
-                        color: canAfford
-                            ? const Color(0xFF388E3C)
-                            : Colors.grey[500],
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
+                          const SizedBox(width: 4),
+                          Flexible(
+                            child: Text(
+                              '$coinsRequired',
+                              style: TextStyle(
+                                color:
+                                    canAfford
+                                        ? AppColors.textPrimary
+                                        : Colors.grey[400],
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 4),
+                      Text(
+                        canAfford ? 'Available' : 'Not enough',
+                        style: TextStyle(
+                          color:
+                              canAfford
+                                  ? const Color(0xFF388E3C)
+                                  : Colors.grey[500],
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -409,90 +399,83 @@ class _CoinsPageState extends State<CoinsPage> {
   void _showRedeemDialog(BuildContext context, String reward, int coins) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        title: const Text(
-          'Redeem Reward',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Do you want to redeem $coins coins for:',
-              style: const TextStyle(
-                fontSize: 16,
-              ),
+      builder:
+          (context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
             ),
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFF194CBF).withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.card_giftcard,
-                    color: Color(0xFF194CBF),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      reward,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF194CBF),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            title: const Text(
+              'Redeem Reward',
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 16),
-            Text(
-              'Your remaining coins: ${currentCoins - coins}',
-              style: TextStyle(
-                fontSize: 14,
-                color: AppColors.textSecondary,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('$reward redeemed successfully!'),
-                  backgroundColor: const Color(0xFF388E3C),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Do you want to redeem $coins coins for:',
+                  style: const TextStyle(fontSize: 16),
                 ),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF194CBF),
-              foregroundColor: Color(0xFF61A1FF),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.card_giftcard, color: AppColors.primary),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          reward,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Your remaining coins: ${currentCoins - coins}',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
             ),
-            child: const Text('Redeem'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('$reward redeemed successfully!'),
+                      backgroundColor: const Color(0xFF388E3C),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text('Redeem'),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 }
-

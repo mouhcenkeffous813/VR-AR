@@ -833,7 +833,7 @@ class _HomeContentPageState extends State<HomeContentPage> {
                       ),
                       const SizedBox(height: 4),
                       const Text(
-                        'Ennoveria',
+                        'NextVerse',
                         style: TextStyle(
                           color: Color.fromARGB(179, 15, 71, 238),
                           fontSize: 14,
@@ -922,7 +922,7 @@ class _HomeContentPageState extends State<HomeContentPage> {
               ),
         ),
         title: const Text(
-          'Ennoveria',
+          'NextVerse',
           style: TextStyle(
             color: AppColors.primary,
             fontSize: 24,
