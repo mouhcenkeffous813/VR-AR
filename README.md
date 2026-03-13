@@ -1,75 +1,75 @@
-# Youth Center – AR & Live Projects
+# AR VR
 
-Application Flutter pour un centre de jeunesse, avec :
+Flutter application for a youth center with:
 
-- **Réalité augmentée (AR)** pour afficher des modèles 3D interactifs.
-- **Projets “live”** avec caméra, micro et chat temps-réel.
-- Intégration **Supabase** pour les données et la messagerie.
+- **Augmented Reality (AR)** to display interactive 3D models.
+- **Live projects** with camera, microphone, and real-time chat.
+- **Supabase** integration for data storage and messaging.
 
-## Fonctionnalités principales
+## Main features
 
 - **AR View** (`ArViewScreen`)
-  - Chargement de modèles 3D (GLB) depuis les assets.
-  - Détection de plans et placement du modèle sur la surface.
-  - Zoom par pincement (pinch to zoom).
-  - Déplacement du modèle avec les doigts.
-  - Bouton d’**assistant AI**:
-    - Toggle ON/OFF (bouton rond en haut à droite).
-    - Panneau d’assistance avec commande **vocale** (speech-to-text).
+  - Loads 3D models (GLB) from assets.
+  - Plane detection and model placement on the surface.
+  - Pinch to zoom.
+  - Drag to move the model on the plane.
+  - **AI assistant button**:
+    - Toggle ON/OFF (round button at the top-right).
+    - Assistant panel with **voice command** (speech-to-text).
 
-- **Page Live** (`LivePage`)
-  - Affichage de la caméra (Live).
-  - Chat texte lié à un projet (`projectTitle`).
-  - Rafraîchissement automatique des messages.
-  - Gestion basique du micro / caméra.
+- **Live Page** (`LivePage`)
+  - Camera preview (live).
+  - Text chat bound to a project (`projectTitle`).
+  - Automatic message refresh.
+  - Basic microphone / camera handling.
 
-## Démarrage du projet
+## Getting started
 
-### Prérequis
+### Prerequisites
 
-- Flutter installé (version compatible avec `sdk: ^3.7.2`).
-- Android Studio / Xcode pour lancer sur émulateur ou appareil réel.
+- Flutter installed (compatible with `sdk: ^3.7.2`).
+- Android Studio / Xcode to run on an emulator or real device.
 
-### Installation
+### Install dependencies
 
 ```bash
 flutter pub get
 ```
 
-### Lancer l’app
+### Run the app
 
 ```bash
 flutter run
 ```
 
-## AR – Notes techniques
+## AR – technical notes
 
-- Plugin AR utilisé : `ar_flutter_plugin_engine`.
-- Modèles GLB copiés dans le dossier documents de l’app à partir des assets.
-- Interaction :
-  - **Tap** sur un plan détecté → place un modèle 3D.
-  - **Pinch** → change l’échelle du modèle.
-  - **Glisser** → déplace le modèle sur le plan.
+- AR plugin used: `ar_flutter_plugin_engine`.
+- GLB models are copied into the app’s documents folder from the assets.
+- Interaction:
+  - **Tap** on a detected plane → place a 3D model.
+  - **Pinch** → change the model scale.
+  - **Drag** → move the model on the plane.
 
-## Assistant AI vocal
+## Voice AI assistant
 
-- Basé sur le package `speech_to_text`.
-- Texte reconnu transmis à un handler (`_onSendAiMessage`) qui pourra être relié à un backend AI.
-- Animation du bouton micro (effet d’ondes) pendant l’écoute.
+- Based on the `speech_to_text` package.
+- Recognized text is sent to a handler (`_onSendAiMessage`) that can be wired to a backend AI.
+- Microphone button has an animated wave effect while listening.
 
 ## Backend & AI services
 
-- **`ai next_verse`** : sous-projet Python pour les services AI (FastAPI + DeepSeek/Gemini).
-  - Nouveau module **MindSpore** (`ai next_verse/MindSpore.py`) pour expérimenter des réseaux neuronaux avec MindSpore.
-  - L’installation de MindSpore dépend de votre plateforme (CPU / GPU) – voir la doc officielle : https://www.mindspore.cn/install
+- **`ai next_verse`**: Python subproject for AI services (FastAPI + DeepSeek/Gemini).
+  - New **MindSpore** module (`ai next_verse/MindSpore.py`) to experiment with neural networks using MindSpore.
+  - MindSpore installation depends on your platform (CPU / GPU) – see the official docs: https://www.mindspore.cn/install
 
-## Structure rapide
+## Project structure (quick view)
 
-- `lib/screens/ar/ar_view_screen.dart` : écran AR + assistant AI.
-- `lib/screens/projects/live_page.dart` : page live avec caméra/chat.
-- `lib/config/` : configuration UI et autres utilitaires.
-- `ai next_verse/` : backend AI + module MindSpore pour l’expérimentation ML.
+- `lib/screens/ar/ar_view_screen.dart`: AR screen + AI assistant.
+- `lib/screens/projects/live_page.dart`: live page with camera/chat.
+- `lib/config/`: UI configuration and other utilities.
+- `ai next_verse/`: AI backend + MindSpore module for ML experimentation.
 
 ## License
 
-Projet privé – usage interne au centre de jeunesse (adapter si nécessaire).
+Private project – internal use for the youth center (adapt if needed).
