@@ -15,6 +15,7 @@ import 'package:ar_flutter_plugin_engine/models/ar_node.dart';
 import 'package:ar_flutter_plugin_engine/models/ar_hittest_result.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:vector_math/vector_math_64.dart' show Vector3, Vector4;
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 /// Configuration pour chaque modèle 3D disponible en AR
 class _ARModelConfig {
@@ -39,7 +40,8 @@ class ArViewScreen extends StatefulWidget {
   State<ArViewScreen> createState() => _ArViewScreenState();
 }
 
-class _ArViewScreenState extends State<ArViewScreen> {
+class _ArViewScreenState extends State<ArViewScreen>
+    with SingleTickerProviderStateMixin {
   ARSessionManager? _arSessionManager;
   ARObjectManager? _arObjectManager;
   ARAnchorManager? _arAnchorManager;
@@ -48,6 +50,12 @@ class _ArViewScreenState extends State<ArViewScreen> {
   bool _isPlacingObject = false;
   bool _isModelPrepared = false;
   int _selectedModelIndex = 0;
+  bool _isAiAssistantActive = false;
+  final TextEditingController _aiMessageController = TextEditingController();
+  final stt.SpeechToText _speech = stt.SpeechToText();
+  bool _isListening = false;
+  late final AnimationController _voicePulseController;
+  late final Animation<double> _voicePulseAnimation;
 
   /// Dernier nœud et anchor placés (un seul modèle affiché à la fois)
   ARNode? _lastPlacedNode;
@@ -75,7 +83,31 @@ class _ArViewScreenState extends State<ArViewScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _voicePulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+    _voicePulseAnimation = Tween<double>(begin: 1.0, end: 1.2).animate(
+      CurvedAnimation(
+        parent: _voicePulseController,
+        curve: Curves.easeInOut,
+      ),
+    );
+    _voicePulseController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _voicePulseController.reverse();
+      } else if (status == AnimationStatus.dismissed) {
+        _voicePulseController.forward();
+      }
+    });
+  }
+
+  @override
   void dispose() {
+    _voicePulseController.dispose();
+    _aiMessageController.dispose();
     _arSessionManager?.dispose();
     super.dispose();
   }
@@ -86,9 +118,27 @@ class _ArViewScreenState extends State<ArViewScreen> {
 
   void _onScaleUpdate(ScaleUpdateDetails details) {
     if (_lastPlacedNode == null) return;
-    final newScale = (_scaleOnPinchStart * details.scale).clamp(_minScale, _maxScale);
+
+    // Zoom (pinch)
+    final newScale = (_scaleOnPinchStart * details.scale).clamp(
+      _minScale,
+      _maxScale,
+    );
     _currentModelScale = newScale;
     _lastPlacedNode!.scale = Vector3(newScale, newScale, newScale);
+
+    // Déplacement (drag à un ou plusieurs doigts)
+    const moveFactor = 0.0008;
+    final dx = details.focalPointDelta.dx;
+    final dy = details.focalPointDelta.dy;
+    if (dx != 0 || dy != 0) {
+      final currentPos = _lastPlacedNode!.position;
+      _lastPlacedNode!.position = Vector3(
+        currentPos.x - dx * moveFactor,
+        currentPos.y,
+        currentPos.z + dy * moveFactor,
+      );
+    }
   }
 
   /// Supprime le modèle actuellement affiché (un seul modèle à la fois).
@@ -103,6 +153,85 @@ class _ArViewScreenState extends State<ArViewScreen> {
     _lastPlacedAnchor = null;
   }
 
+  void _onSendAiMessage(String value) {
+    final text = value.trim();
+    if (text.isEmpty) return;
+    _aiMessageController.clear();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('AI (mock) répond à: "$text"'),
+        duration: const Duration(seconds: 1),
+      ),
+    );
+
+    // TODO: ici tu peux appeler ton backend / ton modèle AI
+    // et afficher la vraie réponse dans un widget de conversation.
+  }
+
+  Future<void> _toggleVoiceListening() async {
+    if (_isListening) {
+      await _speech.stop();
+      if (mounted) {
+        setState(() {
+          _isListening = false;
+        });
+      }
+      _voicePulseController.stop();
+      _voicePulseController.value = 1.0;
+      return;
+    }
+
+    final available = await _speech.initialize(
+      onStatus: (status) {
+        if (status == 'notListening' && mounted) {
+          setState(() {
+            _isListening = false;
+          });
+        }
+      },
+      onError: (error) {
+        if (!mounted) return;
+        setState(() {
+          _isListening = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erreur reconnaissance vocale: ${error.errorMsg}'),
+          ),
+        );
+      },
+    );
+
+    if (!available) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Reconnaissance vocale non disponible sur cet appareil'),
+        ),
+      );
+      return;
+    }
+
+    if (mounted) {
+      setState(() {
+        _isListening = true;
+      });
+    }
+
+    _voicePulseController.forward();
+
+    await _speech.listen(
+      localeId: 'fr_FR',
+      onResult: (result) {
+        if (!mounted) return;
+        if (result.finalResult) {
+          _onSendAiMessage(result.recognizedWords);
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -115,6 +244,142 @@ class _ArViewScreenState extends State<ArViewScreen> {
             ARView(
               onARViewCreated: _onARViewCreated,
               planeDetectionConfig: PlaneDetectionConfig.horizontalAndVertical,
+            ),
+
+            // AI assistant panel (animated)
+            Positioned(
+              left: 16,
+              right: 16,
+              bottom: 190,
+              child: IgnorePointer(
+                ignoring: !_isAiAssistantActive,
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 220),
+                  opacity: _isAiAssistantActive ? 1 : 0,
+                  child: AnimatedSlide(
+                    duration: const Duration(milliseconds: 220),
+                    offset: _isAiAssistantActive
+                        ? Offset.zero
+                        : const Offset(0, 0.2),
+                    curve: Curves.easeOut,
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.78),
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(
+                          color: const Color(0xFFF6093D).withOpacity(0.7),
+                          width: 1.3,
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: const [
+                              Icon(
+                                Icons.smart_toy_rounded,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                              SizedBox(width: 8),
+                              Text(
+                                'Assistant AR AI',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Pose une question sur ce que tu vois ou demande de l’aide pour interagir avec le modèle.',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 12,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  _isListening
+                                      ? 'Parle maintenant…'
+                                      : 'Appuie sur le micro pour parler.',
+                                  style: TextStyle(
+                                    color: _isListening
+                                        ? const Color(0xFFFF6C4A)
+                                        : Colors.white70,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              GestureDetector(
+                                onTap: _toggleVoiceListening,
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 200),
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    gradient: _isListening
+                                        ? const LinearGradient(
+                                            colors: [
+                                              Color(0xFFFF6C4A),
+                                              Color(0xFFF6093D),
+                                            ],
+                                          )
+                                        : const LinearGradient(
+                                            colors: [
+                                              Color(0xFF444444),
+                                              Color(0xFF222222),
+                                            ],
+                                          ),
+                                    boxShadow: _isListening
+                                        ? [
+                                            BoxShadow(
+                                              color: const Color(0xFFF6093D)
+                                                  .withOpacity(0.7),
+                                              blurRadius: 16,
+                                              spreadRadius: 2,
+                                            ),
+                                          ]
+                                        : [
+                                            BoxShadow(
+                                              color:
+                                                  Colors.black.withOpacity(0.5),
+                                              blurRadius: 10,
+                                              spreadRadius: 1,
+                                            ),
+                                          ],
+                                  ),
+                                  child: ScaleTransition(
+                                    scale: _isListening
+                                        ? _voicePulseAnimation
+                                        : const AlwaysStoppedAnimation(1.0),
+                                    child: Icon(
+                                      _isListening
+                                          ? Icons.mic_rounded
+                                          : Icons.mic_none_rounded,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
 
           // Top bar with back button
@@ -181,6 +446,107 @@ class _ArViewScreenState extends State<ArViewScreen> {
             ),
           ),
 
+          // AI assistant circular toggle button
+          Positioned(
+            top: 20,
+            right: 20,
+            child: SafeArea(
+              top: false,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _isAiAssistantActive = !_isAiAssistantActive;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        _isAiAssistantActive
+                            ? 'Assistant AI activé'
+                            : 'Assistant AI désactivé',
+                      ),
+                      duration: const Duration(milliseconds: 800),
+                    ),
+                  );
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeOut,
+                  width: _isAiAssistantActive ? 68 : 60,
+                  height: _isAiAssistantActive ? 68 : 60,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _isAiAssistantActive
+                        ? const Color(0xFFF6093D)
+                        : Colors.black.withOpacity(0.65),
+                    boxShadow: _isAiAssistantActive
+                        ? [
+                            BoxShadow(
+                              color: const Color(0xFFF6093D).withOpacity(0.7),
+                              blurRadius: 25,
+                              spreadRadius: 2,
+                            ),
+                          ]
+                        : [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.5),
+                              blurRadius: 14,
+                              spreadRadius: 1,
+                            ),
+                          ],
+                  ),
+                  child: Center(
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 220),
+                      transitionBuilder: (child, animation) {
+                        return ScaleTransition(scale: animation, child: child);
+                      },
+                      child: _isAiAssistantActive
+                          ? Column(
+                              key: const ValueKey('ai-on'),
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Icon(
+                                  Icons.smart_toy_rounded,
+                                  color: Colors.white,
+                                  size: 26,
+                                ),
+                                SizedBox(height: 2),
+                                Text(
+                                  'ON',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            )
+                          : Column(
+                              key: const ValueKey('ai-off'),
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Icon(
+                                  Icons.smart_toy_outlined,
+                                  color: Colors.white,
+                                  size: 24,
+                                ),
+                                SizedBox(height: 2),
+                                Text(
+                                  'AI',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
           // Scrollable model selector (smaller icons, above instruction)
           Positioned(
             left: 0,
