@@ -57,11 +57,18 @@ flutter run
 - Texte reconnu transmis à un handler (`_onSendAiMessage`) qui pourra être relié à un backend AI.
 - Animation du bouton micro (effet d’ondes) pendant l’écoute.
 
+## Backend & AI services
+
+- **`ai next_verse`** : sous-projet Python pour les services AI (FastAPI + DeepSeek/Gemini).
+  - Nouveau module **MindSpore** (`ai next_verse/MindSpore.py`) pour expérimenter des réseaux neuronaux avec MindSpore.
+  - L’installation de MindSpore dépend de votre plateforme (CPU / GPU) – voir la doc officielle : https://www.mindspore.cn/install
+
 ## Structure rapide
 
 - `lib/screens/ar/ar_view_screen.dart` : écran AR + assistant AI.
 - `lib/screens/projects/live_page.dart` : page live avec caméra/chat.
 - `lib/config/` : configuration UI et autres utilitaires.
+- `ai next_verse/` : backend AI + module MindSpore pour l’expérimentation ML.
 
 ## License
 
