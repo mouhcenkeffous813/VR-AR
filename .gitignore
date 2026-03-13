@@ -1,3 +1,7 @@
+# Repository and platform
+.git/
+android/
+
 # Miscellaneous
 *.class
 *.log
